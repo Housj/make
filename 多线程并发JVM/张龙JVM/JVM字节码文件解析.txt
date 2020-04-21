@@ -1,0 +1,452 @@
+
+CAFEBABE 魔数四个字节
+
+0000		minor version 0 //两个字节
+
+0034		major_version  52  对应jdk1.8.0//两个字节
+//Constant pool
+002F		#常量池的个数   47 	减去一个0对应的null 剩46 //两个字节  第0个是null  常量池从第一个开始
+
+			#1
+0A			u1=10    constant_methodref_info
+000A		u2=#10  指向一个声明这个方法的类的描述符constant_class_info的索引项			value=java/lang/Object
+0022		u2=#34  指向该方法的名称及类型描述符（方法的参数和方法的返回值）constant_nameAndType_info的索引项//	value=#17<init>#18()V		
+
+			#2
+08			u1=8	constant_String_info
+0023		u2=#35  指向字符串字面量的索引	value=welcome
+
+			#3
+09			u1=9    constant_Fieldref_info
+0005		u2=#5   指向声明字段的类或接口的描述符constant_class_info的索引项
+0024		u2=#36	指向该字段描述符constant_NameAndType_info的索引项
+
+			#4
+09			u1=9    constant_Fieldref_info
+0005		u2=#5   指向声明字段的类或接口的描述符constant_class_info的索引项value=#38 com/jlu/bytecode/MyTest2
+0025		u2=#37	指向该字段描述符constant_NameAndType_info的索引项value=#13 x	value=#14 I
+
+			#5
+07			u1=7	constant_class_info
+0026		u2=#38  指向全限定名#项的索引 value=com/jlu/bytecode/MyTest2
+
+			#6
+0A			u1=1     constant_utf-8_info0   constant_methodref_info
+0005		u2=#5  指向一个声明这个方法的类的描述符constant_class_info的索引项	value=com/jlu/bytecode/MyTest2
+0022		u2=#34  指向该方法的名称及类型描述符（方法的参数和方法的返回值）constant_nameAndType_info的索引项	value=#17<init>#18()V
+
+			#7
+0A			u1=1     constant_utf-8_info0   constant_methodref_info
+0005		u2=#5  指向一个声明这个方法的类的描述符constant_class_info的索引项	value=com/jlu/bytecode/MyTest2
+0027		u2=#39  指向该方法的名称及类型描述符（方法的参数和方法的返回值）constant_nameAndType_info的索引项 value=#29 setX  #30 (I)V
+
+			#8
+0A			u1=1     constant_utf-8_info0   constant_methodref_info
+0028		u2=#40  指向一个声明这个方法的类的描述符constant_class_info的索引项	value=#44 java/lang/Integer
+0029		u2=#41  指向该方法的名称及类型描述符（方法的参数和方法的返回值）constant_nameAndType_info的索引项	value=#45 valueOf #46(I)Ljava/lang/Integer;
+
+			#9
+09			u1=9    constant_Fieldref_info
+0005		u2=#5   指向声明字段的类或接口的描述符constant_class_info的索引项	value=com/jlu/bytecode/MyTest2
+002A		u2=#42	指向该字段描述符constant_NameAndType_info的索引项value=#15 in #16 Ljava/lang/Integer;
+
+			#10
+07			u1=7	constant_class_info
+002B		u2=#43  指向全限定名#项的索引	value=java/lang/Object
+
+			#11
+01			u1=1     constant_utf-8_info
+0003		u2=3 utf-8 （length）编码的字符串的长度//
+737472		value=str  u1长度为length的utf-8 编码的字符串//
+
+			#12
+01			u1=1     constant_utf-8_info	
+0012		u2=18 utf-8 （length）编码的字符串的长度//
+4C6A6176612F6C616E672F537472696E673B	value=Ljava/lang/String; u1长度为length的utf-8 编码的字符串//
+
+			#13
+01			u1=1     constant_utf-8_info
+0001		u2=1 utf-8 （length）编码的字符串的长度//
+78			value=x	u1长度为length的utf-8 编码的字符串//
+
+			#14
+01			u1=1     constant_utf-8_info
+0001		u2=1 utf-8 （length）编码的字符串的长度//
+49			value=I	u1长度为length的utf-8 编码的字符串//
+
+			#15
+01			u1=1     constant_utf-8_info
+0002		u2=2 utf-8 （length）编码的字符串的长度//
+696E		value=in	u1长度为length的utf-8 编码的字符串//
+
+			#16
+01			u1=1     constant_utf-8_info
+0013		u2=19 utf-8 （length）编码的字符串的长度//
+4C6A6176612F6C616E672F496E74656765723B	value=Ljava/lang/Integer;	u1长度为length的utf-8 编码的字符串//
+
+			#17
+01			u1=1     constant_utf-8_info
+0006		u2=6 utf-8 （length）编码的字符串的长度//
+3C696E69743E	value=<init>	u1长度为length的utf-8 编码的字符串//
+
+			#18
+01			u1=1     constant_utf-8_info
+0003		u2=3 utf-8 （length）编码的字符串的长度//
+282956		value=()V
+
+			#19
+01			u1=1     constant_utf-8_info
+0004		u2=4 utf-8 （length）编码的字符串的长度//
+436F6465	value=Code
+
+			#20
+01			u1=1     constant_utf-8_info
+000F		u2=18 utf-8 （length）编码的字符串的长度//
+4C696E654E756D6265725461626C65	value=LineNumberTable
+
+			#21
+01			u1=1     constant_utf-8_info
+0012		u2=18 utf-8 （length）编码的字符串的长度//
+4C6F63616C5661726961626C655461626C65	value=LocalVariableTable
+
+			#22
+01			u1=1     constant_utf-8_info
+0004		u2=4 utf-8 （length）编码的字符串的长度//
+74686973	value=this
+
+			#23
+01			u1=1     constant_utf-8_info
+001A		u2=26 utf-8 （length）编码的字符串的长度//
+4C636F6D2F6A6C752F62797465636F64652F4D7954657374323B	value=Lcom/jlu/bytecode/MyTest2;
+
+			#24
+01			u1=1     constant_utf-8_info
+0004		u2=4 utf-8 （length）编码的字符串的长度//
+6D61696E	value=main
+
+			#25
+01			u1=1     constant_utf-8_info
+0016		u2=22 utf-8 （length）编码的字符串的长度//
+285B4C6A6176612F6C616E672F537472696E673B2956	value=([Ljava/lang/String;)V
+
+			#26
+01			u1=1     constant_utf-8_info
+0004		u2=4 utf-8 （length）编码的字符串的长度//
+61726773	value=args
+
+			#27
+01			u1=1     constant_utf-8_info
+0013		u2=19 utf-8 （length）编码的字符串的长度//
+5B4C6A6176612F6C616E672F537472696E673B	value=[Ljava/lang/String;
+
+			#28
+01			u1=1     constant_utf-8_info
+0007		u2=7 utf-8 （length）编码的字符串的长度//
+6D795465737432	value=myTest2
+
+			#29
+01			u1=1     constant_utf-8_info
+0004		u2=7 utf-8 （length）编码的字符串的长度//
+73657458	value=setX
+
+			#30
+01			u1=1     constant_utf-8_info
+0004		u2=4 utf-8 （length）编码的字符串的长度//
+28492956	value=(I)V
+
+			#31
+01			u1=1     constant_utf-8_info
+0008		u2=8 utf-8 （length）编码的字符串的长度//
+3C636C696E69743E	value=<clinit>
+
+			#32
+01			u1=1     constant_utf-8_info
+000A		u2=10 utf-8 （length）编码的字符串的长度//
+536F7572636546696C65	value=SourceFile
+
+			#33
+01			u1=1     constant_utf-8_info
+000C		u2=12 utf-8 （length）编码的字符串的长度//
+4D7954657374322E6A617661	value=MyTest2.java
+
+			#34
+0C			u1=12     	constant_NameAndType_info
+0011		u2=#17 指向该字段或方法名称常量项的索引
+0012		u2=#18	指向该字段或方法描述符常量项的索引
+
+			#35
+01			u1=1     constant_utf-8_info
+0007		u2=12 utf-8 （length）编码的字符串的长度//
+77656C636F6D65	value=welcome
+
+#36
+0C			u1=12     	constant_NameAndType_info	
+000B		u2=#11 指向该字段或方法名称常量项的索引	value=str
+000C		u2=#12	指向该字段或方法描述符常量项的索引	value=Ljava/lang/String;
+
+#37
+0C			u1=12     	constant_NameAndType_info
+000D		u2=#13 指向该字段或方法名称常量项的索引	value=x
+000E		u2=#14	指向该字段或方法描述符常量项的索引	value=I
+
+#38
+01			u1=1     constant_utf-8_info
+0018		u2=12 utf-8 （length）编码的字符串的长度//
+636F6D2F6A6C752F62797465636F64652F4D795465737432	value=com/jlu/bytecode/MyTest2
+
+#39
+0C			u1=12    constant_NameAndType_info
+001D		u2=#29 指向该字段或方法名称常量项的索引	value=setX
+001E		u2=#30	指向该字段或方法描述符常量项的索引	value=(I)V
+
+#40			
+07			u1=7	constant_class_info
+002C		u2=#44	指向全限定名常量项的索引	value=java/lang/Integer
+
+#41
+0C			u1=12    	constant_NameAndType_info
+002D		u2=#45 指向该字段或方法名称常量项的索引	value=valueOf
+002E		u2=#46	指向该字段或方法描述符常量项的索引	value=(I)Ljava/lang/Integer;
+
+#42
+0C			u1=12     	constant_NameAndType_info
+000F		u2=#15 指向该字段或方法名称常量项的索引	value=in
+0010		u2=#16	指向该字段或方法描述符常量项的索引	value=Ljava/lang/Integer;
+
+#43
+01			u1=1     constant_utf-8_info
+0010		u2=16 utf-8 （length）编码的字符串的长度//
+6A6176612F6C616E672F4F626A656374	value=java/lang/Object
+
+#44
+01			u1=1     constant_utf-8_info
+0011		u2=17 utf-8 （length）编码的字符串的长度//
+6A6176612F6C616E672F496E7465676572	value=java/lang/Integer
+
+#45
+01			u1=1     constant_utf-8_info
+0007		u2=7 utf-8 （length）编码的字符串的长度//
+76616C75654F66	value=valueOf
+
+#46
+01			u1=1     constant_utf-8_info
+0016		u2=12 utf-8 （length）编码的字符串的长度//
+2849294C6A6176612F6C616E672F496E74656765723B	value=(I)Ljava/lang/Integer;
+
+/////////////////////////////
+Access Flag   两个字节  //该类的限定符号  public  private 这些  
+
+0021		acc_super  acc_public
+
+
+
+
+/////////////////////////////////
+The class Name 两个字节
+0005	#5 		com/jlu/bytecode/MyTest2
+
+
+
+
+//////////////////////////
+super class name 
+000A	#10 	 java/lang/Object 
+
+
+
+//////////////////////
+Interface  前两个字节表示个数  后面的是接口
+0000	0	表示没有实现接口
+
+
+/////////////////////////////////////
+Fields   前两个字节表示变量的个数
+0003	表示有3个
+
+[0]str
+0000	access_flag 
+000B	name_index #11 value=str
+000C	descriptor_index #12 value=Ljava/lang/String;
+0000	attrivutes_count	全是0表示没有，接下来进入下个field的解析
+
+[1]x
+0002	access_flag acc_private
+000D	name_index #13 value=x
+000E	descriptor_index #14	value=I
+0000	attrivutes_count	全是0表示没有，接下来进入下个field的解析
+
+[2]in
+0009	access_flag	    public static 
+000F	name_index #15	value=in
+0010	descriptor_index #16	value=Ljava/lang/Integer;	
+0000	attributes_count	全是0表示没有，接下来进入下个field的解析
+
+
+////////////////////////////
+Method   前两个字节表示方法的个数
+0004	Methods_account   4个方法
+
+Method1
+0001	access_flag  public 
+0011	name_index #17 <init>
+0012	descriptor_index	#18 ()V
+0001	attributes_count	有一个
+	attribute_info
+0013	attribute_name_index #19 Code  (Code 也是一个属性)
+00000042 attribute_length 66		
+0002	max_stack 2
+0001	max_locals 1 
+00000010	codeLength 16
+2A			aload_0
+B7	0001	invokespecial #1	java/lang/Object <init>()V
+2A			aload_0
+12	02		ldc #2	welcome
+B5	0003	putfield #3	  str Ljava/lang/String;
+2A			aload_0
+08			iconst_5
+B5	0004	 putfield #4 <com/jlu/bytecode/MyTest2.x>
+B1	return 
+0000	exception_table_length	 0 表示没有异常需要处理
+
+0002	attributes_count
+			attribute_info[0]
+0014	attribute_name_index	#20		LineNumberTable
+0000000E	attribute_length	14		
+0003	LineNumberTable的元素个数  两个字节  3
+
+0000	0003	//  0 startPc    3 LineNumber	    一行两个字节	
+0004	0005	//  4 startPc    5 LineNumber	    一行两个字节
+000A	0007	//  10 startPc    7 LineNumber	    一行两个字节
+			attribute_info[1]
+0015	attribute_name_index	#21	LocalVariableTable
+0000000C	attribute_length	12	
+0001			//有一个元素
+0000
+0010	Length
+0016	Name this 
+0017	Lcom/jlu/bytecode/MyTest2;
+0000
+
+Method2
+0009	access_flags  public static
+0018	name_index	#24 main
+0019	name_index	#25	([Ljava/lang/String;)V
+0001	attribute_count 1 
+0013	attribute_name_index #19	Code		 注意：Code中的attribute_name_index接方法中的attribute_name_index
+00000057	attribute_length	87						Code中的attribute_length接方法中的 attribute_length
+0002		max_stack
+0002		max_locals
+00000017	codeLength  23
+code
+BB	0005	new #5	<com/jlu/bytecode/MyTest2>
+59			dup   
+B7	0006	invokespecial #6 <com/jlu/bytecode/MyTest2.<init>>
+4C			astore_1
+2B			aload_1
+10	08		bipush 8
+B6	0007	invokevirtual #7 <com/jlu/bytecode/MyTest2.setX>
+10	14		bipush 20
+B8	0008	 invokestatic #8 <java/lang/Integer.valueOf>
+B3	0009	 putstatic #9 <com/jlu/bytecode/MyTest2.in>
+B1			return 
+0000		exception_table_length  0
+0002		attribute_count 2
+				attribute_info[0]
+0014		attribute_name_index LineNumberTable
+00000012	attribute_length 18
+0004		LineNumberTable的元素个数  两个字节  4
+0000	000D			//  0 startPc    13 LineNumber	    一行两个字节	
+0008	000F			//  8 startPc    15 LineNumber	    一行两个字节	
+000E	0011			//  14 startPc    17 LineNumber	    一行两个字节	
+0016	0012			//  22 startPc    18 LineNumber	    一行两个字节	
+			attribute_info[0]
+0015		attribute_name_index	#21	LocalVariableTable
+00000016	attribute_length	22	
+0002		//表中有2个元素
+					//元素1
+0000				startPc
+0017				Length 23
+001A				Name #26	args
+001B				Descriptor #27	[Ljava/lang/String;
+0000				index
+					//元素2
+0008				startPc
+000F				Length 15
+001C				Name #28 myTest2
+0017				Descriptor #23	Lcom/jlu/bytecode/MyTest2;
+0001				index
+
+
+Method3
+0001				access_flag	public
+001D				name_index	#29	setX
+001E				descriptor_index	#30	(I)V
+0001				attribute_count	1
+0013				attribute_name_index	#19 	Code
+0000003E			attribute_length 62
+0002				max_stack	2
+0002				max_locals	2
+00000006			codeLength 
+Code
+2A					aload_0
+1B					iload_1
+B5	0004			putfield #4	<com/jlu/bytecode/MyTest2.x>
+B1					return
+
+0000				exception_table_length	0 表示没有异常需要处理
+0002				attributes_count	2
+							attribute_info[0]
+0014				attribute_name_index # 20 LineNumberTable
+0000000A			attribute_length 10
+0002								//LineNumberTable 中有两个元素
+0000	0014		//  0 startPc    20 LineNumber	    一行两个字节	
+0005	0015		//  5 startPc    21 LineNumber	    一行两个字节	
+							attribute_info[1]
+0015				attribute_name_index	#21	LocalVariableTable
+00000016			attribute_length	22
+0002								//LocalVariableTable 中有两个元素
+													//元素1
+0000				startPc
+0006				Length 	6
+0016				Name	#22 this
+0017				Descriptor	#23	Lcom/jlu/bytecode/MyTest2;
+0000				index
+													//元素2
+0000				startPc
+0006				Length 	6
+000D				Name #13 x
+000E				Descriptor	I
+0001				index 
+
+
+
+Method4
+0008				access_flag		static
+001F				name_index	#31		<clinit>//表示静态代码
+0012				descriptor_index	#18 	()V  	
+0001				attributes_count	1个
+0013				attribute_name_index	#19 	Code  
+00000021			attribute_length	33
+0001				max_stack 	1
+0000				max_locals	0
+00000009			codeLength	9
+code
+10	0A				bipush	10
+B8	0008			invokestatic	#8
+B3	0009			putstatic	#9
+B1					return
+0000				exception_table_length	0
+0001				attributes_count
+0014				attribute_name_index	#20 LineNumberTable
+00000006			attribute_length  6	
+0001								//LineNumberTable 中有一个元素
+0000	0009		//  0 startPc    9 LineNumber	    一行两个字节	
+////////////////////////
+attributes
+0001							//attribute_count   1
+0020							//attribute_name_index #32	SourceFile
+00000002						//attribute_length  2
+0021							//attribute_name_index #33	  MyTest2.java
+
+ 16进制转换网站
+http://www.bejson.com/convert/ox2str/
