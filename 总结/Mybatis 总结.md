@@ -1,4 +1,4 @@
-# [mybatis 详解（一）------JDBC](https://www.cnblogs.com/ysocean/p/7271600.html)
+# [JDBC](https://www.cnblogs.com/ysocean/p/7271600.html)
 
 
 
@@ -188,7 +188,7 @@ public class CRUDDao {
 
 
 
-# [mybatis 详解（二）------入门实例（基于XML）](https://www.cnblogs.com/ysocean/p/7277545.html)
+# [入门实例（基于XML）](https://www.cnblogs.com/ysocean/p/7277545.html)
 
 
 
@@ -616,7 +616,7 @@ public class CRUDTest {
 
 
 
-# [mybatis 详解（三）------入门实例（基于注解）](https://www.cnblogs.com/ysocean/p/7282639.html)
+# [入门实例（基于注解）](https://www.cnblogs.com/ysocean/p/7282639.html)
 
 
 
@@ -791,7 +791,7 @@ public class UserAnnocationTest {
 
 
 
-# [mybatis 详解（四）------properties以及别名定义](https://www.cnblogs.com/ysocean/p/7287972.html)
+# [properties以及别名定义](https://www.cnblogs.com/ysocean/p/7287972.html)
 
 
 
@@ -983,7 +983,7 @@ private void propertiesElement(XNode context) throws Exception {
 
 　　　　引用的时候类名的首字母大小写都可以
 
-# [mybatis 详解（五）------动态SQL](https://www.cnblogs.com/ysocean/p/7289529.html)
+# [动态SQL](https://www.cnblogs.com/ysocean/p/7289529.html)
 
 
 
@@ -1354,7 +1354,7 @@ public void testSelectUserByListId(){
 
 　　其实动态 sql 语句的编写往往就是一个拼接的问题，为了保证拼接准确，我们最好首先要写原生的 sql 语句出来，然后在通过 mybatis 动态sql 对照着改，防止出错。
 
-# [mybatis 详解（六）------通过mapper接口加载映射文件](https://www.cnblogs.com/ysocean/p/7301548.html)
+# [通过mapper接口加载映射文件](https://www.cnblogs.com/ysocean/p/7301548.html)
 
 
 
@@ -1544,7 +1544,7 @@ public interface UserMapper {
 
 
 
-# [mybatis 详解（七）------一对一、一对多、多对多](https://www.cnblogs.com/ysocean/p/7309308.html)
+# [一对一、一对多、多对多](https://www.cnblogs.com/ysocean/p/7309308.html)
 
 **目录**
 
@@ -2204,7 +2204,7 @@ public void testGetUserByRoleId(){
 
 　　多对多主要是关联关系要找好，然后根据关联去查询。
 
-# [mybatis 详解（八）------ 懒加载](https://www.cnblogs.com/ysocean/p/7336945.html)
+# [懒加载](https://www.cnblogs.com/ysocean/p/7336945.html)
 
 目录**
 
@@ -2536,7 +2536,7 @@ public void testLazy(){
 
 　　　　这与mybatis懒加载的区别就是，mybatis是在mapper.xml文件中配置好关联关系了，我们直接调用就好了。而自己实现的原理就是手动去建立关联关系。
 
-# [mybatis 详解（九）------ 一级缓存、二级缓存](https://www.cnblogs.com/ysocean/p/7342498.html)
+# [一级缓存、二级缓存](https://www.cnblogs.com/ysocean/p/7342498.html)
 
 **目录**
 
@@ -2889,7 +2889,7 @@ public void testTwoCache(){
 
 　　mybatis二级缓存对细粒度的数据级别的缓存实现不好，比如如下需求：对商品信息进行缓存，由于商品信息查询访问量大，但是要求用户每次都能查询最新的商品信息，此时如果使用mybatis的二级缓存就无法实现当一个商品变化时只刷新该商品的缓存信息而不刷新其它商品的信息，因为mybaits的二级缓存区域以mapper为单位划分的，当一个商品信息变化会将所有商品信息的缓存数据全部清空。解决此类问题可能需要在业务层根据需求对数据有针对性缓存。
 
-# [mybatis 详解（十）------ 逆向工程](https://www.cnblogs.com/ysocean/p/7360409.html)
+# [逆向工程](https://www.cnblogs.com/ysocean/p/7360409.html)
 
 　通过前面的学习，在实际开发中，我们基本上能对mybatis应用自如了，但是我们发现了一个问题，所有操作都是围绕着po类，xxxMapper.xml文件，xxxMapper接口等文件来进行的。如果实际开发中数据库的表特别多，那么我们需要手动去写每一张表的po类，xxxMapper.xml，xxxMapper.java文件，这显然需要花费巨大的精力，而且可能由于表字段太多，写错了而不知道也是可能的。
 
@@ -3033,7 +3033,7 @@ public class GeneratorTest {
 
 
 
-# [mybatis 详解（十一）------ mybatis和spring整合](https://www.cnblogs.com/ysocean/p/7368499.html)
+# [mybatis和spring整合](https://www.cnblogs.com/ysocean/p/7368499.html)
 
 **目录**
 
