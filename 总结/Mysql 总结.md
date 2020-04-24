@@ -1,6 +1,6 @@
 # 数据库基础知识
 
-### 为什么要使用数据库**
+### 为什么要使用数据库
 
 **数据保存在内存**
 
@@ -98,9 +98,69 @@ mysql对于日志格式的选定原则:如果是采用 INSERT，UPDATE，DELETE 
 
 mysql有哪些数据类型
 
-分类 类型名称 说明 整数类型 tinyInt 很小的整数(8位二进制) smallint 小的整数(16位二进制) mediumint 中等大小的整数(24位二进制) int(integer) 普通大小的整数(32位二进制) 小数类型 float 单精度浮点数 double 双精度浮点数 decimal(m,d) 压缩严格的定点数 日期类型 year YYYY 1901~~2155 time HH:MM:SS -838:59:59~~838:59:59 date YYYY-MM-DD 1000-01-01~~9999-12-3 datetime YYYY-MM-DD HH:MM:SS 1000-01-01 00:00:00~~ 9999-12-31 23:59:59 timestamp YYYY-MM-DD HH:MM:SS 19700101 00:00:01 UTC~~2038-01-19 03:14:07UTC 文本、二进制类型 CHAR(M) M为0~~255之间的整数 VARCHAR(M) M为0~~65535之间的整数 TINYBLOB 允许长度0~~255字节 BLOB 允许长度0~~65535字节 MEDIUMBLOB 允许长度0~~167772150字节 LONGBLOB 允许长度0~~4294967295字节 TINYTEXT 允许长度0~~255字节 TEXT 允许长度0~~65535字节 MEDIUMTEXT 允许长度0~~167772150字节 LONGTEXT 允许长度0~~4294967295字节 VARBINARY(M) 允许长度0~~M个字节的变长字节字符串 BINARY(M) 允许长度0~M个字节的定长字节字符串 1、`整数类型`，包括TINYINT、SMALLINT、MEDIUMINT、INT、BIGINT，分别表示1字节、2字节、3字节、4字节、8字节整数。任何整数类型都可以加上UNSIGNED属性，表示数据是无符号的，即非负整数。 `长度`：整数类型可以被指定长度，例如：INT(11)表示长度为11的INT类型。长度在大多数场景是没有意义的，它不会限制值的合法范围，只会影响显示字符的个数，而且需要和UNSIGNED ZEROFILL属性配合使用才有意义。 `例子`，假定类型设定为INT(5)，属性为UNSIGNED ZEROFILL，如果用户插入的数据为12的话，那么数据库实际存储数据为00012。
+​		分类 类型名称 说明 
 
-2、`实数类型`，包括FLOAT、DOUBLE、DECIMAL。 DECIMAL可以用于存储比BIGINT还大的整型，能存储精确的小数。 而FLOAT和DOUBLE是有取值范围的，并支持使用标准的浮点进行近似计算。 计算时FLOAT和DOUBLE相比DECIMAL效率更高一些，DECIMAL你可以理解成是用字符串进行处理。
+整数类型 
+
+tinyInt 很小的整数(8位二进制) 
+
+smallint 小的整数(16位二进制) 
+
+mediumint 中等大小的整数(24位二进制) 
+
+int(integer) 普通大小的整数(32位二进制) 
+
+小数类型 
+
+float 单精度浮点数 
+
+double 双精度浮点数 
+
+decimal(m,d) 压缩严格的定点数 
+
+日期类型
+
+ year YYYY 19012155 time HH:MM:SS -838:59:59838:59:59 
+
+date YYYY-MM-DD 1000-01-019999-12-3 
+
+datetime YYYY-MM-DD HH:MM:SS 1000-01-01 00:00:00~~ 9999-12-31 23:59:59 
+
+timestamp YYYY-MM-DD HH:MM:SS 19700101 00:00:01 UTC 2038-01-19 03:14:07UTC 
+
+文本、二进制类型 
+
+CHAR(M) M为0~~255之间的整数 ~~
+
+VARCHAR(M) M为0~~65535之间的整数 ~~
+
+TINYBLOB 允许长度0~~255字节 ~~
+
+BLOB 允许长度0~~65535字节 ~~
+
+MEDIUMBLOB 允许长度0~~167772150字节 ~~
+
+LONGBLOB 允许长度0 4294967295字节 ~~
+
+TINYTEXT 允许长度0 255字节~~
+
+TEXT 允许长度0~~65535字节 ~~
+
+MEDIUMTEXT 允许长度0~~167772150字节~~
+
+LONGTEXT 允许长度0~~4294967295字节 ~~
+
+VARBINARY(M) 允许长度0~~M个字节的变长字节字符串 
+
+BINARY(M) 允许长度0~M个字节的定长字节字符串 
+
+1、`整数类型`，包括TINYINT、SMALLINT、MEDIUMINT、INT、BIGINT，分别表示1字节、2字节、3字节、4字节、8字节整数。任何整数类型都可以加上UNSIGNED属性，表示数据是无符号的，即非负整数。 `长度`：整数类型可以被指定长度，例如：INT(11)表示长度为11的INT类型。长度在大多数场景是没有意义的，它不会限制值的合法范围，只会影响显示字符的个数，而且需要和UNSIGNED ZEROFILL属性配合使用才有意义。 `例子`，假定类型设定为INT(5)，属性为UNSIGNED ZEROFILL，如果用户插入的数据为12的话，那么数据库实际存储数据为00012。
+
+2、`实数类型`，包括FLOAT、DOUBLE、DECIMAL。 
+
+DECIMAL可以用于存储比BIGINT还大的整型，能存储精确的小数。 
+
+而FLOAT和DOUBLE是有取值范围的，并支持使用标准的浮点进行近似计算。 计算时FLOAT和DOUBLE相比DECIMAL效率更高一些，DECIMAL你可以理解成是用字符串进行处理。
 
 3、`字符串类型`，包括VARCHAR、CHAR、TEXT、BLOB VARCHAR用于存储可变长字符串，它比定长类型更节省空间。 VARCHAR使用额外1或2个字节存储字符串长度。列长度小于255字节时，使用1字节表示，否则使用2字节表示。 VARCHAR存储的内容超出设置的长度时，内容会被截断。 CHAR是定长的，根据定义的字符串长度分配足够的空间。 CHAR会根据需要使用空格进行填充方便比较。 CHAR适合存储很短的字符串，或者所有值都接近同一个长度。 CHAR存储的内容超出设置的长度时，内容同样会被截断。
 
@@ -112,7 +172,7 @@ mysql有哪些数据类型
 
 ### mysql中常见正则表达式的应用
 
-[![img](https://camo.githubusercontent.com/4a3b5d331d647e53bbbf6dab0950287736902448/68747470733a2f2f696d67323031382e636e626c6f67732e636f6d2f626c6f672f313033363833372f3230313930372f313033363833372d32303139303731353133353930323938322d3334303132363035362e706e67)](https://camo.githubusercontent.com/4a3b5d331d647e53bbbf6dab0950287736902448/68747470733a2f2f696d67323031382e636e626c6f67732e636f6d2f626c6f672f313033363833372f3230313930372f313033363833372d32303139303731353133353930323938322d3334303132363035362e706e67)
+![img](https://img2018.cnblogs.com/blog/1036837/201907/1036837-20190715135902982-340126056.png)
 
 查找name字段中以'st'为开头的所有数据：
 
@@ -197,7 +257,7 @@ MyISAM Innodb 存储结构 每张表被存放在三个文件：frm-表格定义�
 
 **where**
 
-[![img](https://camo.githubusercontent.com/2037d41e384c13cbc83ba9de77e674650c52fbc8/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c793931633256794c57647662475174593252754c6e687064485575615738764d6a41784f5338794c7a45354c7a45324f5441304e546b325a5446694e545534596a493f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)](https://camo.githubusercontent.com/2037d41e384c13cbc83ba9de77e674650c52fbc8/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c793931633256794c57647662475174593252754c6e687064485575615738764d6a41784f5338794c7a45354c7a45324f5441304e546b325a5446694e545534596a493f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)
+<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424152447826.png" alt="image-20200424152447826" style="zoom:50%;" />
 
 上图中，根据id查询记录，因为id字段仅建立了主键索引，因此此SQL执行可选的索引只有主键索引，如果有多个，最终会选一个较优的作为检索的依据。
 
@@ -208,7 +268,7 @@ alter table innodb1 add sex char(1);
 EXPLAIN SELECT * from innodb1 where sex='男';
 ```
 
-[![img](https://camo.githubusercontent.com/d39f9fd91fc5cd9d8ea7a010a0138ddf2edd476c/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c793931633256794c57647662475174593252754c6e687064485575615738764d6a41784f5338794c7a45354c7a45324f5441304e546b325a6a6b315954646d4f546b3f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)](https://camo.githubusercontent.com/d39f9fd91fc5cd9d8ea7a010a0138ddf2edd476c/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c793931633256794c57647662475174593252754c6e687064485575615738764d6a41784f5338794c7a45354c7a45324f5441304e546b325a6a6b315954646d4f546b3f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)
+<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424152520597.png" alt="image-20200424152520597" style="zoom:50%;" />
 
 > 可以尝试在一个字段未建立索引时，根据该字段查询的效率，然后对该字段建立索引（**alter table 表名 add index(字段名)**），同样的SQL执行的效率，你会发现查询效率会有明显的提升（数据量越大越明显）。
 
@@ -260,7 +320,7 @@ EXPLAIN SELECT * from innodb1 where sex='男';
 
 mysql通过存储引擎取数据，基本上90%的人用的就是InnoDB了，按照实现方式分，InnoDB的索引类型目前只有两种：**BTREE（B树）\**索引和\**HASH**索引。B树索引是Mysql数据库中使用最频繁的索引类型，基本所有存储引擎都支持BTree索引。通常我们说的索引不出意外指的就是（B树）索引（实际是用B+树实现的，因为在查看表索引时，mysql一律打印BTREE，所以简称为B树索引）
 
-[![img](https://camo.githubusercontent.com/ab5f28ac8a8499cdcc499be07f2c195401c2887e/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c793931633256794c57647662475174593252754c6e687064485575615738764d6a41784f4338354c7a49304c7a45324e6a426a4d4759784e475268593259325a6a553f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)](https://camo.githubusercontent.com/ab5f28ac8a8499cdcc499be07f2c195401c2887e/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c793931633256794c57647662475174593252754c6e687064485575615738764d6a41784f4338354c7a49304c7a45324e6a426a4d4759784e475268593259325a6a553f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)
+![image-20200424152551792](/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424152551792.png)
 
 **查询方式：**
 
@@ -284,7 +344,7 @@ mysql通过存储引擎取数据，基本上90%的人用的就是InnoDB了，按
 
 简要说下，类似于数据结构中简单实现的HASH表（散列表）一样，当我们在mysql中用哈希索引时，主要就是通过Hash算法（常见的Hash算法有直接定址法、平方取中法、折叠法、除数取余法、随机数法），将数据库字段数据转换成定长的Hash值，与这条数据的行指针一并存入Hash表的对应位置；如果发生Hash碰撞（两个不同关键字的Hash值相同），则在对应Hash键下以链表形式存储。当然这只是简略模拟图。
 
-[![img](https://camo.githubusercontent.com/5541c5ad3dff8e7f2734868a260f32499385e279/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c793931633256794c57647662475174593252754c6e687064485575615738764d6a41784f4338354c7a49304c7a45324e6a426a4d4759784e5468684e7a5a6d4f54513f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)](https://camo.githubusercontent.com/5541c5ad3dff8e7f2734868a260f32499385e279/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c793931633256794c57647662475174593252754c6e687064485575615738764d6a41784f4338354c7a49304c7a45324e6a426a4d4759784e5468684e7a5a6d4f54513f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)
+<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424152606887.png" alt="image-20200424152606887" style="zoom:50%;" />
 
 ## 索引的基本原理
 
@@ -394,7 +454,7 @@ alter table user_index drop KEY information;
 
 **删除主键索引**：alter table 表名 drop primary key（因为主键只有一个）。这里值得注意的是，如果主键自增长，那么不能直接执行此操作（自增长依赖于主键索引）：
 
-[![img](https://camo.githubusercontent.com/7d0e40db59d8a6174ae0b74871365f37466c2e8f/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c793931633256794c57647662475174593252754c6e687064485575615738764d6a41784f5338794c7a45354c7a45324f5441304e546b32596a49785a5449774f574d3f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)](https://camo.githubusercontent.com/7d0e40db59d8a6174ae0b74871365f37466c2e8f/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c793931633256794c57647662475174593252754c6e687064485575615738764d6a41784f5338794c7a45354c7a45324f5441304e546b32596a49785a5449774f574d3f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)
+<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424152625160.png" alt="image-20200424152625160" style="zoom:50%;" />
 
 需要取消自增长再行删除：
 
@@ -452,7 +512,7 @@ drop PRIMARY KEY
 - 在B树中，你可以将键和值存放在内部节点和叶子节点；但在B+树中，内部节点都是键，没有值，叶子节点同时存放键和值。
 - B+树的叶子节点有一条链相连，而B树的叶子节点各自独立。
 
-[![img](https://camo.githubusercontent.com/1fc59abacb9fa17978a6a3bff275e5c4ee7448af/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c793931633256794c57647662475174593252754c6e687064485575615738764d6a41784f4338354c7a49784c7a45324e575a694e6a67795a5463314f574e6d4d54493f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)](https://camo.githubusercontent.com/1fc59abacb9fa17978a6a3bff275e5c4ee7448af/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c793931633256794c57647662475174593252754c6e687064485575615738764d6a41784f4338354c7a49784c7a45324e575a694e6a67795a5463314f574e6d4d54493f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)
+![image-20200424152726948](/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424152726948.png)
 
 ### 使用B树的好处
 
@@ -508,7 +568,7 @@ B+树底层实现是多路平衡查找树。对于每一次的查询都是从根
 
 **何时使用聚簇索引与非聚簇索引**
 
-[![img](https://camo.githubusercontent.com/9662f525250fa92a4d6d1dd5657ec7f326f9c91f/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c7939316347787659575174615731685a32567a4c6d70705957357a6148557561573876645842736232466b58326c745957646c637938784d4445314e4451354f53316b4e544e684e574e6c4f574e6c593259794d6d597a4c6e42755a773f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)](https://camo.githubusercontent.com/9662f525250fa92a4d6d1dd5657ec7f326f9c91f/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c7939316347787659575174615731685a32567a4c6d70705957357a6148557561573876645842736232466b58326c745957646c637938784d4445314e4451354f53316b4e544e684e574e6c4f574e6c593259794d6d597a4c6e42755a773f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)
+![image-20200424152745051](/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424152745051.png)
 
 ## 非聚簇索引一定会回表查询吗？
 
@@ -857,15 +917,13 @@ SELECT * FROM A LEFT JOIN B ON A.id=B.id UNIONSELECT * FROM A RIGHT JOIN B ON A.
 
 R表
 
-A B C a1 b1 c1 a2 b2 c2 a3 b3 c3 S表
-
-C D c1 d1 c2 d2 c4 d3 **交叉连接(笛卡尔积):**
+**交叉连接(笛卡尔积):**
 
 ```
 select r.*,s.* from r,s
 ```
 
-A B C C D a1 b1 c1 c1 d1 a2 b2 c2 c1 d1 a3 b3 c3 c1 d1 a1 b1 c1 c2 d2 a2 b2 c2 c2 d2 a3 b3 c3 c2 d2 a1 b1 c1 c4 d3 a2 b2 c2 c4 d3 a3 b3 c3 c4 d3 **内连接结果：**
+ **内连接结果：**
 
 ```
 select r.*,s.* from r inner join s on r.c=s.c
@@ -877,19 +935,19 @@ A B C C D a1 b1 c1 c1 d1 a2 b2 c2 c2 d2 **左连接结果：**
 select r.*,s.* from r left join s on r.c=s.c
 ```
 
-A B C C D a1 b1 c1 c1 d1 a2 b2 c2 c2 d2 a3 b3 c3 **右连接结果：**
+ **右连接结果：**
 
 ```
 select r.*,s.* from r right join s on r.c=s.c
 ```
 
-A B C C D a1 b1 c1 c1 d1 a2 b2 c2 c2 d2 c4 d3 **全表连接的结果（MySql不支持，Oracle支持）：**
+ **全表连接的结果（MySql不支持，Oracle支持）：**
 
 ```
 select r.*,s.* from r full join s on r.c=s.c
 ```
 
-A B C C D a1 b1 c1 c1 d1 a2 b2 c2 c2 d2 a3 b3 c3 c4 d3
+
 
 ## 什么是子查询
 
@@ -999,13 +1057,2415 @@ DOUBLE类型数据可以存储至多18位十进制数，并在内存中占8字�
 
 效率 UNION 高于 UNION ALL
 
+# 日志
+
+**MySQL中的日志包括**
+
+| 日志类型              | 写入日志的信息                                               |
+| --------------------- | ------------------------------------------------------------ |
+| 错误日志              | 记录在启动，运行或停止mysqld时遇到的问题                     |
+| 通用查询日志          | 记录建立的客户端连接和执行的语句                             |
+| 二进制日志            | 记录更改数据的语句                                           |
+| 中继日志              | 从复制主服务器接收的数据更改                                 |
+| 慢查询日志            | 记录所有执行时间超过 `long_query_time` 秒的所有查询或不使用索引的查询 |
+| DDL日志（元数据日志） | 元数据操作由DDL语句执行                                      |
+
+ 缺省情况下，所有日志创建于mysqld数据目录中。
+
+##  Binlog
+
+MySQL 的二进制日志 binlog 可以说是 MySQL 最重要的日志，它记录了所有的 `DDL` 和 `DML` 语句（除了数据查询语句select、show等），**以事件形式记录**，还包含语句所执行的消耗的时间，MySQL的二进制日志是事务安全型的。binlog 的主要目的是**复制和恢复**。
+
+#### Binlog日志的两个最重要的使用场景
+
+- **MySQL主从复制**：MySQL Replication在Master端开启binlog，Master把它的二进制日志传递给slaves来达到master-slave数据一致的目的
+- **数据恢复**：通过使用 mysqlbinlog工具来使恢复数据
+
+#### 启用 Binlog
+
+> 注：笔者实验的MySQL版本为：5.7.22
+
+一般来说开启binlog日志大概会有1%的性能损耗。
+
+启用binlog，通过配置 `/etc/my.cnf` 或 `/etc/mysql/mysql.conf.d/mysqld.cnf` 配置文件的 `log-bin` 选项：
+
+在配置文件中加入 `log-bin` 配置，表示启用binlog，如果没有给定值，写成 `log-bin=`，则默认名称为主机名。（注：名称若带有小数点，则只取第一个小数点前的部分作为名称）
+
+```
+[mysqld]
+log-bin=my-binlog-name
+12
+```
+
+也可以通过 `SET SQL_LOG_BIN=1` 命令来启用 binlog，通过 `SET SQL_LOG_BIN=0` 命令停用 binlog。启用 binlog 之后须重启MySQL才能生效。
+
+#### 常用的Binlog操作命令
+
+```
+# 是否启用binlog日志
+show variables like 'log_bin';
+
+# 查看详细的日志配置信息
+show global variables like '%log%';
+
+# mysql数据存储目录
+show variables like '%dir%';
+
+# 查看binlog的目录
+show global variables like "%log_bin%";
+
+# 查看当前服务器使用的biglog文件及大小
+show binary logs;
+
+# 查看主服务器使用的biglog文件及大小
+
+# 查看最新一个binlog日志文件名称和Position
+show master status;
+
+
+# 事件查询命令
+# IN 'log_name' ：指定要查询的binlog文件名(不指定就是第一个binlog文件)
+# FROM pos ：指定从哪个pos起始点开始查起(不指定就是从整个文件首个pos点开始算)
+# LIMIT [offset,] ：偏移量(不指定就是0)
+# row_count ：查询总条数(不指定就是所有行)
+show binlog events [IN 'log_name'] [FROM pos] [LIMIT [offset,] row_count];
+
+# 查看 binlog 内容
+show binlog events;
+
+# 查看具体一个binlog文件的内容 （in 后面为binlog的文件名）
+show binlog events in 'master.000003';
+
+# 设置binlog文件保存事件，过期删除，单位天
+set global expire_log_days=3; 
+
+# 删除当前的binlog文件
+reset master; 
+
+# 删除slave的中继日志
+reset slave;
+
+# 删除指定日期前的日志索引中binlog日志文件
+purge master logs before '2019-03-09 14:00:00';
+
+# 删除指定日志文件
+purge master logs to 'master.000003';
+123456789101112131415161718192021222324252627282930313233343536373839404142434445464748
+```
+
+#### 写 Binlog 的时机
+
+对支持事务的引擎如InnoDB而言，必须要提交了事务才会记录binlog。binlog 什么时候**刷新到磁盘**跟参数 `sync_binlog` 相关。
+
+- 如果设置为0，则表示MySQL不控制binlog的刷新，由文件系统去控制它缓存的刷新；
+- 如果设置为不为0的值，则表示每 `sync_binlog` 次事务，MySQL调用文件系统的刷新操作刷新binlog到磁盘中。
+- 设为1是最安全的，在系统故障时最多丢失一个事务的更新，但是会对性能有所影响。
+
+如果 `sync_binlog=0` 或 `sync_binlog大于1`，当发生电源故障或操作系统崩溃时，可能有一部分已提交但其binlog未被同步到磁盘的事务会被丢失，恢复程序将无法恢复这部分事务。
+
+在MySQL 5.7.7之前，默认值 sync_binlog 是0，MySQL 5.7.7和更高版本使用默认值1，这是最安全的选择。一般情况下会设置为100或者0，牺牲一定的一致性来获取更好的性能。
+
+#### Binlog 文件以及扩展
+
+binlog日志包括两类文件:
+
+- 二进制日志索引文件（文件名后缀为.index）用于记录所有有效的的二进制文件
+- 二进制日志文件（文件名后缀为.00000*）记录数据库所有的DDL和DML语句事件
+
+binlog是一个二进制文件集合，每个binlog文件以一个4字节的魔数开头，接着是一组Events:
+
+- 魔数：0xfe62696e对应的是0xfebin；
+- Event：每个Event包含header和data两个部分；header提供了Event的创建时间，哪个服务器等信息，data部分提供的是针对该Event的具体信息，如具体数据的修改；
+- 第一个Event用于描述binlog文件的格式版本，这个格式就是event写入binlog文件的格式；
+- 其余的Event按照第一个Event的格式版本写入；
+- 最后一个Event用于说明下一个binlog文件；
+- binlog的索引文件是一个文本文件，其中内容为当前的binlog文件列表
+
+当遇到以下3种情况时，MySQL会重新生成一个新的日志文件，文件序号递增：
+
+- MySQL服务器停止或重启时
+- 使用 `flush logs` 命令；
+- 当 binlog 文件大小超过 `max_binlog_size` 变量的值时；
+
+> `max_binlog_size` 的最小值是4096字节，最大值和默认值是 1GB (1073741824字节)。事务被写入到binlog的一个块中，所以它不会在几个二进制日志之间被拆分。因此，如果你有很大的事务，为了保证事务的完整性，不可能做切换日志的动作，只能将该事务的日志都记录到当前日志文件中，直到事务结束，你可能会看到binlog文件大于 max_binlog_size 的情况。
+
+#### Binlog 的日志格式
+
+记录在二进制日志中的事件的格式取决于二进制记录格式。支持三种格式类型：
+
+- STATEMENT：基于SQL语句的复制（statement-based replication, SBR）
+- ROW：基于行的复制（row-based replication, RBR）
+- MIXED：混合模式复制（mixed-based replication, MBR）
+
+在 `MySQL 5.7.7` 之前，默认的格式是 `STATEMENT`，在 `MySQL 5.7.7` 及更高版本中，默认值是 `ROW`。日志格式通过 `binlog-format` 指定，如 `binlog-format=STATEMENT`、`binlog-format=ROW`、`binlog-format=MIXED`。
+
+##### Statement
+
+每一条会修改数据的sql都会记录在binlog中
+
+优点：不需要记录每一行的变化，减少了binlog日志量，节约了IO, 提高了性能。
+
+缺点：由于记录的只是执行语句，为了这些语句能在slave上正确运行，因此还必须记录每条语句在执行的时候的一些相关信息，以保证所有语句能在slave得到和在master端执行的时候相同的结果。另外mysql的复制，像一些特定函数的功能，slave与master要保持一致会有很多相关问题。
+
+##### Row
+
+5.1.5版本的MySQL才开始支持 `row level` 的复制,它不记录sql语句上下文相关信息，仅保存哪条记录被修改。
+
+优点： binlog中可以不记录执行的sql语句的上下文相关的信息，仅需要记录那一条记录被修改成什么了。所以row的日志内容会非常清楚的记录下每一行数据修改的细节。而且不会出现某些特定情况下的存储过程，或function，以及trigger的调用和触发无法被正确复制的问题.
+
+缺点:所有的执行的语句当记录到日志中的时候，都将以每行记录的修改来记录，这样可能会产生大量的日志内容。
+
+> 注：将二进制日志格式设置为ROW时，有些更改仍然使用基于语句的格式，包括所有DDL语句，例如CREATE TABLE， ALTER TABLE，或 DROP TABLE。
+
+##### Mixed
+
+从5.1.8版本开始，MySQL提供了Mixed格式，实际上就是Statement与Row的结合。
+在Mixed模式下，一般的语句修改使用statment格式保存binlog，如一些函数，statement无法完成主从复制的操作，则采用row格式保存binlog，MySQL会根据执行的每一条具体的sql语句来区分对待记录的日志形式，也就是在Statement和Row之间选择一种。
+
+#### mysqlbinlog 命令的使用
+
+服务器以二进制格式将binlog日志写入binlog文件，如何要以文本格式显示其内容，可以使用 mysqlbinlog 命令。
+
+```shell
+# mysqlbinlog 的执行格式
+mysqlbinlog [options] log_file ...
+
+# 查看bin-log二进制文件（shell方式）
+mysqlbinlog -v --base64-output=decode-rows /var/lib/mysql/master.000003
+
+# 查看bin-log二进制文件（带查询条件）
+mysqlbinlog -v --base64-output=decode-rows /var/lib/mysql/master.000003 \
+    --start-datetime="2019-03-01 00:00:00"  \
+    --stop-datetime="2019-03-10 00:00:00"   \
+    --start-position="5000"    \
+    --stop-position="20000"
+123456789101112
+```
+
+设置日志格式为ROW时，在我的机器上输出了以下信息
+
+```
+/*!50530 SET @@SESSION.PSEUDO_SLAVE_MODE=1*/;
+/*!50003 SET @OLD_COMPLETION_TYPE=@@COMPLETION_TYPE,COMPLETION_TYPE=0*/;
+DELIMITER /*!*/;
+# at 4
+#190308 10:05:03 server id 1  end_log_pos 123 CRC32 0xff02e23d 	Start: binlog v 4, server v 5.7.22-log created 190308 10:05:03
+# Warning: this binlog is either in use or was not closed properly.
+# at 123
+#190308 10:05:03 server id 1  end_log_pos 154 CRC32 0xb81da4c5 	Previous-GTIDs
+# [empty]
+# at 154
+#190308 10:05:09 server id 1  end_log_pos 219 CRC32 0xfb30d42c 	Anonymous_GTID	last_committed=0	sequence_number=1	rbr_only=yes
+/*!50718 SET TRANSACTION ISOLATION LEVEL READ COMMITTED*//*!*/;
+SET @@SESSION.GTID_NEXT= 'ANONYMOUS'/*!*/;
+# at 219
+...
+...
+# at 21019
+#190308 10:10:09 server id 1  end_log_pos 21094 CRC32 0x7a405abc 	Query	thread_id=113	exec_time=0	error_code=0
+SET TIMESTAMP=1552011009/*!*/;
+BEGIN
+/*!*/;
+# at 21094
+#190308 10:10:09 server id 1  end_log_pos 21161 CRC32 0xdb7a2b35 	Table_map: `maxwell`.`positions` mapped to number 110
+# at 21161
+#190308 10:10:09 server id 1  end_log_pos 21275 CRC32 0xec3be372 	Update_rows: table id 110 flags: STMT_END_F
+### UPDATE `maxwell`.`positions`
+### WHERE
+###   @1=1
+###   @2='master.000003'
+###   @3=20262
+###   @4=NULL
+###   @5='maxwell'
+###   @6=NULL
+###   @7=1552011005707
+### SET
+###   @1=1
+###   @2='master.000003'
+###   @3=20923
+###   @4=NULL
+###   @5='maxwell'
+###   @6=NULL
+###   @7=1552011009790
+# at 21275
+#190308 10:10:09 server id 1  end_log_pos 21306 CRC32 0xe6c4346d 	Xid = 13088
+COMMIT/*!*/;
+SET @@SESSION.GTID_NEXT= 'AUTOMATIC' /* added by mysqlbinlog */ /*!*/;
+DELIMITER ;
+# End of log file
+/*!50003 SET COMPLETION_TYPE=@OLD_COMPLETION_TYPE*/;
+/*!50530 SET @@SESSION.PSEUDO_SLAVE_MODE=0*/;
+1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950
+```
+
+截取其中的一段进行分析：
+
+```
+# at 21019
+#190308 10:10:09 server id 1  end_log_pos 21094 CRC32 0x7a405abc 	Query	thread_id=113	exec_time=0	error_code=0
+SET TIMESTAMP=1552011009/*!*/;
+BEGIN
+/*!*/;
+12345
+```
+
+上面输出包括信息：
+
+- position: 位于文件中的位置，即第一行的（# at 21019）,说明该事件记录从文件第21019个字节开始
+- timestamp: 事件发生的时间戳，即第二行的（#190308 10:10:09）
+- server id: 服务器标识（1）
+- end_log_pos 表示下一个事件开始的位置（即当前事件的结束位置+1）
+- thread_id: 执行该事件的线程id （thread_id=113）
+- exec_time: 事件执行的花费时间
+- error_code: 错误码，0意味着没有发生错误
+- type:事件类型Query
+
+#### Binlog 事件类型
+
+binlog 事件的结构主要有3个版本：
+
+- v1: 在 MySQL 3.23 中使用
+- v3: 在 MySQL 4.0.2 到 4.1 中使用
+- v4: 在 MySQL 5.0 及以上版本中使用
+
+现在一般不会使用MySQL5.0以下版本，所以下面仅介绍v4版本的binlog事件类型。binlog 的事件类型较多，本文在此做一些简单的汇总
+
+| 事件类型                 | 说明                                                         |
+| ------------------------ | ------------------------------------------------------------ |
+| UNKNOWN_EVENT            | 此事件从不会被触发，也不会被写入binlog中；发生在当读取binlog时，不能被识别其他任何事件，那被视为UNKNOWN_EVENT |
+| START_EVENT_V3           | 每个binlog文件开始的时候写入的事件，此事件被用在MySQL3.23 – 4.1，MYSQL5.0以后已经被 FORMAT_DESCRIPTION_EVENT 取代 |
+| QUERY_EVENT              | 执行更新语句时会生成此事件，包括：create，insert，update，delete； |
+| STOP_EVENT               | 当mysqld停止时生成此事件                                     |
+| ROTATE_EVENT             | 当mysqld切换到新的binlog文件生成此事件，切换到新的binlog文件可以通过执行flush logs命令或者binlog文件大于 `max_binlog_size` 参数配置的大小； |
+| INTVAR_EVENT             | 当sql语句中使用了AUTO_INCREMENT的字段或者LAST_INSERT_ID()函数；此事件没有被用在binlog_format为ROW模式的情况下 |
+| LOAD_EVENT               | 执行LOAD DATA INFILE 语句时产生此事件，在MySQL 3.23版本中使用 |
+| SLAVE_EVENT              | 未使用                                                       |
+| CREATE_FILE_EVENT        | 执行LOAD DATA INFILE 语句时产生此事件，在MySQL4.0和4.1版本中使用 |
+| APPEND_BLOCK_EVENT       | 执行LOAD DATA INFILE 语句时产生此事件，在MySQL4.0版本中使用  |
+| EXEC_LOAD_EVENT          | 执行LOAD DATA INFILE 语句时产生此事件，在MySQL4.0和4.1版本中使用 |
+| DELETE_FILE_EVENT        | 执行LOAD DATA INFILE 语句时产生此事件，在MySQL4.0版本中使用  |
+| NEW_LOAD_EVENT           | 执行LOAD DATA INFILE 语句时产生此事件，在MySQL4.0和4.1版本中使用 |
+| RAND_EVENT               | 执行包含RAND()函数的语句产生此事件，此事件没有被用在binlog_format为ROW模式的情况下 |
+| USER_VAR_EVENT           | 执行包含了用户变量的语句产生此事件，此事件没有被用在binlog_format为ROW模式的情况下 |
+| FORMAT_DESCRIPTION_EVENT | 描述事件，被写在每个binlog文件的开始位置，用在MySQL5.0以后的版本中，代替了START_EVENT_V3 |
+| XID_EVENT                | 支持XA的存储引擎才有，本地测试的数据库存储引擎是innodb，所有上面出现了XID_EVENT；innodb事务提交产生了QUERY_EVENT的BEGIN声明，QUERY_EVENT以及COMMIT声明，如果是myIsam存储引擎也会有BEGIN和COMMIT声明，只是COMMIT类型不是XID_EVENT |
+| BEGIN_LOAD_QUERY_EVENT   | 执行LOAD DATA INFILE 语句时产生此事件，在MySQL5.0版本中使用  |
+| EXECUTE_LOAD_QUERY_EVENT | 执行LOAD DATA INFILE 语句时产生此事件，在MySQL5.0版本中使用  |
+| TABLE_MAP_EVENT          | 用在binlog_format为ROW模式下，将表的定义映射到一个数字，在行操作事件之前记录（包括：WRITE_ROWS_EVENT，UPDATE_ROWS_EVENT，DELETE_ROWS_EVENT） |
+| PRE_GA_WRITE_ROWS_EVENT  | 已过期，被 WRITE_ROWS_EVENT 代替                             |
+| PRE_GA_UPDATE_ROWS_EVENT | 已过期，被 UPDATE_ROWS_EVENT 代替                            |
+| PRE_GA_DELETE_ROWS_EVENT | 已过期，被 DELETE_ROWS_EVENT 代替                            |
+| WRITE_ROWS_EVENT         | 用在binlog_format为ROW模式下，对应 insert 操作               |
+| UPDATE_ROWS_EVENT        | 用在binlog_format为ROW模式下，对应 update 操作               |
+| DELETE_ROWS_EVENT        | 用在binlog_format为ROW模式下，对应 delete 操作               |
+| INCIDENT_EVENT           | 主服务器发生了不正常的事件，通知从服务器并告知可能会导致数据处于不一致的状态 |
+| HEARTBEAT_LOG_EVENT      | 主服务器告诉从服务器，主服务器还活着，不写入到日志文件中     |
+
+#### Binlog 事件的结构
+
+一个事件对象分为事件头和事件体，事件的结构如下：
+
+```
++=====================================+
+| event  | timestamp         0 : 4    |
+| header +----------------------------+
+|        | type_code         4 : 1    |
+|        +----------------------------+
+|        | server_id         5 : 4    |
+|        +----------------------------+
+|        | event_length      9 : 4    |
+|        +----------------------------+
+|        | next_position    13 : 4    |
+|        +----------------------------+
+|        | flags            17 : 2    |
+|        +----------------------------+
+|        | extra_headers    19 : x-19 |
++=====================================+
+| event  | fixed part        x : y    |
+| data   +----------------------------+
+|        | variable part              |
++=====================================+
+12345678910111213141516171819
+```
+
+如果事件头的长度是 `x` 字节，那么事件体的长度为 `(event_length - x)` 字节；设事件体中 `fixed part` 的长度为 `y` 字节，那么 `variable part` 的长度为 `(event_length - (x + y))` 字节
+
+#### Binlog Event 简要分析
+
+从一个最简单的实例来分析Event，包括创建表，插入数据，更新数据，删除数据；
+
+```sql
+CREATE TABLE `test` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `age` int(11) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ 
+insert into test values(1,22,"小旋锋");
+update test set name='whirly' where id=1;
+delete from test where id=1;
+12345678910
+```
+
+日志格式为`STATEMENT`，查看所有的Event
+
+![STATEMENT格式下create、insert、update、delete操作产生的binlog事件](http://image.laijianfeng.org/20190309_185754.png)
+
+日志格式为`ROW`时是下面这样，可以发现又有一些不同
+
+![ROW格式下create、insert、update、delete操作产生的binlog事件](http://image.laijianfeng.org/20190309_191336.png)
+
+关于Event的分析，有需要可以查看参考文档进行推算。
+
+#### 参考文档
+
+- [MySQL 5.7参考手册.二进制日志](http://www.searchdoc.cn/rdbms/mysql/dev.mysql.com/doc/refman/5.7/en/binary-log.com.coder114.cn.html)
+- [MySQL Internals Manual.The Binary Log](https://dev.mysql.com/doc/internals/en/binary-log.html)
+- [朱小厮.MySQL Binlog解析](https://blog.csdn.net/u013256816/article/details/53020335)
+- [七把刀.MySQL binlog格式解析](https://www.jianshu.com/p/c16686b35807)
+- [散尽浮华.Mysql之binlog日志说明及利用binlog日志恢复数据操作记录](https://www.cnblogs.com/kevingrace/p/5907254.html)
+- [MySql Binlog 初识](http://blog.jobbole.com/113073/)
+- [MySQL5.7杀手级新特性：GTID原理与实战](https://yq.aliyun.com/articles/57731#)
+- [MySQL 5.7 基于 GTID 的主从复制实践](https://www.hi-linux.com/posts/47176.html)
+
+## redo log
+
+存储了数据被修改后的值。
+
+### 1 redo是什么
+
+  当数据库对数据做修改的时候，需要把数据页从磁盘读到buffer pool中，然后在buffer pool中进行修改，那么这个时候buffer pool中的数据页就与磁盘上的数据页内容不一致，称buffer pool的数据页为dirty page 脏数据，如果这个时候发生非正常的DB服务重启，那么这些数据还没在内存，并没有同步到磁盘文件中（注意，同步到磁盘文件是个随机IO），也就是会发生数据丢失，如果这个时候，能够在有一个文件，当buffer pool 中的data page变更结束后，把相应修改记录记录到这个文件（注意，记录日志是顺序IO），那么当DB服务发生crash的情况，恢复DB的时候，也可以根据这个文件的记录内容，重新应用到磁盘文件，数据保持一致。
+
+  这个文件就是redo log ，用于记录 数据修改后的记录，顺序记录。它可以带来这些好处：
+
+- 当buffer pool中的dirty page 还没有刷新到磁盘的时候，发生crash，启动服务后，可通过redo log 找到需要重新刷新到磁盘文件的记录；
+- buffer pool中的数据直接flush到disk file，是一个随机IO，效率较差，而把buffer pool中的数据记录到redo log，是一个顺序IO，可以提高事务提交的速度；
+
+  假设修改 tba 表中 id=2的行数据，把Name='B' 修改为Name = 'B2' ，那么redo日志就会用来存放Name='B2'的记录，如果这个修改在flush 到磁盘文件时出现异常，可以使用redo log实现重做操作，保证事务的持久性。
+
+| Id   | Name |
+| ---- | ---- |
+| 1    | A    |
+| 2    | B    |
+| 3    | C    |
+| 4    | D    |
+
+ 
+
+  这里注意下redo log 跟binary log 的区别，redo log 是存储引擎层产生的，而binary log是数据库层产生的。假设一个大事务，对tba做10万行的记录插入，在这个过程中，一直不断的往redo log顺序记录，而binary log不会记录，知道这个事务提交，才会一次写入到binary log文件中。binary log的记录格式有3种：row，statement跟mixed，不同格式记录形式不一样。
+
+### 2 **redo** **参数**
+
+- **innodb_log_files_in_group**
+
+redo log 文件的个数，命名方式如：ib_logfile0，iblogfile1... iblogfilen。默认2个，最大100个。
+
+- **innodb_log_file_size**
+
+文件设置大小，默认值为 48M，最大值为512G，注意最大值指的是整个 redo log系列文件之和，即（innodb_log_files_in_group * innodb_log_file_size ）不能大于最大值512G。
+
+- **innodb_log_group_home_dir**
+
+文件存放路径
+
+- **innodb_log_buffer_size**
+
+Redo Log 缓存区，默认8M，可设置1-8M。延迟事务日志写入磁盘，把redo log 放到该缓冲区，然后根据 innodb_flush_log_at_trx_commit参数的设置，再把日志从buffer 中flush 到磁盘中。
+
+- **innodb_flush_log_at_trx_commit**
+
+- innodb_flush_log_at_trx_commit=1，每次commit都会把redo log从redo log buffer写入到system，并fsync刷新到磁盘文件中。
+- innodb_flush_log_at_trx_commit=2，每次事务提交时MySQL会把日志从redo log buffer写入到system，但只写入到file system buffer，由系统内部来fsync到磁盘文件。如果数据库实例crash，不会丢失redo log，但是如果服务器crash，由于file system buffer还来不及fsync到磁盘文件，所以会丢失这一部分的数据。
+- innodb_flush_log_at_trx_commit=0，事务发生过程，日志一直激励在redo log buffer中，跟其他设置一样，但是在事务提交时，不产生redo 写操作，而是MySQL内部每秒操作一次，从redo log buffer，把数据写入到系统中去。如果发生crash，即丢失1s内的事务修改操作。
+
+- 注意：由于进程调度策略问题,这个“每秒执行一次 flush(刷到磁盘)操作”并不是保证100%的“每秒”。
+
+ ![img](data:image/png;base64,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)
+
+### **3** **redo** **空间管理**
+
+  Redo log文件以`ib_logfile[number]`命名，Redo log 以顺序的方式写入文件文件，写满时则回溯到第一个文件，进行覆盖写。（但在做redo checkpoint时，也会更新第一个日志文件的头部checkpoint标记，所以严格来讲也不算顺序写）。
+
+实际上redo log有两部分组成：redo log buffer 跟redo log file。buffer pool中把数据修改情况记录到redo log buffer，出现以下情况，再把redo log刷下到redo log file：
+
+- Redo log buffer空间不足
+- 事务提交（依赖innodb_flush_log_at_trx_commit参数设置）
+- 后台线程
+- 做checkpoint
+- 实例shutdown
+- binlog切换
+
+首先我们先明确一下InnoDB的修改数据的基本流程，当我们想要修改DB上某一行数据的时候，InnoDB是把数据从磁盘读取到内存的缓冲池上进行修改。这个时候数据在内存中被修改，与磁盘中相比就存在了差异，我们称这种有差异的数据为**脏页**。InnoDB对脏页的处理不是每次生成脏页就将脏页刷新回磁盘，这样会产生海量的IO操作，严重影响InnoDB的处理性能。对于此，InnoDB有一套完善的处理策略，与我们这次主题关系不大，表过不提。既然脏页与磁盘中的数据存在差异，那么如果在这期间DB出现故障就会造成数据的丢失。为了解决这个问题，redo log就应运而生了。
+
+### Redo log工作原理
+
+在讲Redo log工作原理之前，先来学习一下MySQL的一些基础：
+**一、日志类型**
+
+
+
+![img](https://pic4.zhimg.com/80/v2-8dfbbee6c5ef2788fa94cf0929f7940f_1440w.jpg)
+
+
+redo log在数据库重启恢复的时候被使用，因为其属于物理日志的特性，恢复速度远快于逻辑日志。而我们经常使用的binlog就属于典型的逻辑日志。
+**二、 checkpoint**
+坦白来讲checkpoint本身是比较复杂的，checkpoint所做的事就是把脏页给刷新回磁盘。所以，当DB重启恢复时，只需要恢复checkpoint之后的数据。这样就能大大缩短恢复时间。当然checkpoint还有其他的作用。
+**三、 LSN(Log Sequence Number)**
+LSN实际上就是InnoDB使用的一个版本标记的计数，它是一个单调递增的值。**数据页和redo log都有各自的LSN。我们可以根据数据页中的LSN值和redo log中LSN的值判断需要恢复的redo log的位置和大小。**
+**四、 工作原理**
+好的，现在我们来看看redo log的工作原理。说白了，redo log就是存储了数据被修改后的值。当我们提交一个事务时，InnoDB会先去把要修改的数据写入日志，然后再去修改缓冲池里面的真正数据页。
+我们着重看看redo log是怎么一步步写入磁盘的。redo log本身也由两部分所构成即重做日志缓冲(redo log buffer)和重做日志文件(redo log file)。这样的设计同样也是为了调和内存与磁盘的速度差异。InnoDB写入磁盘的策略可以通过`innodb_flush_log_at_trx_commit`这个参数来控制。
+
+![img](https://pic3.zhimg.com/80/v2-98474a984bcdccca3c38a960b1ce6f62_1440w.jpg)
+
+
+当该值为1时，当然是最安全的，但是数据库性能会受一定影响。
+为0时性能较好，但是会丢失掉master thread还没刷新进磁盘部分的数据。
+这里我想简单介绍一下master thread，这是InnoDB一个在后台运行的主线程，从名字就能看出这个线程相当的重要。它做的主要工作包括但不限于：刷新日志缓冲，合并插入缓冲，刷新脏页等。master thread大致分为每秒运行一次的操作和每10秒运行一次的操作。master thread中刷新数据，属于checkpoint的一种。所以如果在master thread在刷新日志的间隙，DB出现故障那么将丢失掉这部分数据。
+当该值为2时，当DB发生故障能恢复数据。但如果操作系统也出现宕机，那么就会丢失掉，文件系统没有及时写入磁盘的数据。
+这里说明一下，`innodb_flush_log_at_trx_commit`设为非0的值，并不是说不会在master thread中刷新日志了。master thread刷新日志是在不断进行的，所以redo log写入磁盘是在持续的写入。
+**五、 宕机恢复**
+DB宕机后重启，InnoDB会首先去查看数据页中的LSN的数值。**这个值代表数据页被刷新回磁盘的LSN的大小。然后再去查看redo log的LSN的大小。如果数据页中的LSN值大说明数据页领先于redo log刷新回磁盘，不需要进行恢复。反之需要从redo log中恢复数据。**
+Redo log的结构
+其实这一部分内容日常工作中很少涉及到，稍微了解一下就足够了。
+**一、 log block**
+Redo log的存储都是以 **块(block)** 为单位进行存储的，每个块的大小为512字节。同磁盘扇区大小一致，可以保证块的写入是原子操作。
+块由三部分所构成，分别是 **日志块头(log block header)**，**日志块尾(log block tailer)**，**日志本身**。
+日志头占用12字节，日志尾占用8字节。故每个块实际存储日志的大小为492字节。
+**二、 log group**
+一个日志文件由多个块所构成，多个日志文件形成一个**重做日志文件组(redo log group)**。不过，log group是一个逻辑上的概念，真实的磁盘上不会这样存储。
+
+## undo log
+
+### 1.1 undo是什么
+
+**undo日志用于存放数据修改被修改前的值**，假设修改 tba 表中 id=2的行数据，把Name='B' 修改为Name = 'B2' ，那么undo日志就会用来存放Name='B'的记录，如果这个修改出现异常，可以使用undo日志来实现回滚操作，保证事务的一致性。
+
+对数据的变更操作，主要来自 INSERT UPDATE DELETE，**UNDO LOG中分为两种类型**，一种是 **INSERT_UNDO**（INSERT操作），记录插入的唯一键值；一种是 **UPDATE_UNDO**（包含UPDATE及DELETE操作），记录修改的唯一键值以及old column记录。
+
+### 1.2 undo参数
+
+MySQL跟undo有关的参数设置有这些：
+
+```sql
+ 1 mysql> show global variables like '%undo%';
+ 2 +--------------------------+------------+
+ 3 | Variable_name            | Value      |
+ 4 +--------------------------+------------+
+ 5 | innodb_max_undo_log_size | 1073741824 |
+ 6 | innodb_undo_directory    | ./         |
+ 7 | innodb_undo_log_truncate | OFF        |
+ 8 | innodb_undo_logs         | 128        |
+ 9 | innodb_undo_tablespaces  | 3          |
+10 +--------------------------+------------+
+11  
+12 mysql> show global variables like '%truncate%';
+13 +--------------------------------------+-------+
+14 | Variable_name                        | Value |
+15 +--------------------------------------+-------+
+16 | innodb_purge_rseg_truncate_frequency | 128   |
+17 | innodb_undo_log_truncate             | OFF   |
+18 +--------------------------------------+-------+
+```
+
+- **innodb_max_undo_log_size**
+
+  控制最大undo tablespace文件的大小，当启动了innodb_undo_log_truncate 时，undo tablespace 超过innodb_max_undo_log_size 阀值时才会去尝试truncate。该值默认大小为1G，truncate后的大小默认为10M。
+
+- **innodb_undo_tablespaces** 
+
+  设置undo独立表空间个数，范围为0-128， 默认为0，0表示表示不开启独立undo表空间 且 undo日志存储在ibdata文件中。该参数只能在最开始初始化MySQL实例的时候指定，如果实例已创建，这个参数是不能变动的，如果在数据库配置文 件 .cnf 中指定innodb_undo_tablespaces 的个数大于实例创建时的指定个数，则会启动失败，提示该参数设置有误。
+
+![img](data:image/png;base64,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)
+
+  如果设置了该参数为n（n>0），那么就会在undo目录下创建n个undo文件（undo001，undo002 ...... undo n），每个文件默认大小为10M.
+
+![img](data:image/png;base64,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)
+
+**什么时候需要来设置这个参数呢？**
+
+  当DB写压力较大时，可以设置独立UNDO表空间，把UNDO LOG从ibdata文件中分离开来，指定 innodb_undo_directory目录存放，可以制定到高速磁盘上，加快UNDO LOG 的读写性能。
+
+- **innodb_undo_log_truncate**
+
+  InnoDB的purge线程，根据innodb_undo_log_truncate设置开启或关闭、innodb_max_undo_log_size的参数值，以及truncate的频率来进行空间回收和 undo file 的重新初始化。
+
+  **该参数生效的前提是，已设置独立表空间且独立表空间个数大于等于2个。**
+
+  purge线程在truncate undo log file的过程中，需要检查该文件上是否还有活动事务，如果没有，需要把该undo log file标记为不可分配，这个时候，undo log 都会记录到其他文件上，所以至少需要2个独立表空间文件，才能进行truncate 操作，标注不可分配后，会创建一个独立的文件undo_<space_id>_trunc.log，记录现在正在truncate 某个undo log文件，然后开始初始化undo log file到10M，操作结束后，删除表示truncate动作的 undo_<space_id>_trunc.log 文件，这个文件保证了即使在truncate过程中发生了故障重启数据库服务，重启后，服务发现这个文件，也会继续完成truncate操作，删除文件结束后，标识该undo log file可分配。
+
+- **innodb_purge_rseg_truncate_frequency**
+
+ 用于控制purge回滚段的频度，默认为128。假设设置为n，则说明，当Innodb Purge操作的协调线程 purge事务128次时，就会触发一次History purge，检查当前的undo log 表空间状态是否会触发truncate。
+
+### 1.3 undo空间管理
+
+如果需要设置独立表空间，需要在初始化数据库实例的时候，指定独立表空间的数量。
+
+UNDO内部由多个回滚段组成，即 Rollback segment，一共有128个，保存在ibdata系统表空间中，分别从resg slot0 - resg slot127，每一个resg slot，也就是每一个回滚段，内部由1024个undo segment 组成。
+
+回滚段（rollback segment）分配如下：
+
+- slot 0 ，预留给系统表空间；
+- slot 1- 32，预留给临时表空间，每次数据库重启的时候，都会重建临时表空间；
+- slot33-127，如果有独立表空间，则预留给UNDO独立表空间；如果没有，则预留给系统表空间；
+
+回滚段中除去32个提供给临时表事务使用，剩下的 128-32=96个回滚段，可执行 96*1024 个并发事务操作，每个事务占用一个 undo segment slot，注意，如果事务中有临时表事务，还会在临时表空间中的 undo segment slot 再占用一个 undo segment slot，即占用2个undo segment slot。如果错误日志中有：`Cannot find a free slot for an undo log。`则说明并发的事务太多了，需要考虑下是否要分流业务。
+
+回滚段（rollback segment ）采用 轮询调度的方式来分配使用，如果设置了独立表空间，那么就不会使用系统表空间回滚段中undo segment，而是使用独立表空间的，同时，如果回顾段正在 Truncate操作，则不分配。
+
+![image-20200424231447755](/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424231447755.png)
+
+
+
+## undo+redo记录事物
+
+**00 – Undo Log**
+Undo Log 是为了实现事务的原子性，在MySQL数据库InnoDB存储引擎中，还用Undo Log来实现多版本并发控制(简称：MVCC)。
+
+**- 事务的原子性(Atomicity)**
+ 事务中的所有操作，要么全部完成，要么不做任何操作，不能只做部分操作。如果在执行的过程中发生
+ 了错误，要回滚(Rollback)到事务开始前的状态，就像这个事务从来没有执行过。
+
+**- 原理**
+ Undo Log的原理很简单，为了满足事务的原子性，在操作任何数据之前，首先将数据备份到一个地方
+ （这个存储数据备份的地方称为Undo Log）。然后进行数据的修改。如果出现了错误或者用户执行了
+ ROLLBACK语句，系统可以利用Undo Log中的备份将数据恢复到事务开始之前的状态。
+
+除了可以保证事务的原子性，Undo Log也可以用来辅助完成事务的持久化。
+
+**- 事务的持久性(Durability)**
+ 事务一旦完成，该事务对数据库所做的所有修改都会持久的保存到数据库中。为了保证持久性，数据库
+ 系统会将修改后的数据完全的记录到持久的存储上。
+
+**- 用Undo Log实现原子性和持久化的事务的简化过程**
+ 假设有A、B两个数据，值分别为1,2。
+ A.事务开始.
+ B.记录A=1到undo log.
+ C.修改A=3.
+ D.记录B=2到undo log.
+ E.修改B=4.
+ F.将undo log写到磁盘。
+ G.将数据写到磁盘。
+ H.事务提交
+ 这里有一个隐含的前提条件：‘数据都是先读到内存中，然后修改内存中的数据，最后将数据写回磁盘’。
+
+ 之所以能同时保证原子性和持久化，是因为以下特点：
+ A. 更新数据前记录Undo log。
+ B. 为了保证持久性，必须将数据在事务提交前写到磁盘。只要事务成功提交，数据必然已经持久化。
+ C. Undo log必须先于数据持久化到磁盘。如果在G,H之间系统崩溃，undo log是完整的，
+   可以用来回滚事务。
+ D. 如果在A-F之间系统崩溃,因为数据没有持久化到磁盘。所以磁盘上的数据还是保持在事务开始前的状态。
+
+**缺陷：**每个事务提交前将数据和Undo Log写入磁盘，这样会导致大量的磁盘IO，因此性能很低。
+
+如果能够将数据缓存一段时间，就能减少IO提高性能。但是这样就会丧失事务的持久性。因此引入了另外一
+种机制来实现持久化，即Redo Log.
+
+**01 – Redo Log**
+
+**- 原理**
+ 和Undo Log相反，Redo Log记录的是**新数据**的备份。在事务提交前，只要将Redo Log持久化即可，
+ 不需要将数据持久化。当系统崩溃时，虽然数据没有持久化，但是Redo Log已经持久化。系统可以根据
+ Redo Log的内容，将所有数据恢复到最新的状态。
+
+**- Undo + Redo事务的简化过程**
+ 假设有A、B两个数据，值分别为1,2.
+ A.事务开始.
+ B.记录A=1到undo log.
+ C.修改A=3.
+ D.记录A=3到redo log.
+ E.记录B=2到undo log.
+ F.修改B=4.
+ G.记录B=4到redo log.
+ H.将redo log写入磁盘。
+ I.事务提交
+
+\- **Undo + Redo事务的特点**
+ A. 为了保证持久性，必须在事务提交前将Redo Log持久化。
+ B. 数据不需要在事务提交前写入磁盘，而是缓存在内存中。
+ C. Redo Log 保证事务的持久性。
+ D. Undo Log 保证事务的原子性。
+ E. 有一个隐含的特点，数据必须要晚于redo log写入持久存储。
+
+**- IO性能**
+ Undo + Redo的设计主要考虑的是提升IO性能。虽说通过缓存数据，减少了写数据的IO.
+ 但是却引入了新的IO，即写Redo Log的IO。如果Redo Log的IO性能不好，就不能起到提高性能的目的。
+ 为了保证Redo Log能够有比较好的IO性能，InnoDB 的 Redo Log的设计有以下几个特点：
+
+ A. 尽量保持Redo Log存储在一段连续的空间上。因此在系统第一次启动时就会将日志文件的空间完全分配。
+   以顺序追加的方式记录Redo Log,通过顺序IO来改善性能。
+ B. 批量写入日志。日志并不是直接写入文件，而是先写入redo log buffer.当需要将日志刷新到磁盘时
+   (如事务提交),将许多日志一起写入磁盘.
+ C. 并发的事务共享Redo Log的存储空间，它们的Redo Log按语句的执行顺序，依次交替的记录在一起，
+   以减少日志占用的空间。例如,Redo Log中的记录内容可能是这样的：
+   记录1: <trx1, insert …>
+   记录2: <trx2, update …>
+   记录3: <trx1, delete …>
+   记录4: <trx3, update …>
+   记录5: <trx2, insert …>
+ D. 因为C的原因,当一个事务将Redo Log写入磁盘时，也会将其他未提交的事务的日志写入磁盘。
+ E. Redo Log上只进行顺序追加的操作，当一个事务需要回滚时，它的Redo Log记录也不会从
+   Redo Log中删除掉。
+
+### 恢复(Recovery)机制
+
+\- 恢复策略
+ 前面说到未提交的事务和回滚了的事务也会记录Redo Log，因此在进行恢复时,这些事务要进行特殊的
+ 的处理.有2中不同的恢复策略：
+
+ A. 进行恢复时，只重做已经提交了的事务。
+ B. 进行恢复时，重做所有事务包括未提交的事务和回滚了的事务。然后通过Undo Log回滚那些
+   未提交的事务。
+
+**- InnoDB存储引擎的恢复机制**
+ MySQL数据库InnoDB存储引擎使用了B策略, InnoDB存储引擎中的恢复机制有几个特点：
+
+ A. 在重做Redo Log时，并**不关心事务性**。 恢复时，没有BEGIN，也没有COMMIT,ROLLBACK的行为。
+   也不关心每个日志是哪个事务的。尽管事务ID等事务相关的内容会记入Redo Log，这些内容只是被当作
+   要操作的数据的一部分。
+ B. 使用B策略就必须要将Undo Log持久化，而且必须要在写Redo Log之前将对应的Undo Log写入磁盘。
+   Undo和Redo Log的这种关联，使得持久化变得复杂起来。为了降低复杂度，InnoDB将Undo Log看作
+   数据，因此记录Undo Log的操作也会记录到redo log中。这样undo log就可以象数据一样缓存起来，
+   而不用在redo log之前写入磁盘了。
+   包含Undo Log操作的Redo Log，看起来是这样的：
+   记录1: <trx1, **Undo log insert** <undo_insert …>>
+   记录2: <trx1, insert …>
+   记录3: <trx2, **Undo log insert** <undo_update …>>
+   记录4: <trx2, update …>
+   记录5: <trx3, ***\*Undo log insert\**** <undo_delete …>>
+   记录6: <trx3, delete …>
+ C. 到这里，还有一个问题没有弄清楚。既然Redo没有事务性，那岂不是会重新执行被回滚了的事务？
+   确实是这样。同时Innodb也会将事务回滚时的操作也记录到redo log中。回滚操作本质上也是
+   对数据进行修改，因此回滚时对数据的操作也会记录到Redo Log中。
+   一个回滚了的事务的Redo Log，看起来是这样的：
+   记录1: <trx1, Undo log insert <undo_insert …>>
+   记录2: <trx1, **insert A**…>
+   记录3: <trx1, Undo log insert <undo_update …>>
+   记录4: <trx1, **update B**…>
+   记录5: <trx1, Undo log insert <undo_delete …>>
+   记录6: <trx1, **delete C**…>
+   记录7: <trx1, **insert C**>
+   记录8: <trx1, **update B** to old value>
+   记录9: <trx1, **delete A>**
+   一个被回滚了的事务在恢复时的操作就是先redo再undo，因此不会破坏数据的一致性.
+
+**- InnoDB存储引擎中相关的函数**
+ Redo: recv_recovery_from_checkpoint_start()
+ Undo: recv_recovery_rollback_active()
+ Undo Log的Redo Log: trx_undof_page_add_undo_rec_log()
+
+
+
+## slow_query_log
+
+mysql slow log 是用来记录执行时间较长(超过long_query_time秒)的sql的一种日志工具
+
+### 启用 slow log 
+
+有两种启用方式:
+
+1, 在my.cnf 里 通过 log-slow-queries[=file_name]
+
+2, 在mysqld进程启动时,指定--log-slow-queries[=file_name]选项
+
+### 比较的五款常用工具 
+
+mysqldumpslow, mysqlsla, myprofi, mysql-explain-slow-log, mysqllogfilter
+
+***\*开源的MySQL慢日志查询监控工具\****
+
+pmm server、Navicat、mysqltop（天兔Lepus）、Box Anemometer、explain、**pt-query-digest**
+
+慢查询日志
+  慢查询日志是将mysql服务器中影响数据库性能的相关SQL语句记录到日志文件，通过对这些特殊的SQL语句分析，改进以达到提高数据库性能的目的。
+  通过使用--slow_query_log[={0|1}]选项来启用慢查询日志。所有执行时间超过long_query_time秒的SQL语句都会被记录到慢查询日志。
+  缺省情况下hostname-slow.log为慢查询日志文件安名，存放到数据目录，同时缺省情况下未开启慢查询日志。
+  缺省情况下数据库相关管理型SQL(比如OPTIMIZE TABLE、ANALYZE TABLE和ALTER TABLE)不会被记录到日志。
+  对于管理型SQL可以通过--log-slow-admin-statements开启记录管理型慢SQL。
+  mysqld在语句执行完并且所有锁释放后记入慢查询日志。记录顺序可以与执行顺序不相同。获得初使表锁定的时间不算作执行时间。
+  
+  可以使用mysqldumpslow命令获得日志中显示的查询摘要来处理慢查询日志。
+  用查询缓存处理的查询不加到慢查询日志中，表有零行或一行而不能从索引中受益的查询也不写入慢查询日志。
+  MySQL服务器按以下顺序记录SQL是否写入到慢查询日志
+ a. The query must either not be an administrative statement, or --log-slow-adminstatements must have been specified.
+ b. The query must have taken at least long_query_time seconds, or log_queries_not_using_indexes must be enabled and the query used no indexes for row lookups.
+  c. The query must have examined at least min_examined_row_limit rows.
+ d. The query must not be suppressed according to the log_throttle_queries_not_using_indexes setting.
+
+
+
+[mysql](https://www.2cto.com/database/MySQL/)dumpslow是mysql自带的用来分析慢查询的工具，当然不止这一种工具，还有percona-toolkit是percona公司出的一组命令行工具的集合，用来执行各种通过手工执行非常复杂和麻烦的mysql相关任务，包含以下内容：
+
+检查master和slave数据一致性/记录有效的归档/服务器信息汇总/分析和统计日志,为了省事这块使用mysqldumpslow命令做分析。
+
+需要开启mysql的慢查询日志，否则无法进行统计分析，开启mysql慢查询日志需要在mysql的配置文件中进行如下配置：
+
+```
+slow_query_log=1#定义超过1秒的查询计数到变量Slow_queries
+slow-query-log-file=mysql-slow.log
+long_query_time=1
+```
+
+
+
+**1.1 简介**
+
+开启慢查询日志，可以让MySQL记录下查询超过指定时间的语句，通过定位分析性能的瓶颈，才能更好的优化数据库系统的性能。
+
+**1.2 登录数据库查看**
+
+```
+[root@localhost lib]# mysql –uroot
+```
+
+因为没有设置设置密码，有密码的在 mysql –uroot –p 接密码
+
+**1.2.1 进入MySql 查询是否开了慢查询**
+
+```sql
+mysql> show variables like 'slow_query%';
+```
+
+参数说明：
+
+1. slow_query_log 慢查询开启状态 OFF 未开启 ON 为开启
+2. slow_query_log_file 慢查询日志存放的位置（这个目录需要MySQL的运行帐号的可写权限，一般设置为MySQL的数据存放目录）
+
+**1.2.2 查看慢查询超时时间**
+
+```sql
+mysql> show variables like 'long%';
+```
+
+long_query_time 查询超过多少秒才记录  默认10秒 修改为1秒
+
+**1.3 修改方法1：（不推荐）**
+
+方法一：优点临时开启慢查询，不需要重启数据库 缺点：MySql 重启慢查询失效
+
+推荐：根据业务需求，建议使用第二种，临时可以用第一种
+
+默认情况下slow_query_log的值为OFF，表示慢查询日志是禁用的，可以通过设置slow_query_log的值来开启，如下所示：：是否开启慢查询日志，1表示开启，0表示关闭。
+
+**1.3.1 查看是否开启慢查询**
+
+```sql
+mysql> show variables like '%slow_query_log%';
+```
+
+输入 语句修改（重启后失效，建议在/etc/my.cnf中修改永久生效）
+
+```sql
+mysql> set global slow_query_log=1;
+```
+
+**1.3.2 再次查看**
+
+```sql
+mysql> show variables like '%slow_query_log%';
+```
+
+**1.4 修改方法2：（推荐）**
+
+修改 MySql 慢查询，好多人不知道my.cnf 路径，可以用 find 查找
+
+备注：我的MySQL 是编译的 路径为 /etc/my.cnf （一般都是这里）
+
+```perl
+[root@localhost log]# find / -type f -name "my.cnf"
+
+/application/mysql-5.5.51/mysql-test/suite/rpl/my.cnf
+
+/application/mysql-5.5.51/mysql-test/suite/federated/my.cnf
+
+/application/mysql-5.5.51/mysql-5.5.51-linux2.6-x86_64/mysql-test/suite/rpl/my.cnf
+
+/application/mysql-5.5.51/mysql-5.5.51-linux2.6-x86_64/mysql-test/suite/federated/my.cnf
+
+/etc/my.cnf  ###（一般都是这里）
+```
+
+**1.4.1.1 修改**
+
+```
+[root@localhost log]# vim /etc/my.cnf
+```
+
+找到 [mysqld] 下面添加
+
+```ruby
+slow_query_log =1
+
+slow_query_log_file=/application/mysql/data/localhost-slow.log
+
+long_query_time = 1
+```
+
+参数说明：
+
+1. slow_query_log 慢查询开启状态 1 为开启
+2. slow_query_log_file 慢查询日志存放的位置
+3. long_query_time 查询超过多少秒才记录  默认10秒 修改为1秒
+
+修改完重启MySQL
+
+**1.5 查看、测试**
+
+**1.5.1.1 插入一条测试慢查询**
+
+```sql
+mysql> select sleep(2);
+```
+
+**1.5.1.2 查看慢查询日志**
+
+```
+[root@localhost data]# cat /application/mysql/data/localhost-slow.log
+
+/application/mysql/bin/mysqld, Version: 5.5.51-log (MySQL Community Server (GPL)). started with:
+
+Tcp port: 3306 Unix socket: /tmp/mysql.sock
+
+Time         Id Command  Argument
+
+/application/mysql/bin/mysqld, Version: 5.5.51-log (MySQL Community Server (GPL)). started with:
+
+Tcp port: 3306 Unix socket: /tmp/mysql.sock
+
+Time         Id Command  Argument
+
+/application/mysql/bin/mysqld, Version: 5.5.51-log (MySQL Community Server (GPL)). started with:
+
+Tcp port: 3306 Unix socket: /tmp/mysql.sock
+
+Time         Id Command  Argument
+
+# Time: 170605 6:37:00
+
+# User@Host: root[root] @ localhost []
+
+# Query_time: 2.000835 Lock_time: 0.000000 Rows_sent: 1 Rows_examined: 0
+
+SET timestamp=1496615820;
+
+select sleep(2);
+```
+
+**1.5.1.3 通过MySQL命令查看有多少慢查询**
+
+```sql
+mysql> show global status like '%Slow_queries%';
+```
+
+**1.6 日志分析工具mysqldumpslow**
+
+在生产环境中，如果要手工分析日志，查找、分析SQL，显然是个体力活，MySQL提供了日志分析工具mysqldumpslow
+
+
+
+### MySQL 慢查询日志分析
+
+mysql> show variables like '%slow%';
++---------------------+-------------------------+
+| Variable_name    | Value          |
++---------------------+-------------------------+
+| log_slow_queries  | ON            |
+| slow_launch_time  | 2             |
+| slow_query_log   | ON             |
+| slow_query_log_file | D:/log/slow.txt    |
++---------------------+-------------------------+
+
+其中,各参数说明如下:
+
+slow_launch_time: 慢查询超过的执行时间值
+
+ slow_query_log: 是否打开慢查询日志功能
+
+show_query_log_file:慢查询日志目录 
+
+开启慢查询日志功能:
+
+mysql配置文件(win mysql.ini linux mysql.conf)下,
+
+[mysqld]
+
+log-slow-queries ="D:/xampp/mysql/long.txt"
+long_query_time = 1
+
+log-slow-queries=/var/lib/mysql/slowquery.log (指定日志文件存放位置，可以为空，系统会给一个缺省的文件host_name-slow.log)
+long_query_time=2 (记录超过的时间，默认为10s)
+log-queries-not-using-indexes (log下来没有使用索引的query,可以根据情况决定是否开启)
+log-long-format (如果设置了，所有没有使用索引的查询也将被记录)
+
+
+
+
+
+**mysqldumpslow**, mysql官方提供的慢查询日志分析工具. 输出图表如下:
+
+![img](http://files.jb51.net/upload/201105/20110522124535455.gif)
+
+主要功能是, 统计不同慢sql的
+
+出现次数(Count), 
+
+执行最长时间(Time), 
+
+累计总耗费时间(Time), 
+
+等待锁的时间(Lock), 
+
+发送给客户端的行总数(Rows), 
+
+扫描的行总数(Rows), 
+
+用户以及sql语句本身(抽象了一下格式, 比如 limit 1, 20 用 limit N,N 表示).
+
+**mysqlsla, hackmysql.com推出的一款日志分析工具(该网站还维护了 mysqlreport, mysqlidxchk 等比较实用的mysql工具)
+**
+
+![img](http://files.jb51.net/upload/201105/20110522124545396.gif)
+
+整体来说, 功能非常强大. 数据报表,非常有利于分析慢查询的原因, 包括执行频率, 数据量, 查询消耗等.
+
+格式说明如下:
+
+总查询次数 (queries total), 去重后的sql数量 (unique)
+
+输出报表的内容排序(sorted by)
+
+最重大的慢sql统计信息, 包括 平均执行时间, 等待锁时间, 结果行的总数, 扫描的行总数.
+
+Count, sql的执行次数及占总的slow log数量的百分比.
+
+Time, 执行时间, 包括总时间, 平均时间, 最小, 最大时间, 时间占到总慢sql时间的百分比.
+
+95% of Time, 去除最快和最慢的sql, 覆盖率占95%的sql的执行时间.
+
+Lock Time, 等待锁的时间.
+
+95% of Lock , 95%的慢sql等待锁时间.
+
+Rows sent, 结果行统计数量, 包括平均, 最小, 最大数量.
+Rows examined, 扫描的行数量.
+
+Database, 属于哪个数据库
+
+Users, 哪个用户,IP, 占到所有用户执行的sql百分比
+
+Query abstract, 抽象后的sql语句
+
+Query sample, sql语句
+
+除了以上的输出, 官方还提供了很多定制化参数, 是一款不可多得的好工具.
+
+**mysql-explain-slow-log**, 德国人写的一个perl脚本.
+http://www.willamowius.de/mysql-tools.html
+
+
+
+![img](http://files.jb51.net/upload/201105/20110522124554551.gif)
+
+![img](http://files.jb51.net/upload/201105/20110522124604199.gif)
+
+功能上有点瑕疵, 不仅把所有的 slow log 打印到屏幕上, 而且统计也只有数量而已. 不推荐使用.
+
+**mysql-log-filter**, google code上找到的一个分析工具.提供了 python 和 php 两种可执行的脚本.
+http://code.google.com/p/mysql-log-filter/
+
+![img](http://files.jb51.net/upload/201105/20110522124613635.gif)
+
+功能上比官方的mysqldumpslow, 多了查询时间的统计信息(平均,最大, 累计), 其他功能都与 mysqldumpslow类似.
+特色功能除了统计信息外, 还针对输出内容做了排版和格式化, 保证整体输出的简洁. 喜欢简洁报表的朋友, 推荐使用一下.
+
+**myprofi**, 纯php写的一个开源分析工具.项目在 sourceforge 上.
+http://myprofi.sourceforge.net/
+
+ ![img](http://files.jb51.net/upload/201105/20110522124626662.gif)
+
+功能上, 列出了总的慢查询次数和类型, 去重后的sql语句, 执行次数及其占总的slow log数量的百分比.
+从整体输出样式来看, 比mysql-log-filter还要简洁. 省去了很多不必要的内容. 对于只想看sql语句及执行次数的用户来说, 比较推荐.
+
+### 总结 
+
+| 工具/功能              | 一般统计信息 | 高级统计信息 | 脚本          | 优势                                |
+| ---------------------- | ------------ | ------------ | ------------- | ----------------------------------- |
+| mysqldumpslow          | 支持         | 不支持       | perl          | mysql官方自带                       |
+| mysqlsla               | 支持         | 支持         | perl          | 功能强大,数据报表齐全,定制化能力强. |
+| mysql-explain-slow-log | 支持         | 不支持       | perl          | 无                                  |
+| mysql-log-filter       | 支持         | 部分支持     | python or php | 不失功能的前提下,保持输出简洁       |
+| myprofi                | 支持         | 不支持       | php           | 非常精简                            |
+
+**【参考资料】**
+
+1、MySQL 慢查询日志分析及可视化结果 – 运维生存时间 http://www.ttlsa.com/mysql/mysql-slow-query-log-analysis-and-visualization-of-results/
+
+2、Mysql 慢日志分析系统搭建 —— Box Anemometer_SleePerSir_新浪博客 http://blog.sina.com.cn/s/blog_c2839d2a0102wkuv.html
+
+3、mysql性能监控软件 慢日志分析利器 - pmm server https://blog.csdn.net/john1337/article/details/70855293
+
+4、MySQL 慢查询日志(Slow Query Log) - CSDN博客 https://blog.csdn.net/leshami/article/details/39829605
+
+5、关于MySQL 通用查询日志和慢查询日志分析 - CSDN博客 https://blog.csdn.net/timchen525/article/details/75268151
+
+6、mysql 慢日志分析工具pt-query-digest - CSDN博客 https://blog.csdn.net/stevendbaguo/article/details/47612359
+
+
+
+# 并发
+
+## 并发处理机制_MVCC
+
+### 1 什么是MVCC
+
+   MVCC全称是： **Multiversion concurrency control**，多版本并发控制，提供并发访问数据库时，对事务内读取的到的内存做处理，用来避免写操作堵塞读操作的并发问题。
+
+   举个例子，程序员A正在读数据库中某些内容，而程序员B正在给这些内容做修改（假设是在一个事务内修改，大概持续10s左右），A在这10s内 则可能看到一个不一致的数据，在B没有提交前，如何让A能够一直读到的数据都是一致的呢？ 
+
+   有几种处理方法，第一种： 基于锁的并发控制，程序员B开始修改数据时，给这些数据加上锁，程序员A这时再读，就发现读取不了，处于等待情况，只能等B操作完才能读数据，这保证A不会读到一个不一致的数据，但是这个会影响程序的运行效率。还有一种就是：MVCC，每个用户连接数据库时，看到的都是某一特定时刻的数据库快照，在B的事务没有提交之前，A始终读到的是某一特定时刻的数据库快照，不会读到B事务中的数据修改情况，直到B事务提交，才会读取B的修改内容。
+
+   一个支持MVCC的数据库，在更新某些数据时，并非使用新数据覆盖旧数据，而是标记旧数据是过时的，同时在其他地方新增一个数据版本。因此，同一份数据有多个版本存储，但只有一个是最新的。 
+
+   MVCC提供了 时间一致性的 处理思路，在MVCC下读事务时，通常使用一个时间戳或者事务ID来确定访问哪个状态的数据库及哪些版本的数据。读事务跟写事务彼此是隔离开来的，彼此之间不会影响。假设同一份数据，既有读事务访问，又有写事务操作，实际上，写事务会新建一个新的数据版本，而读事务访问的是旧的数据版本，直到写事务提交，读事务才会访问到这个新的数据版本。
+
+   MVCC有两种实现方式，第一种实现方式是将数据记录的多个版本保存在数据库中，当这些不同版本数据不再需要时，垃圾收集器回收这些记录。这个方式被PostgreSQL和Firebird/Interbase采用，SQL Server使用的类似机制，所不同的是旧版本数据不是保存在数据库中，而保存在不同于主数据库的另外一个数据库tempdb中。第二种实现方式只在数据库保存最新版本的数据，但是会在使用undo时动态重构旧版本数据，这种方式被Oracle和MySQL/InnoDB使用。   
+
+   这部分可以查阅维基百科：https://en.wikipedia.org/wiki/Multiversion_concurrency_control
+
+### 2  Innodb的MVCC
+
+   在Innodb db中，无论是聚簇索引，还是二级索引，每一行记录都包含一个 DELETE bit，用于表示该记录是否被删除， 同时，聚簇索引还有两个隐藏值：DATA_TRX_ID，DATA_ROLL_PTR。DATA _TRX_ID表示产生当前记录项的事务ID，这个ID随着事务的创建不断增长；DATA _ROLL_PTR指向当前记录项的undo信息。
+
+1. 无论是聚簇索引，还是二级索引，只要其键值更新，就会产生新版本。将老版本数据deleted bti设置为1；同时插入新版本。
+2. 对于聚簇索引，如果更新操作没有更新primary key，那么更新不会产生新版本，而是在原有版本上进行更新，老版本进入undo表空间，通过记录上的undo指针进行回滚。
+3. 对于二级索引，如果更新操作没有更新其键值，那么二级索引记录保持不变。
+4. 对于二级索引，更新操作无论更新primary key，或者是二级索引键值，都会导致二级索引产生新版本数据。
+5. 聚簇索引设置记录deleted bit时，会同时更新DATA_TRX_ID列。老版本DATA_TRX_ID进入undo表空间；二级索引设置deleted bit时，不写入undo。
+
+​    **MVCC只工作在REPEATABLE READ和READ COMMITED隔离级别下。READ UNCOMMITED不是MVCC兼容的，因为查询不能找到适合他们事务版本的行版本；它们每次都只能读到最新的版本。SERIABLABLE也不与MVCC兼容，因为读操作会锁定他们返回的每一行数据 。**
+
+   在MVCC中，读操作分为两类：当前读跟快照读，当前读返回最新记录，会加锁，保证该记录不会被其他事务修改；快照读，读取的是记录的某个版本（有可能是最新版本也有可能是旧版本），不加锁。
+
+   快照读：RU,RC,RR隔离级别下，select * from tbname where ....
+
+   当前读：
+
+1. select * from tbname where ....  **for update （加X锁）**
+2. select * from tbname where ....  **lock in share mode（加S锁）**
+3. insert into tbname .... （加X锁，注意如果有unique key的情况）
+4. delete from tbname ... （加X锁）
+5. update tbname set ... where .. （加X锁）
+
+​    本部分参考：http://hedengcheng.com/?p=148
+
+### 3 Two Phase Locking
+
+   2-PL，也就是两阶段锁，锁的操作分为两个阶段：加锁、解锁。先加锁，后解锁，不相交。加锁时，读操作会申请并占用S锁，写操作会申请并占用X锁，如果对所在记录加锁有冲突，那么会处于等待状态，知道加锁成功才惊醒下一步操作。解锁时，也就是事务提交或者回滚的时候，这个阶段会释放该事务中所有的加锁情况，进行一一释放锁。 
+
+   假设事务对记录A和记录B都有操作，那么，其加锁解锁按照逐行加锁解锁顺序，如下：
+
+```
+BEGIN
+LOCK A
+READ A
+A:A+100
+WRITE A
+UNLOCK A
+LOCK B
+READ B
+UNLOCK B
+COMMIT
+```
+
+  两阶段锁还有几种特殊情况：conservative（保守）、strict（严格）、strong strict（强严格），这三种类型在加锁和释放锁的处理有些不一样。
+
+1. conservative
+
+   - 在事务开始的时候，获取需要的记录的锁，避免在操作期间逐个申请锁可能造成的锁等待，conservative 2PL 可以避免死锁
+
+2. strict 
+
+   - 仅在事务结束的时候（commit or rollback），才释放所有 write lock，read lock 则正常释放
+
+3. strong strict
+
+   - 仅在事务结束的时候（commit or rollback），才释放所有锁，包括write lock 跟 read lock 都是结束后才释放。
+
+     ![img](https://images2017.cnblogs.com/blog/608061/201710/608061-20171031174303480-2127073501.png)
+
+      
+
+   这部分可以查看维基百科：https://en.wikipedia.org/wiki/Two-phase_locking，
+
+### 4 数据不一致情况
+
+#### 4.1 脏读
+
+  读取未提交事务中修改的数据，称为脏读。
+
+  举例，表格 A （name,age），记录1为name='xinysu'，age=188
+
+  ![img](https://images2017.cnblogs.com/blog/608061/201707/608061-20170730200326537-1330607402.png)
+
+  这里，事务2 中读出来的数据是 （name，age）=（'xinysu',299），这一条是 事务1中未提交的记录，属于脏数据。
+
+#### 4.2 丢失更新
+
+   多个更新操作并发执行，导致某些更新操作数据丢失。
+
+   举例，表格 A （name,age），记录1为name='xinysu'，age=188。并发2个更新操作如下：
+
+   ![img](https://images2017.cnblogs.com/blog/608061/201707/608061-20170730200338037-753124538.png)
+
+   正常情况下，如果是事务1操作后，age为288，事务2再进行288+100=388，但是实际上，事务2的操作覆盖事务1的操作，造成了事务1的更新丢失。
+
+#### 4.3 不可重复读
+
+   同个事务多次读取同一条存在的记录，但是读取的结构不一致，称之为不可重复读。
+
+   举例，表格 A （name,age），记录1为name='xinysu'，age=188。操作如下：
+
+   ![img](https://images2017.cnblogs.com/blog/608061/201707/608061-20170730200353505-1543976963.png)
+
+   事务1第一次读出来的结构是name='xinysu'，age=188，第二次读出来的结果是name='xinysu'，age=288，同个事务中，多次读取同一行存在的记录，但结果不一致的情况，则为不可重复读。
+
+#### 4.4 幻读
+
+   同个事务多次读取某段段范围内的数据，但是读取到底行数不一致的情况，称之为幻读。
+
+   举例，表格 A （name,age），记录1为name='xinysu'，age=188。操作如下：
+
+   ![img](https://images2017.cnblogs.com/blog/608061/201707/608061-20170730200406240-1411813995.png)
+
+   事务1中，第一次读取的结果行数有1行，如果事务2执行的是delete，则事务1第二次读取的为0行；如果事务2执行的是INSERT，则事务2第二次读取的行数是2行，前后记录数不一致，称之为幻读。
+
+### 5 innodb的隔离级别
+
+#### 5.1 隔离级别介绍
+
+1. Read Uncommited
+   - 简称 RU，读未提交记录，始终是读最新记录
+   - 不支持快照读，都是当前读
+   - 可能存在脏读、不可重复读、幻读等问题；
+2. Read Commited
+   - 简称 RC ，读已提交记录
+   - 支持快照读，读取版本有可能不是最新版本
+   - 支持当前读，读取到的记录添加锁
+   - - 不存在脏读、不可重复读
+     - 存在幻读问题；
+3. Read Repeatable
+   - 简称 RR ，可重复读记录
+   - 支持快照读，读取版本有可能不是最新版本
+   - 支持当前读，读取到的记录添加锁，并且对读取的范围枷锁，保证满足查询条件的记录不能够被insert进来
+   - 不存在脏读、不可重复读及幻读情况；
+4. Read Serializable
+   - 简称 RS，序列化读记录
+   - 不支持快照读，都是当前读
+   - select数据添加S锁，update\insert\delete数据添加X锁
+   - 并发度最差，除非明确业务需求及性能影响，才使用，一般不建议在innodb中应用
+
+#### 5.2 隔离级别测试
+
+测试各个隔离级别下的数据不一致情况。
+
+```
+1.查看当前会话隔离级别
+select @@tx_isolation;
+ 
+2.查看系统当前隔离级别
+select @@global.tx_isolation;
+ 
+3.设置当前会话隔离级别
+set session transaction isolation level repeatable read;
+ 
+4.设置系统当前隔离级别
+set global transaction isolation level repeatable read;
+```
+
+**5.2.1 Read Uncommitted**
+
+**所有事务隔离级别设置： set session transaction isolation level read Uncommited ;**
+
+ 
+
+该隔离级别没有的快照读，所有读操作都是读最新版本，可以读未提交事务的数据。
+
+ 
+
+测试1：update数据不提交，另起查询
+
+测试结果：正常select可以查询到不提交的事务内容，属于脏读
+
+ ![img](https://images2017.cnblogs.com/blog/608061/201707/608061-20170730200533302-1924827027.png)
+
+ 
+
+测试2：修改数据不提交，另起事务多次查询
+
+测试结果：同个事务多次读取同一行记录结果不一致，属于重复读
+
+ ![img](https://images2017.cnblogs.com/blog/608061/201707/608061-20170730200543959-53126937.png)
+
+ 
+
+测试3：INSERT数据不提交，另起事务多次查询
+
+测试结果：同个事务多次读取相同范围的数据，但是行数不一样，属于幻读
+
+![img](https://images2017.cnblogs.com/blog/608061/201707/608061-20170730200603177-867185670.png)
+
+ 
+
+测试4：不同事务对同一行数据进行update
+
+测试结果：由于INNODB有锁机制，所有所有update都会持有X锁互斥，并不会出现事务都提交成功情况下的丢失更新，所以四个隔离级别都可以避免丢失更新问题。
+
+![img](https://images2017.cnblogs.com/blog/608061/201707/608061-20170730200623021-1913088425.png)
+
+ 
+
+**总结：没有快照读，都是当前读，所有读都是读可以读未提交记录，存在脏读、不可重复读、幻读等问题。**
+
+   
+
+#### 5.2.2 Read Committed
+
+**所有事务隔离级别设置： set session transaction isolation level read committed ;**
+
+ 
+
+由于该隔离级别支持快照读，不添加for update跟lock in share mode的select 查询语句，使用的是快照读，读取已提交记录，不添加锁。所以测试使用当前读的模式测试，添加lock in share mode，添加S锁。
+
+ 
+
+测试1：update数据不提交，另起查询
+
+测试结果：由于当前读持有S锁，导致update申请X锁处于等待情况，无法更新，同个事务内的多次查询结果一致，无脏读及不可重复读情况。
+
+![img](https://images2017.cnblogs.com/blog/608061/201707/608061-20170730200704552-1956428903.png)
+
+ 
+
+测试2：INSERT数据不提交，另起事务多次查询
+
+测试结果：同个事务多次读取相同范围的数据，但是行数不一样，属于幻读（这里注意，如果insert 分为beigin；commit，一直不commit的话，3的查询会处于等待情况，因为它需要申请的S锁被 insert的X锁所堵塞） ![img](https://images2017.cnblogs.com/blog/608061/201707/608061-20170730200712818-715439220.png)
+
+ 
+
+测试3：快照读测试
+
+测试结果：同个事务多次读取相同记录，读取的都是已提交记录，不存在脏读及丢失更新情况，但是存在不可重复读及幻读。 ![img](https://images2017.cnblogs.com/blog/608061/201707/608061-20170730200721521-388510668.png)
+
+ 
+
+**总结：支持快照读，快照读 不存在脏读及丢失更新情况，但是存在不可重复读及幻读；****而当前读不存在脏读、不可重复读问题，存在幻读问题。** 
+
+#### 5.2.3 Read Repeatable
+
+**所有事务隔离级别设置： set session transaction isolation level repeatable** **read ;**
+
+ 
+
+由于该隔离级别支持快照读，不添加for update跟lock in share mode的select 查询语句，使用的是快照读，不添加锁。所以测试使用当前读的模式测试，添加lock in share mode，添加S锁。
+
+ 
+
+测试1：update数据不提交，另起查询
+
+测试结果：由于当前读持有S锁，导致update申请X锁处于等待情况，无法更新，同个事务内的多次查询结果一致，无脏读及不可重复读情况。
+
+![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(12).png)
+
+![img](https://images2017.cnblogs.com/blog/608061/201707/608061-20170730200811724-966427933.png)
+
+ 
+
+测试2：INSERT数据不提交，另起事务多次查询
+
+测试结果：同个事务多次读取相同范围的数据，会有GAP锁锁定，故同个事务多次当前读结果记录数都是一致的，不存在幻读情况。
+
+![img](https://images2017.cnblogs.com/blog/608061/201707/608061-20170730200829365-1265517150.png)
+
+ 
+
+测试3：快照读测试
+
+测试结果：同个事务多次读取相同记录，不存在脏读及丢失更新、不可重复读及幻读等情况。
+
+![img](https://images2017.cnblogs.com/blog/608061/201707/608061-20170730200841459-1609844308.png)
+
+ 
+
+**总结：支持快照读，快照读跟****当前读不存在脏读、不可重复读问题、幻读问题。**
+
+#### 5.2.4 Read Serializable
+
+**所有事务隔离级别设置： set session transaction isolation level** **Serializable**  **;**
+
+ 
+
+该隔离级别不支持快照读，所有SELECT查询都是当前读，并且持有S锁.
+
+ 
+
+测试1：update数据不提交，另起查询；INSERT数据不提交，另起事务多次查询
+
+测试结果：该隔离级别下所有select语句持有S锁，导致update申请X锁处于等待情况，INSERT申请X也被堵塞，同个事务内的多次查询结果一致，不存在脏读、不可重复读及幻读情况。
+
+ ![img](https://images2017.cnblogs.com/blog/608061/201707/608061-20170730200904849-1203268621.png)
+
+ 
+
+**总结：无快照读，所有SELECT查询都是****当前读，不存在脏读、不可重复读问题、幻读问题。**
+
+ 
+
+### PS： semi-consistent read
+
+ 
+
+**在read committed或者read uncommitted 隔离级别下**，有这样的测试现象：
+
+ 
+
+测试表格及数据
+
+ 
+
+CREATE TABLE `tblock` (
+
+ `id` int(11) NOT NULL AUTO_INCREMENT,
+
+ `name` varchar(10) DEFAULT NULL,
+
+ PRIMARY KEY (`id`)
+
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+ 
+
+insert into tblock(name) select 'su';
+
+insert into tblock(name) select 'xin';
+
+ 
+
+ 
+
+测试1：两个update事务并发，分别update不同行，update条件列无索引
+
+测试结果：两条update互不干扰，正常执行。
+
+![img](https://images2017.cnblogs.com/blog/608061/201707/608061-20170730200949240-1781256531.png)
+
+ 
+
+测试2：update语句不提交，另起事务当前读操作
+
+测试结果：当前读被堵塞，无法正常加X锁
+
+![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(17).png)
+
+![img](https://images2017.cnblogs.com/blog/608061/201707/608061-20170730201000177-1685388309.png)
+
+ 
+
+  **问题点：为啥两个测试中的sql序号2，都是申请X锁，测试1可以正常申请情况，而测试2不行呢？**
+
+ 
+
+  正常情况下，where条件中的name列没有索引，故这个update操作是对全表做scan扫描加X锁，正常情况下，在第一个事务中，update语句没有提交的情况下，这个表格有一个表锁X，对每一行数据都无法申请S锁或者X锁，那么为什么 测试1 可以正常申请呢？
+
+ 
+
+  在这里，需要引入semi-constent-read，半一致性读。官网解释如下：
+
+ 
+
+*semi consistent read：*
+
+*A type of read operation used for UPDATE statements, that is a combination of read committed and consistent read. When an UPDATE statement examines a row that is already locked, InnoDB returns the latest committed version to MySQL so that MySQL can determine whether the row matches the WHERE condition of the UPDATE. If the row matches (must be updated), MySQL reads the row again, and this time InnoDB either locks it or waits for a lock on it. This type of read operation can only happen when the transaction has the read committed isolation level, or when the innodb_locks_unsafe_for_binlog option is enabled.*
+
+ 
+
+  semi-consistent read是update语句在读数据的一种操作， 是read committed与consistent read两者的结合。update语句A在没有提交时，另外一个update语句B读到一行已经被A加锁的记录，但是这行记录不在A的where条件内，此时InnoDB返回记录最近提交的版本给B，由MySQL上层判断此版本是否满足B的update的where条件。若满足(需要更新)，则MySQL会重新发起一次读操作，此时会读取行的最新版本(并加锁)。semi-consistent read只会发生在read committed及**read uncommitted**隔离级别，或者是参数innodb_locks_unsafe_for_binlog被设置为true。 对update起作用，对select insert delete 不起作用。这就导致了update 不堵塞，但是当前读的select则被堵塞的现象。
+
+ 
+
+  发生 semi consitent read的条件：
+
+1. update语句
+2. 执行计划时scan，range scan or table scan，不能时unique scan
+3. 表格为聚集索引
+
+总结如下：
+
+ ![img](https://images2017.cnblogs.com/blog/608061/201707/608061-20170730201115755-65460081.png)
+
+
+
+##并发处理机制_锁
+
+ MySQL的并发处理机制，有MVCC及锁机制来处理，上篇简要说明了 MVCC及隔离级别：[mysql的并发处理机制_上篇](http://www.cnblogs.com/xinysu/p/7260227.html) ，这篇来说说mysql下的锁。
+
+### 1 Innodb的锁
+
+  在innodb中，有4种类型的锁：IX、X、IS及S锁，其说明如下：
+
+ 
+
+| 类型 | 说明       | 场景                                                         |
+| ---- | ---------- | ------------------------------------------------------------ |
+| S    | 共享锁     | 针对于RS隔离级别的查询或者添加Lock in share mode的SELECT查询而产生的锁 |
+| X    | 排它锁     | 针对于update、delete、insert操作而产生的锁                   |
+| IS   | 意向共享锁 | 表级别的锁，在添加S锁之前对表格添加IS锁                      |
+| IX   | 意向排他锁 | 表级别的锁，在添加X锁之前对表格添加IX锁                      |
+
+#### 1.1 锁定兼容情况
+
+ 四个锁之间的兼容性，需要分成两种情况来讨论，锁粒度小于表级别的锁的兼容情况，表级的锁兼容情况。
+
+1. **锁粒度小于表级别的锁的兼容情况**
+
+2. - ![img](https://images2017.cnblogs.com/blog/608061/201710/608061-20171022180439099-2112128552.png)
+
+   - 对于这两行锁的兼容说明如下：
+
+   - - 假设有一行数据，添加了行锁S锁，那么这个行数据，可以提供给其他事务进行S锁的申请和添加，但是不支持其他事务对这一行进行X锁的申请和添加。比如，事务A，对 pk100 这一行进行了 查询操作并添加了S锁，那么其他事务仍然可以对这一行数据进行查询，但是不能对这行数据进行 UPDATE 跟 DELETE 操作，会处于锁等待情况，直到该事务A结束并释放S锁；
+     - 假设有一行数据，添加了X锁，那么这个行数据，不允许其他事务对这一行数据进行加锁。比如，事务A，对pk100这一行进行了UPDATE操作，那么其他事务在事务A没有结束之前，都无法对这一行数据申请 S锁。
+
+3. **表级的锁兼容情况**
+
+4. - ![img](https://images2017.cnblogs.com/blog/608061/201710/608061-20171022180947927-732267059.png)
+
+   - 对于表级别的锁兼容性如下：
+
+   - - 当一个表格持有S表锁时，不需要其他事务对该表格申请X锁跟IX锁，但是允许申请S跟IS锁。比如，事务A对表格tba全表读，加了S表锁，期间支持其他事务对tba全表读（申请S表锁成功）、支持其他事务对tba行数据查询（申请IS表锁成功），但是不支持对表格全表的修改操作（申请X表锁等待）跟不支持对表格行数据修改操作（申请IX表锁等待）；
+
+     - 当一个表格持有X表锁时，持有锁期间，不支持其他所有锁的申请；
+
+     - 当一个表格持有IS表锁时，允许申请 S表锁、IS表锁、IX表锁，但是不支持X表锁申请。
+
+     - - 比如，事务A对表格tba 查询了 id = 10（id为主键）这一行数据，这个时候，表格tba持有IS表锁，id = 10 这一行持有 S 行锁，期间，支持其他事务对 tba 全表查询（申请表锁S成功）或者 基于索引查找（申请表锁IS成功）
+       - 如果需要对行 id = 20 进行数据修改，则会先申请 tba 的表锁 IX（申请成功），然后再申请id=20行锁X （申请成功）；如果需要对 id = 10 这一行数据进行修改，则会申请 tba的表锁 IX（表锁申请成功），然后申请 id = 10 的行锁X（申请堵塞，因为 id = 10 正持有S锁）；
+       - 如果需要对表格进行全表修改，需要申请表锁（X锁），这个时候，IS锁的优势来了，当查看表格是否有其他事务在访问操作时，一看表锁IS就知道有其他事务对表格内部某些数据持有S锁，并且还没有释放，那么这个时候，申请X锁就会处于等待状态，而不需要一行一行去查询每一行数据有没有被其他事务持有锁，可以大规模的减少查询 锁申请情况；
+
+     - 当一个表格持有IX表锁时，支持申请IS、IX表锁，但是不兼容S、X表锁。
+
+     - - 比如，事务A对表格 tba 中 id=10 （id为主键）进行进行 数据修改，这个时候，会对表格 tba 先申请一个 IX 表锁（申请成功），然后申请 id =10 的 X 行锁，申请成功，则 事务A 持有 IX 表锁、id=10的X 行锁，此时事务B 查询 id=20的行，申请表锁 IS 成功，申请 id=20的 S 行锁成功；事务C 修改 id=30的行数据，申请表锁 IX 成功，申请 id=30的行锁 X成功；但是，事务D中，对整个表格发起update或者全表SELECT操作，需要申请 X表锁或者S表锁，正常情况下，应该要对表格的每一行数据进行查看，确保每一行数据的行锁情况，但是因为有了意向锁，事务D一看到 tba 持有 了IX锁，则明白，tba 中某些行持有X锁，则会不兼容其他事务对tba 表锁S ，表锁X的申请。
+
+   - 为什么要引入意向表锁？
+
+   - - 在没有意向锁的时候，如果事务T 需要给表格 A 添加 一个S 表锁，那么就意味这这个表格内部的每一行数据，都不能有X锁，才能够申请 S 表锁成功，如果表格数据很多，一行行查找非常浪费加锁时间，这个时候，就出现了表格意向锁，当表格内部某些行发生 UPATE DELETE INSERT操作，则会对表格 加上 一个意向 IX 表锁，这样 事务T在申请 表格A的 S 表锁时，只需要检查 表格 A 是否有 IX表锁，如果有，则意味内部有 部分行数据持有X锁，则直接进入等待情况，如果表格没有 IX表锁，则直接申请S表锁成功，这是一个多么节约加锁时间的操作！
+
+#### 1.2 锁的级别
+
+- **Table Lock**
+
+- - 表锁，如果没有where条件、无可用索引或者获取的行记录过多，则会使用 table full scan，添加表锁
+
+- Record Lock
+
+  - 记录锁，如果执行计划使用了索引，则会根据索引的查找情况添加行锁
+
+- **Gap Lock**
+
+- - 在RR、RS隔离级别，发生在索引值之间，在连续的两个索引值之间添加锁，加锁后，这两个索引值之间，无法插入新的索引值，不包含行记录
+
+- **Next-Key Lock**
+
+- - Record Lock 跟Gap Lock的组合，合体成为Next-KEY Lock
+
+ 
+
+   表锁、行锁都相对好理解，这里尝试简单说明下 GAP LOCK。
+
+   假设当前隔离级别为RR，表格 tbgap( id int auto_increment primary key not null , name varchar(50) , sort int , key ix_sort (sort)) engine=innodb; 
+
+   表格数据如下：
+
+   ![img](https://images2017.cnblogs.com/blog/608061/201710/608061-20171022181052959-664350963.png)
+
+   在索引ix_sort上，一共有7个间隙，分别为（-∞，(1,6)），（(1,6)，(2,5)），（(2,5)，(3,2)），（(3,2)，(5,4)），（(5,4)，(6,1)），（(6,1)，(7,3)），（(7,3)，+∞），而根据实际的隔离级别及锁申请情况，加在这些间隙上的锁，则成为 GAP LOCK 。  
+
+#### 1.3 锁与隔离级别（不考虑 lock in shar mode跟for update ）
+
+- RU，读未提交记录，不加锁读，正常写锁；
+- RC，快照读，无锁；当前读，加 Record Lock
+- RR，快照读，无锁；当前读，对读取到的记录加 Record Lock，同时为了确保where条件范围内的数据无变化，会增加Next key lock
+- RS，读写均为当前读，不支持快照读。包括select 在内，对读取到的记录加 Record Lock，同时为了确保where条件范围内的数据无变化，会增加Next key lock。
+
+[回到顶部(go to top)](https://www.cnblogs.com/xinysu/p/7710928.html#_labelTop)
+
+### 2 锁的申请与释放过程
+
+   看SQL语句的锁情况，需要结合隔离级别、执行计划、表结构等，同一个SQL，不同的隔离级别、表结构、执行计划，其锁情况不一定是一样的！
+
+   本次模拟这3个表格，age列分别：无索引、有一般索引、有唯一索引。表结构结束及数据如下：
+
+ 
+
+CREATE TABLE tb_no_index ( id int primary key not null auto_increment, age int not null, name varchar(100) );
+
+CREATE TABLE tb_index ( id int primary key not null auto_increment, age int not null, name varchar(100) KEY ix_age(age) );
+
+CREATE TABLE tb_unique_index ( id int primary key not null auto_increment, age int not null,name varchar(100) UNIQUE KEY ix_age(age) );
+
+ 
+
+INSERT INTO tb_no_index(age) values(2),(9),(21),(4),(7),(25);
+
+INSERT INTO tb_index(age) values(2),(9),(21),(4),(7),(25);
+
+INSERT INTO tb_unique_index(age) values(2),(9),(21),(4),(7),(25);
+
+ 
+
+每个表格IX_age的索引行数就据如下图展示：
+
+| age  | 2    | 4    | 7    | 9    | 21   | 25   |
+| ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| id   | 1    | 4    | 5    | 2    | 3    | 6    |
+
+ 
+
+每个表格主键上面的行数就据如下图展示：
+
+| id   | 1    | 2    | 3    | 4    | 5    | 6    |
+| ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| age  | 2    | 9    | 21   | 4    | 7    | 25   |
+| name | null | null | null | null | null | null |
+
+ 
+
+#### 2.1 Read Uncommitted
+
+   所有事务隔离级别设置： set session transaction isolation level read Uncommitted ;
+
+   RU是读未提交，不添加 LOCK IN SHARE MODE 跟 FOR UPDATE 的 SELECT 语句，均为读未提交，不加锁，存在脏读、不可重复读及幻读。
+
+   所有UPDATE、DELETE、INSERT获取当前读记录，加锁。
+
+| **表格   SQL**  | **select \* from tbname****where age/id ...**                | **update tbname set name=...****where id = 4**               | **update tbname set name=...****where age = 21**             | **update tbname set name=...****where age between 5 and 15** |
+| --------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| tb_no_index     | 读不加锁，读未提交数据可能有脏读、不可重复读及幻读           | 当前读，根据主键修改数据tbname 加意向表锁 IXid=4 加 行锁 X![img](https://images2017.cnblogs.com/blog/608061/201710/608061-20171022182644427-1948388930.png) | 表格的age列无索引，所以update过程中，全表加X锁支持semi-constent-read，如果有其他update语句修改其他行不堵塞，但是不支持 select ... for update | 同左                                                         |
+| tb_index        | 表格的age列有索引，update过程中tb_index 加 表格意向锁 IXage索引上面，age=21 行添加行锁 X再在主键上，给id=3 这一行数据，添加行数 X ![img](https://images2017.cnblogs.com/blog/608061/201710/608061-20171022182650443-328615844.png) | 表格的age列有索引，update过程涉及age=7,9 两行数据tb_index 加表格意向锁 IXage索引上面，age=7，age=9 行添加行锁 X再在主键上，给id=2，id=5 这一行数据，添加行数 X ![img](https://images2017.cnblogs.com/blog/608061/201710/608061-20171022182657521-1405300727.png) |                                                              |                                                              |
+| tb_unique_index | 同上                                                         | 同上                                                         |                                                              |                                                              |
+
+   
+
+#### 2.2 Read Committed
+
+所有事务隔离级别设置： set session transaction isolation level read committed ;
+
+   
+
+   RC是读已提交，不添加 LOCK IN SHARE MODE 跟 FOR UPDATE 的 SELECT 语句，均为 快照读，不加锁，同个事务内读取同一个版本的数据，可能非最新数据，但是不存在脏读、不可重复读及幻读情况。
+
+   所有UPDATE、DELETE、INSERT获取当前读记录，加锁。
+
+ 
+
+   下表中，黄绿色 字体 是RC与RU隔离级别不同的地方，仔细阅读分析结果可以知道，在 RU 跟 RC 间，最大的区别在于 SELECT 的查询模式，RU 为 读未提交，而 RC 为快照读。UPATE/DELETE/INSERT的加锁模式类同。
+
+| **表格**       **SQL** | **select \* from tbname****where age/id ...**                | **update tbname set name=...****where id = 4**               | **update tbname set name=...****where age = 21**             | **update tbname set name=...****where age between 5 and 15** |
+| ---------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| tb_no_index            | 快照读，不加锁读取的数据不一定是最新版本，但是事务内的所有查询读取数据都是同一版本的行数据，不存在脏读、不可重复读及幻读的情况 | 当前读，根据主键修改数据tbname 加意向表锁 IXid=4 加 行锁 X![img](https://images2017.cnblogs.com/blog/608061/201710/608061-20171022182758552-719465383.png) | 表格的age列无索引，所以update过程中，全表加X锁支持semi-constent-read，如果有其他update语句修改其他行不堵塞，但是不支持 select ... for update | 同左                                                         |
+| tb_index               | 表格的age列有索引，update过程中tb_index 加 表格意向锁 IXage索引上面，age=21 行添加行锁 X再在主键上，给id=3 这一行数据，添加行数 X ![img](https://images2017.cnblogs.com/blog/608061/201710/608061-20171022182812506-1528687192.png) | 表格的age列有索引，update过程涉及age=7,9 两行数据tb_index 加表格意向锁 IXage索引上面，age=7，age=9 行添加行锁 X再在主键上，给id=2，id=5 这一行数据，添加行数 X ![img](https://images2017.cnblogs.com/blog/608061/201710/608061-20171022182820224-1121930592.png) |                                                              |                                                              |
+| tb_unique_index        | 同上                                                         | 同上                                                         |                                                              |                                                              |
+
+ 
+
+ #### 2.3 Read Repeatable
+
+所有事务隔离级别设置： set session transaction isolation level repeatable read ;
+
+ 
+
+   RR隔离级别中，SELECT操作支持快照读，所有的UPDATE/DELETE/INSERT加锁，锁类型会新增一个GAP LOCK。
+
+| 表格   SQL      | select * from tbnamewhere age/id ...                         | update tbname set name=...where id = 4                       | update tbname set name=...where age = 21                     | update tbname set name=...where age between 5 and 15 |
+| --------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ---------------------------------------------------- |
+| tb_no_index     | 快照读，不加锁读取的数据不一定是最新版本，但是事务内的所有查询读取数据都是同一版本的行数据，不存在脏读、不可重复读及幻读的情况 | 当前读，根据主键修改数据tbname 加意向表锁 IXid=4 加 行锁 X![img](https://images2017.cnblogs.com/blog/608061/201710/608061-20171022182841802-1754518796.png) | 表格的age列无索引，所以update过程中全表加X锁，期间全表堵塞UPDATE\DELETE\INSERT | 同左                                                 |
+| tb_index        | 表格的age列有索引，update过程中tb_index 加 表格意向锁 IXage索引上面，age=21 行添加行锁 X再在主键上，给id=3 这一行数据，添加行数 X 你以为结束了！并没有，这里有趣了！还会添加两个gap lock （(9,2) ,（21,3)），（(21,3), (21,25)） 这里我们单独拎出小表格来分析。![img](https://images2017.cnblogs.com/blog/608061/201710/608061-20171022182849052-1272633681.png) | 表格的age列有索引，update过程涉及age=7,9 两行数据tb_index 加表格意向锁 IXage索引上面，age=7，age=9 行添加行锁 X再在主键上，给id=2，id=5 这一行数据，添加行数 X同时会在索引 age的值上添加 3个 gap lock，分别为 （(4,4)，(7,5)）、（(7,5)，(9,2)）、（(9,2)，(21,3)） ![img](https://images2017.cnblogs.com/blog/608061/201710/608061-20171022182856099-1094041095.png) |                                                              |                                                      |
+| tb_unique_index | 以为跟上面的加锁范围一样，no no no唯一索引列上 每一个age都是唯一的，也就是age=21只有一个，不会再INSERT一个新的 age =21进来，故在这里不需要加gap lock，加锁情况如下：tb_index 加 表格意向锁 IXage=21 行添加行锁 X age索引上面，age=21 行添加行锁 X再在主键上，给id=3 这一行数据，添加行数 X | 表格的age列有索引，update过程涉及age=7,9 两行数据tb_index 加表格意向锁 IXage索引上面，age=7，age=9 行添加行锁 X再在主键上，给id=2，id=5 这一行数据，添加行数 X同时会在索引 age的值上添加 3个 gap lock，分别为 （(4,4)，(7,5)）、（(7,5)，(9,2)）、（(9,2)，(21,3)）但是，范围查询添加到gap lock在其他情况下跟非唯一索引会有一些差别，可以看下表的例子。 |                                                              |                                                      |
+
+这里做亮点补充说明：
+
+ 
+
+#### 2.3.1 RR下的非唯一索引加锁情况
+
+   update tbname set name=...  where age = 21
+
+   ![img](https://images2017.cnblogs.com/blog/608061/201710/608061-20171022181430584-962654217.png) 
+
+   还记得上篇文章说过 RR隔离级别可以防止 幻读吗？因为在RR隔离级别中，加多了next-key = record lock + gap lock，gap lock是加在索引值之间的锁。也就是 当修改 age=21 的行数据时,除了 在 age=21 这一行添加 X record lock ， 还在 （(9,2) ,（21,3)），（(21,3), (21,25)）这两个age值得范围内添加 gap lock。加锁的情况是：tb_index添加 IX意向锁，age索引上添加age=21的 x record lock，再在主键上的行记录 id=5 添加 X record lock，同时在 age 值上添加两个 gap lock，分别为（(9,2) ,（21,3)），（(21,3), (21,25)）。
+
+   注意这里有个误区，很多小伙伴会认为，那么这么加gap锁，则意味着，当update age=21这一列时， 9<age<25 ，这个范围内，是不允许进行 UPATE/DELETE/INSERT的。这种推测实际上是不完整的，因为它没考虑到跟主键！！！
+
+ 
+
+   注意，每次写gap lock的时候，都是有加上主键值的。比如这里，当更新 age=21这列时，加了 （(9,2) ,（21,3)），（(21,3), (21,25)） 这两个范围的 GAP LOCK，那么在当前update age=21的事务还没有结束的情况下，假设有两条修改SQL的语句：
+
+update tbname set age=9 where id = 1;
+
+update tbname set age=9 where age = 4;
+
+ 
+
+  这两条SQL，是能够正常执行，还是堵塞呢？
+
+  innodb中，索引按照二叉树排列顺序，而这两条SQL修改后在IX_AGE上的索引值分别为：（9，1）、（9，4），可以发现（9，1）在键值（9，2）的左边，不在GAP LOCK的范围内，所以，可以正常执行；而（9，4）在键值的右边，刚好在GAP LOCK的范围内，会被堵塞！总结：第一条UPDATE SQL，正常秩序；第二条UPDATE SQL会被堵塞。
+
+ 
+
+  所以，考虑GAP LOCK的时候，一定要注意结合整个索引键值来分析，而索引键值=索引值+主键。
+
+#### 2.3.2 RR下的唯一索引加锁情况
+
+   update tbname set name=...  where age between .. and ... 
+
+ 
+
+   因为唯一索引上面的索引键值都是唯一的，故不会出现重复值的插入的情况，下表罗列了同样的 范围查询修改语句，在唯一索引及非唯一索引上加 GAP_LOCK的情况。
+
+   表格数据如下：
+
+ 
+
+   ![img](https://images2017.cnblogs.com/blog/608061/201710/608061-20171022181503677-307007729.png)
+
+ 
+
+   加GAP_LOCK的情况如下（注意注意，方便查看，省略了主键值，实际上是需要添加上主键键值的）：   
+
+|                 | update tbname set name=...where age between 1 and 7 | update tbname set name=...where age between 2 and 7 | update tbname set name=...where age between 5 and 10 | update tbname set name=...where age between 15 and 50 |
+| --------------- | --------------------------------------------------- | --------------------------------------------------- | ---------------------------------------------------- | ----------------------------------------------------- |
+| tb_index        | (-∞,2),(2,4),(4,7),(7,9)                            | (-∞,2),(2,4),(4,7),(7,9)                            | (4,7),(7,9),(9,21)                                   | (9,21),(21,25),(25,+∞)                                |
+| tb_unique_index | (-∞,2),(2,4),(4,7)                                  | (2,4),(4,7)                                         | (4,7),(7,9),(9,21)                                   | (9,21),(21,25),(25,+∞)                                |
+
+ 
+
+#### 2.4 Read Serializable
+
+所有事务隔离级别设置： set session transaction isolation level Serializable  ;
+
+| 表格   SQL      | select * from tbnamewhere age/id ...                         | update tbname set name=...where id = 4                       | update tbname set name=...where age = 21                     | update tbname set name=...where age between 5 and 15 |
+| --------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ---------------------------------------------------- |
+| tb_no_index     | 不支持快照读，所有SELECT都是当前读，所有SELECT操作都需要加S锁,除主键定值查找\唯一索引定值查找外,其他基于索引或者主键的范围查找都会添加 S GAP LOCK。并发度是四个隔离级别中性能最差的。 | 当前读，根据主键修改数据tbname 加意向表锁 IXid=4 加 行锁 X   | 表格的age列无索引，所以update过程中全表加X锁，期间全表堵塞UPDATE\DELETE\INSERT | 同左                                                 |
+| tb_index        | 表格的age列有索引，update过程中tb_index 加 表格意向锁 IXage索引上面，age=21 行添加行锁 X再在主键上，给id=3 这一行数据，添加行数 X在age索引上 添加两个gap lock （(9,2) ,（21,3)），（(21,3), (21,25)） | 表格的age列有索引，update过程涉及age=7,9 两行数据tb_index 加表格意向锁 IXage索引上面，age=7，age=9 行添加行锁 X再在主键上，给id=2，id=5 这一行数据，添加行数 X同时会在索引 age的值上添加 3个 gap lock，分别为（(4,4)，(7,5)）、（(7,5)，(9,2)）、（(9,2)，(21,3)） |                                                              |                                                      |
+| tb_unique_index | 唯一索引列上 每一个age都是唯一的，也就是age=21只有一个，不会再INSERT一个新的 age =21进来，故在这里不需要加gap lock，加锁情况如下：tb_index 加 表格意向锁 IXage=21 行添加行锁 X | 表格的age列有索引，update过程涉及age=7,9 两行数据tb_index 加表格意向锁 IXage索引上面，age=7，age=9 行添加行锁 X再在主键上，给id=2，id=5 这一行数据，添加行数 X同时会在索引 age的值上添加 3个 gap lock，分别为 （(4,4)，(7,5)）、（(7,5)，(9,2)）、（(9,2)，(21,3)）但是，范围查询添加到gap lock在其他情况下跟非唯一索引会有一些差别，可以看下表的例子。 |                                                              |                                                      |
+
+ 
+
+ 
+
+  这里详细的来分析下 RS 隔离级别下的SELECT操作加的锁：
+
+ ![img](https://images2017.cnblogs.com/blog/608061/201710/608061-20171022181638162-2114793152.png)
+
+ 
+
+| 表格   SQL      | select * from tbnamewhere id=5                               | select * from tbnamewhere id betwee 5 and 15                 | select * from tbnamewhere age=21                             | select * from tbnamewhere age betwee 5 and 9                 |
+| --------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| tb_no_index     | 主键定值查找表格tbname 添加 IS 意向锁id=5 添加 S锁           | 主键范围查找表格tbname 添加 IS 意向锁id=5,id=6 两行数据 添加 S锁同时添加2个 S GAP LOCK ,分别为 （(5,7),(6,25)）跟（(6,25),+∞） | 全表查找表格 tbname 添加 IS 意向锁由于全表查找，整个表格 再次添加 S 表锁 | 全表查找表格 tbname 添加 IS 意向锁由于全表查找，整个表格 再次添加S 表锁 |
+| tb_index        | ix_age索引查找表格tbname 添加 IS 意向锁索引上 age = 21 添加 S 行锁主键上 id=3 添加 S 行锁同时添加 2个 S GAP LOCK ，分别为 （(9,2) ,（21,3)），（(21,3), (21,25)） | ix_age索引查找表格tbname 添加 IS 意向锁age索引上面，age=7，age=9 行添加行锁 S再在主键上，给id=2，id=5 这一行数据，添加行数 S同时会在索引 age的值上添加 3个 S gap lock，分别为（(4,4)，(7,5)）、（(7,5)，(9,2)）、（(9,2)，(21,3)） |                                                              |                                                              |
+| tb_unique_index | ix_age索引查找表格tbname 添加 IS 意向锁索引上 age = 21 添加 S 行锁主键上 id=3 添加 S 行锁由于age列唯一，故不需要添加GAP LOCK | ix_age索引查找表格tbname 添加 IS 意向锁age索引上面，age=7，age=9 行添加行锁 S再在主键上，给id=2，id=5 这一行数据，添加行数 S同时会在索引 age的值上添加 2 个 S gap lock，分别为（(4,4)，(7,5)）、（(7,5)，(9,2)） |                                                              |                                                              |
+
+ 
+
+  至此，已说明了四个隔离级别是如何加锁，那么，释放锁呢？
+
+ 
+
+  在MySQL INNODB中，遵循的是 strong strict 2-PL，也就是所有的write lock 跟read lock 都是在 事务 commit后才释放。
+
+[回到顶部(go to top)](https://www.cnblogs.com/xinysu/p/7710928.html#_labelTop)
+
+### 3 SQL分析
+
+   考虑到下文的例子，这里补充两个概念。
+
+   ICP：
+
+   MRR：   
+
+   假设表格 tb_lock ( id int primary key not null, age int,score int,name varchar(10), key ix_age_score ( age, score ) ) 数据修改如下 ：
+
+   ![img](https://images2017.cnblogs.com/blog/608061/201710/608061-20171022181711427-275179066.png)
+
+ 
+
+   假设MySQL当前的隔离级别为 RR，执行 UPDATE tb_index WHERE age between 5 and 22 and score between 1 and 10 and name is not null，其执行计划如下：
+
+   ![img](https://images2017.cnblogs.com/blog/608061/201710/608061-20171022181733584-1874616726.png)
+
+   那么，是如何加锁的呢？
+
+   首先，可以看到是根据索引 ix_age_score 查找，那么分为两种情况来分析，第一种，数据库支持ICP；第二种，数据不支持ICP。
+
+#### 3.1 支持ICP情况
+
+   当数据库支持ICP的时候，根据复合索引第一列 age 查找 age between 5 and 22，然后在索引内部过滤 score between 1 and 10后，取得索引值后，如果数据库支持 MRR，则会把取得的索引值放到buffer中，对主键进行排序，然后可以根据顺序的主键值去 主键中查找行数据，如果不支持，则跳过这一步排序步骤，直接根据索引值内部的主键值，查找主键行数，最后过滤 name is not null 。
+
+  ![img](https://images2017.cnblogs.com/blog/608061/201710/608061-20171022181805568-1873987865.png)
+
+   加锁过程如下，tb_lock添加 IX 意向锁，在索引 ix_age_score 给索引值（7，10，5），（21，4，3）添加上 X record lock，并添加4个 X GAP LOCK，如图片红色素箭头展示，分别为（(4,7,4), (7,10,5)）,（(7,10,5), (9,15,2)）,（(9,15,2),(21,4,3)）,（(21,4,3)，(25,1,6)）,最后在主键上给id=3及id=5 两行数就添加X record lock。
+
+#### 3.2 不支持ICP情况
+
+   当数据库不支持ICP的时候，根据复合索引第一列 age 选择 age between 5 and 22，然后根据筛选的索引值 （7，10，5），（9，15，2），（21，4，3）中的主键 5、2、3，找到对应的行数据，再在行数据中 过滤 score between 1 and 10 and name is not null。
+
+   ![img](https://images2017.cnblogs.com/blog/608061/201710/608061-20171022181830974-266808529.png)
+
+   加锁过程如下，tb_lock添加 IX 意向锁，在索引 ix_age_score 给索引值（7，10，5），（9，15，2），（21，4，3）添加上 X record lock，并添加4个 X GAP LOCK，如图片红色素箭头展示，分别为（(4,7,4), (7,10,5)）,（(7,10,5), (9,15,2)）,（(9,15,2),(21,4,3)）,（(21,4,3)，(25,1,6)）,最后在主键上给id=2、id=3、id=5 两行数就添加X record lock。
+
+ 
+
+参考文档：http://hedengcheng.com/?p=771#_Toc374698321
+
+
+
+## [Innodb 并发涉及参数](https://www.cnblogs.com/xinysu/p/6439715.html)
+
+### 1 参数作用
+
+  MySQL的各个插件式引擎中，都会对事务及线程做一定的处理和优化。在Innodb引擎中，总是尝试保持 innodb内 操作系统的线程数（暂命名为innodb_thread） 应该小于或等于 系统可提供给innodb处理事务的线程数(暂命名为system_innodb_thread)。在大多数情况下，innodb_thread都不会指定一个限制值，而是让它想要多少直接申请多少。
+
+  当 innodb_thread 大于system_innodb_thread 时，持续时间较长时，会导致服务器的线程资源被数据库使用，CPU可能居高不下，甚至引发宕机。
+
+  这个时候，Innodb内部可以提供一个参数来限制 并发线程（同一时刻可处理的请求数），当并发数达到 并发线程限制数时，再接收到一个新的请求，那么这个请求需要在下次请求前先sleep一段时间，如果sleep后再请求还是没有多余线程提供其执行，那么，它就会进入到先进先出的队列中等待执行。这里注意下，等待线程，不计入 innodb_thread 。innodb_thread_concurrency 参数因此而来。
+
+  可以通过innodb_thread_concurrency 来调节 并发线程数的限制值，使用innodb_thread_sleep_delay来调整当 并发 thread 到达 innodb_thread_concurrency时需要sleep的时间。当请求被innodb接受的时候，会获得一个 消费凭证 innodb_concurrency_tickets (默认5000次)，当这个请求中有多个SQL被执行的时候，每执行一次，消费一次tickets，在次数用完之前，该线程重新请求时无须再进行前面 thread 是否达到 并发限制值的检查。
+
+  同时 **innodb_commit_concurrency**也控制了多线程并发提交的数量。如果 innodb_thread_concurrency 设置的有点大innodb_commit_concurrency应该做出相应的调整，否则会造成大量线程阻塞。
+
+  所以，跟并发相关的有这几个参数设置：innodb_thread_concurrency、innodb_thread_sleep_delay、innodb_concurrency_tickets、innodb_commit_concurrency。
+
+跟innodb_thread_concurrency相似的参数有 thread_concurrency ，但是它在5.6版本的官方文档中已被标识为过时，在5.7.2版本废除了该参数，所以我们这里不涉及对该参数的测试及描述。
+
+[回到顶部(go to top)](https://www.cnblogs.com/xinysu/p/6439715.html#_labelTop)
+
+### 2 参数设置
+
+#### 2.1 innodb_thread_concurrency
+
+#### 2.1.1 默认值
+
+  innodb_thread_concurrency默认是0，则表示没有并发线程数限制，所有请求都会直接请求线程执行。注意：当 innodb_thread_concurrency 设置为0时，则innodb_thread_sleep_delay的设置将会被忽略，不起作用。如果数据库没出现性能问题时，使用默认值即可。
+
+#### 2.1.2 大于0
+
+  当innodb_thread_concurrency>0，则表示有 并发数限制，当一个新的请求发起时，会检查当前并发线程数是否达到了 innodb_thread_concurrency的限制值，如果有，则需要sleep一段时间（sleep的设置详见下一部分），然后再再次请求，如果再次请求时，当前并发数还是达到限制值，那么就会进入FIFO队列等待执行。当进入到内核执行时，会得到一个 消费凭证 ticket，则这个线程，在后面的多次进入innodb执行操作是都不需要重复上面的检查步骤，当把次数消费完，那么这个线程就会被驱逐，等待下次再次进入Innodb，再重新分配ticket。
+
+#### 2.1.3 建议配置（来自官网）
+
+- 当并发用户线程数量小于64，建议设置innodb_thread_concurrency=0；
+- 如果负载不稳定，时而低，时而高到峰值，建议先设置innodb_thread_concurrency=128，并通过不断的降低这个参数，96, 80, 64等等，直到发现能够提供最佳性能的线程数，例如，假设系统通常有40到50个用户，但定期的数量增加至60，70，甚至200。你会发现，性能在80个并发用户设置时表现稳定，如果高于这个数，性能反而下降。在这种情况下，建议设置innodb_thread_concurrency参数为80，以避免影响性能；
+- 如果DB服务器上还允许其他应用，需要限制mysql的线程使用情况，则可以设置可分配给DB的线程数，但是不建议DB上跑其他应用，也不建议这么设置，因为这样可能导致数据库没有对硬件最优使用；
+- 设置过高值，可能会因为系统资源内部争夺导致性能下降；
+- 在大多数情况下，最佳的值是小于并接近虚拟CPU的个数；
+- 定期监控和分析DB，因为随着数据库负载的变化，业务的增加，innodb_thread_concurrency也需要动态的调整。
+
+#### 2.2 innodb_thread_sleep_delay
+
+  5.6.3版本前，需要反复测试才能确定innodb_thread_sleep_delay值，并且固定为一个值，在5.6.3版本后，因为 Innodb 自动调整innodb_thread_sleep_delay参数：
+
+- Innodb_adaptive_max_sleep_delay：最大sleep的时间，微秒为单位
+
+可以通过设置参数 innodb_adaptive_max_sleep_delay 来限制 innodb_thread_sleep_delay的最大值，不设置 innodb_thread_sleep_delay的取值情况，让Innodb自动跟进负载来调整，当系统负荷较高时，Innodb动态调整slee时间可使得数据库稳定运行。
+
+#### 2.3 innodb_commit_concurrency
+
+  该值只能为默认值0，mysql不限制并发提交。大于0表示允许N个事务在同一时间点提交，N的范围是0-1000。 
+
+  注意事项：mysqld运行时，不许把innodb_commit_concurrency 的值从0改为非0，或非0的值改为0；但允许从N改为M（N及M均大于0）
+
+#### 2.4 innodb_concurrency_tickets
+
+  默认是5000（基于5.6，5.7）。
+
+  如果innodb_concurrency_tickets设置小些，适用于小事物操作较多的系统，可以快速使用完线程后退出来，提供给其他请求使用；而对于大事务来说，可能会循环进入等待队列中等待执行完成，这会耗费更多时间及资源；如果innodb_concurrency_tickets设置大些，适用于大事务频繁操作的系统，这样大事务则不需要频繁进入queue等待队列，可以通过较少的请求来处理；但是对于小事务来说，则意味着他们要等待更长的时候，才能排队进入到内核执行。所以，当innodb_thread_concurrency>0时，需要上下调整 innodb_concurrency_tickets ，使其达到最佳性能。可以通过show engine innodb status 的queue查看，也可以通过[`INFORMATION_SCHEMA.INNODB_TRX`](https://dev.mysql.com/doc/refman/5.7/en/innodb-trx-table.html) 的`TRX_CONCURRENCY_TICKETS`查看消费次数情况。
+
+
+
+
+
+# 总结
+
+## 一条SQL语句在MySQL中是如何执行的
+
+### 一、mysql架构分析
+
+下面是mysql的一个简要架构图：
+
+<img src="https://img-blog.csdnimg.cn/20190517170850802.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQyMzIyMTAz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" style="zoom:50%;" />
+
+mysql主要分为Server层和存储引擎层
+
+**Server层**：主要包括连接器、查询缓存、分析器、优化器、执行器等，所有跨存储引擎的功能都在这一层实现，比如存储过程、触发器、视图，函数等，还有一个通用的日志模块 binglog日志模块。
+
+**存储引擎**： 主要负责数据的存储和读取，采用可以替换的插件式架构，支持InnoDB、MyISAM、Memory等多个存储引擎，其中InnoDB引擎有自有的日志模块redolog 模块。
+
+InnoDB 5.5.5版本作为默认引擎。
+
+**连接器**
+
+主要负责用户登录数据库，进行用户的身份认证，包括校验账户密码，权限等操作，如果用户账户密码已通过，连接器会到权限表中查询该用户的所有权限，之后在这个连接里的权限逻辑判断都是会依赖此时读取到的权限数据，也就是说，后续只要这个连接不断开，即时管理员修改了该用户的权限，该用户也是不受影响的。
+
+**查询缓存**
+
+连接建立后，执行查询语句的时候，会先查询缓存，Mysql会先校验这个sql是否执行过，以Key-Value的形式缓存在内存中，Key是查询预计，Value是结果集。如果缓存key被命中，就会直接返回给客户端，如果没有命中，就会执行后续的操作，完成后也会把结果缓存起来，方便下一次调用。当然在真正执行缓存查询的时候还是会校验用户的权限，是否有该表的查询条件。
+
+Mysql 查询不建议使用缓存，因为对于经常更新的数据来说，缓存的有效时间太短了，往往带来的效果并不好，对于不经常更新的数据来说，使用缓存还是可以的，Mysql 8.0 版本后删除了缓存的功能，官方也是认为该功能在实际的应用场景比较少，所以干脆直接删掉了。
+
+**分析器**
+
+mysql 没有命中缓存，那么就会进入分析器，分析器主要是用来分析SQL语句是来干嘛的，分析器也会分为几步：
+
+**第一步，词法分析**，一条SQL语句有多个字符串组成，首先要提取关键字，比如select，提出查询的表，提出字段名，提出查询条件等等。做完这些操作后，就会进入第二步。
+
+**第二步，语法分析**，主要就是判断你输入的sql是否正确，是否符合mysql的语法。
+
+完成这2步之后，mysql就准备开始执行了，但是如何执行，怎么执行是最好的结果呢？这个时候就需要优化器上场了。
+
+**优化器**
+
+优化器的作用就是它认为的最优的执行方案去执行（虽然有时候也不是最优），比如多个索引的时候该如何选择索引，多表查询的时候如何选择关联顺序等。
+
+**执行器**
+
+当选择了执行方案后，mysql就准备开始执行了，首先执行前会校验该用户有没有权限，如果没有权限，就会返回错误信息，如果有权限，就会去调用引擎的接口，返回接口执行的结果。
+
+### 二、语句分析
+
+#### 2.1 查询语句
+
+说了以上这么多，那么究竟一条sql语句是如何执行的呢？其实我们的sql可以分为两种，一种是查询，一种是更新（增加，更新，删除）。我们先分析下查询语句，语句如下：
+
+```
+select * from tb_student  A where A.age='18' and A.name='张三';
+```
+
+结合上面的说明，我们分析下这个语句的执行流程：
+
+- 先检查该语句是否有权限，如果没有权限，直接返回错误信息，如果有权限，在mysql8.0版本以前，会先查询缓存，以这条sql语句为key在内存中查询是否有结果，如果有直接缓存，如果没有，执行下一步。
+
+- 通过分析器进行词法分析，提取sql语句的关键元素，比如提取上面这个语句是查询select，提取需要查询的表名为tb_student,需要查询所有的列，查询条件是这个表的id='1'。然后判断这个sql语句是否有语法错误，比如关键词是否正确等等，如果检查没问题就执行下一步。
+
+- 接下来就是优化器进行确定执行方案，上面的sql语句，可以有两种执行方案：
+
+  ```
+    a.先查询学生表中姓名为“张三”的学生，然后判断是否年龄是18。
+    b.先找出学生中年龄18岁的学生，然后再查询姓名为“张三”的学生。
+  ```
+
+  那么优化器根据自己的优化算法进行选择执行效率最好的一个方案（优化器认为，有时候不一定最好）。那么确认了执行计划后就准备开始执行了。
+
+- 进行权限校验，如果没有权限就会返回错误信息，如果有权限就会调用数据库引擎接口，返回引擎的执行结果。
+
+#### 2.2 更新语句
+
+以上就是一条查询sql的执行流程，那么接下来我们看看一条更新语句如何执行的呢？sql语句如下：
+
+```
+update tb_student A set A.age='19' where A.name='张三';
+```
+
+我们来给张三修改下年龄，这条语句也基本上会沿着上一个查询的流程走，只不过执行更新的时候肯定要记录日志，这就会引入日志模块了，mysql 自带的日志模块式binlog（归档日志），所有的存储引擎都可以使用，我们常用的InnoDB引擎还自带了一个日志模块redo log，我们就以InnoDB模式下来探讨这个语句的执行流程。流程如下：
+
+- 先查询到张三这一条数据，如果有缓存，也是会用到缓存。
+- 然后拿到查询的语句，把 age 改为19，然后调用引擎API接口，写入这一行数据，InnoDB引擎把数据保存在内存中，同时记录redo log，此时redo log进入prepare状态，然后告诉执行器，执行完成了，随时可以提交。
+- 执行器收到通知后记录binlog，然后调用引擎接口，提交redo log 为提交状态。
+- 更新完成。
+
+这里肯定有同学会问，为什么要用两个日志模块，用一个日志模块不行吗？这就是之前mysql的模式了，MyISAM引擎是没有redo log的，那么我们知道它是不支持事务的，所以并不是说只用一个日志模块不可以，只是InnoDB引擎就是通过redo log来支持事务的。那么，又会有同学问，我用两个日志模块，但是不要这么复杂行不行，为什么redo log 要引入prepare预提交状态？这里我们用反证法来说明下为什么要这么做？
+
+- **先写redo log 直接提交，然后写 binlog**，假设写完redo log 后，机器挂了，binlog日志没有被写入，那么机器重启后，这台机器会通过redo log恢复数据，但是这个时候binlog并没有记录该数据，后续进行机器备份的时候，就会丢失这一条数据，同时主从同步也会丢失这一条数据。
+- **先写binlog，然后写redo log**，假设写完了binlog，机器异常重启了，由于没有redo log，本机是无法恢复这一条记录的，但是binlog又有记录，那么和上面同样的道理，就会产生数据不一致的情况。
+
+如果采用redo log 两阶段提交的方式就不一样了，写完binglog后，然后再提交redo log就会防止出现上述的问题，从而保证了数据的一致性。那么问题来了，有没有一个极端的情况呢？假设redo log 处于预提交状态，binglog也已经写完了，这个时候发生了异常重启会怎么样呢？ 这个就要依赖于mysql的处理机制了，mysql的处理过程如下：
+
+- 判断redo log 是否完整，如果判断是完整的，就立即提交。
+- 如果redo log 只是预提交但不是commit状态，这个时候就会去判断binlog是否完整，如果完整就提交 redo log, 不完整就回滚事务。
+
+这样就解决了数据一致性的问题。
+
+## 三、总结
+
+- Mysql 主要分为Server层和引擎层，Server层主要包括连接器、查询缓存、分析器、优化器、执行器，同时还有一个日志模块（binlog），这个日志模块所有执行引擎都可以共用。
+- 引擎层是插件式的，目前主要包括，MyISAM,InnoDB,Memory等。
+- 查询语句的执行流程如下：权限校验（如果命中缓存）---》查询缓存---》分析器---》优化器---》权限校验---》执行器---》引擎
+- 更新语句执行流程如下：分析器----》权限校验----》执行器---》引擎---redo log(prepare 状态---》binlog---》redo log(commit状态)
+
+## 四、参考
+
+- 《mysql专栏45讲》
+- [MySQL 5.6参考手册](https://dev.MySQL.com/doc/refman/5.6/en/)
+
+## 简述sql的执行流程
+
+1.当客户端连接到MySQL服务器时，服务器对其进行认证。可以通过用户名与密码认证，也可以通过SSL证书进行认证。登录认证后，服务器还会验证客户端是否有执行某个查询的操作权限。
+2.在正式查询之前，服务器会检查查询缓存，如果能找到对应的查询，则不必进行查询解析，优化，执行等过程，直接返回缓存中的结果集。
+3.MySQL的解析器会根据查询语句，构造出一个解析树，主要用于根据语法规则来验证语句是否正确，比如SQL的关键字是否正确，关键字的顺序是否正确。
+而预处理器主要是进一步校验，比如表名，字段名是否正确等
+4.查询优化器将解析树转化为查询计划，一般情况下，一条查询可以有很多种执行方式，最终返回相同的结果，优化器就是根据`成本`找到这其中最优的执行计划
+5.执行计划调用查询执行引擎，而查询引擎通过一系列API接口查询到数据
+6.得到数据之后，在返回给客户端的同时，会将数据存在查询缓存中
+
+![img](https://pic3.zhimg.com/80/v2-5560559141cb23827dcf5fe1218b3a7a_1440w.jpg)
+
+查询缓存
+
+我们先通过`show variables like '%query_cache%'`来看一下默认的数据库配置，此为本地数据库的配置。
+
+![img](https://pic4.zhimg.com/80/v2-3e30eb64dec6e4c423a547e3e3c05e0b_1440w.jpg)
+
+**2.1 概念**
+
+have_query_cache:当前的MYSQL版本是否支持“查询缓存”功能。
+query_cache_limit:MySQL能够缓存的最大查询结果，查询结果大于该值时不会被缓存。默认值是1048576(1MB)
+query_cache_min_res_unit:查询缓存分配的最小块（字节）。默认值是4096（4KB）。当查询进行时，MySQL把查询结果保存在query cache，但是如果保存的结果比较大，超过了query_cache_min_res_unit的值，这时候MySQL将一边检索结果，一边进行保存结果。他保存结果也是按默认大小先分配一块空间，如果不够，又要申请新的空间给他。如果查询结果比较小，默认的query_cache_min_res_unit可能造成大量的内存碎片，如果查询结果比较大，默认的query_cache_min_res_unit又不够，导致一直分配块空间，所以可以根据实际需求，调节query_cache_min_res_unit的大小。
+注：如果上面说的内容有点弯弯绕，那举个现实生活中的例子，比如咱现在要给运动员送水，默认的是500ml的瓶子，如果过来的是少年运动员，可能500ml太大了，他们喝不完，造成了浪费，那我们就可以选择300ml的瓶子，如果过来的是成年运动员，可能500ml不够，那他们一瓶喝完了，又开一瓶，直接不渴为止。那么那样开瓶子也要时间，我们就可以选择1000ml的瓶子。
+query_cache_size:为缓存查询结果分配的总内存。
+query_cache_type:默认为on，可以缓存除了以select sql_no_cache开头的所有查询结果。
+query_cache_wlock_invalidate:如果该表被锁住，是否返回缓存中的数据，默认是关闭的
+
+**2.2 原理**
+
+MYSQL的查询缓存实质上是缓存SQL的hash值和该SQL的查询结果，如果运行相同的SQL,服务器直接从缓存中去掉结果，而不再去解析，优化，寻找最低成本的执行计划等一系列操作，大大提升了查询速度。
+但是万事有利也有弊。
+
+- 第一个弊端就是如果表的数据有一条发生变化，那么缓存好的结果将全部不再有效。这对于频繁更新的表，查询缓存是不适合的。
+
+比如一张表里面只有两个字段，分别是id和name，数据有一条为1，张三。我使用select * from 表名 where name=“张三”来进行查询，MySQL发现查询缓存中没有此数据，会进行一系列的解析，优化等操作进行数据的查询，查询结束之后将该SQL的hash和查询结果缓存起来，并将查询结果返回给客户端。但是这个时候我有新增了一条数据2，张三。如果我还用相同的SQL来执行，他会根据该SQL的hash值去查询缓存中，那么结果就错了。所以MySQL对于数据有变化的表来说，会直接清空关于该表的所有缓存。这样其实是效率是很差的。
+
+- 第二个弊端就是缓存机制是通过对SQL的hash，得出的值为key，查询结果为value来存放的，那么就意味着SQL必须完完全全一模一样，否则就命不中缓存。
+
+我们都知道hash值的规则，就算很小的查询，哈希出来的结果差距是很多的，所以select * from 表名 where name=“张三”和SELECT * FROM 表名 WHERE NAME=“张三”和select * from 表名 where name = “张三”，三个SQL哈希出来的值是不一样的，大小写和空格影响了他们，所以并不能命中缓存，但其实他们搜索结果是完全一样的。
+**2.3 生产如何设置MySQL Query Cache**
+先来看线上参数：
+
+![img](https://pic1.zhimg.com/80/v2-f22337151ebd2ac63e1867049c335e0c_1440w.jpg)
+
+我们发现将query_cache_type设置为OFF，其实网上资料和各大云厂商提供的云服务器都是将这个功能关闭的，从上面的原理来看，在一般情况下，他的弊端大于优点。
+
+## 索引
+
+**例子**
+
+创建一个名为user的表，其包括id，name，age，sex等字段信息。此外，id为主键聚簇索引，idx_name为非聚簇索引。
+
+```java
+CREATE TABLE `user` (
+  `id` varchar(10) NOT NULL DEFAULT '',
+  `name` varchar(10) DEFAULT NULL,
+  `age` int(11) DEFAULT NULL,
+  `sex` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_name` (`name`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+
+我们将其设置10条数据，便于下面的索引的理解。
+
+```java
+INSERT INTO `user` VALUES ('1', 'andy', '20', '女');
+INSERT INTO `user` VALUES ('10', 'baby', '12', '女');
+INSERT INTO `user` VALUES ('2', 'kat', '12', '女');
+INSERT INTO `user` VALUES ('3', 'lili', '20', '男');
+INSERT INTO `user` VALUES ('4', 'lucy', '22', '女');
+INSERT INTO `user` VALUES ('5', 'bill', '20', '男');
+INSERT INTO `user` VALUES ('6', 'zoe', '20', '男');
+INSERT INTO `user` VALUES ('7', 'hay', '20', '女');
+INSERT INTO `user` VALUES ('8', 'tony', '20', '男');
+INSERT INTO `user` VALUES ('9', 'rose', '21', '男');
+```
+
+聚簇索引（主键索引）
+
+先来一张图镇楼，接下来就是看图说话。
+
+![img](https://pic3.zhimg.com/80/v2-13e0e112fe266bce2f017c419d865ec2_1440w.jpg)
+
+他包含两个特点：
+
+1.使用记录主键值的大小来进行记录和页的排序。
+
+页内的记录是按照主键的大小顺序排成一个单项链表。
+
+各个存放用户记录的页也是根据页中用户记录的主键大小顺序排成一个双向链表。
+
+2.叶子节点存储的是`完整的用户记录`。
+
+```java
+注：聚簇索引不需要我们显示的创建，他是由InnoDB存储引擎自动为我们创建的。如果没有主键，其也会默认创建一个。
+```
+
+### 非聚簇索引（二级索引）
+
+上面的聚簇索引只能在搜索条件是主键时才能发挥作用，因为聚簇索引可以根据主键进行排序的。如果搜索条件是name，在刚才的聚簇索引上，我们可能遍历，挨个找到符合条件的记录，但是，这样真的是太蠢了，MySQL不会这样做的。
+
+如果我们想让搜索条件是name的时候，也能使用索引，那可以多创建一个基于name的二叉树。如下图。
+
+![img](https://pic2.zhimg.com/80/v2-de1f6684b022ca5e9283cf6d4069e3a5_1440w.jpg)
+
+![img](https://pic2.zhimg.com/80/v2-de1f6684b022ca5e9283cf6d4069e3a5_1440w.jpg)
+
+他与聚簇索引的不同：
+
+1.叶子节点内部使用name字段排序，叶子节点之间也是使用name字段排序。
+
+2.叶子节点不再是完整的数据记录，而是name和主键值。
+
+```
+为什么不再是完整信息？
+```
+
+MySQL只让聚簇索引的叶子节点存放完整的记录信息，因为如果有好几个非聚簇索引，他们的叶子节点也存放完整的记录绩效，那就不浪费空间啦。
+
+```
+如果我搜索条件是基于name，需要查询所有字段的信息，那查询过程是啥？
+```
+
+1.根据查询条件，采用name的非聚簇索引，先定位到该非聚簇索引某些记录行。
+
+2.根据记录行找到相应的id，再根据id到聚簇索引中找到相关记录。这个过程叫做`回表`。
+
+联合索引
+
+图就不画了，简单来说，如果name和age组成一个联合索引，那么先按name排序，如果name一样，就按age排序。
+
+### 一些原则
+
+1.最左前缀原则。一个联合索引（a,b,c）,如果有一个查询条件有a，有b，那么他则走索引，如果有一个查询条件没有a，那么他则不走索引。
+
+2.使用唯一索引。具有多个重复值的列，其索引效果最差。例如，存放姓名的列具有不同值，很容易区分每行。而用来记录性别的列，只含有“男”，“女”，不管搜索哪个值，都会得出大约一半的行，这样的索引对性能的提升不够高。
+
+3.不要过度索引。每个额外的索引都要占用额外的磁盘空间，并降低写操作的性能。在修改表的内容时，索引必须进行更新，有时可能需要重构，因此，索引越多，所花的时间越长。
+
+4、索引列不能参与计算，保持列“干净”，比如from_unixtime(create_time) = ’2014-05-29’就不能使用到索引，原因很简单，b+树中存的都是数据表中的字段值，但进行检索时，需要把所有元素都应用函数才能比较，显然成本太大。所以语句应该写成create_time = unix_timestamp(’2014-05-29’);
+
+5.一定要设置一个主键。前面聚簇索引说到如果不指定主键，InnoDB会自动为其指定主键，这个我们是看不见的。反正都要生成一个主键的，还不如我们设置，以后在某些搜索条件时还能用到主键的聚簇索引。
+
+6.主键推荐用自增id，而不是uuid。上面的聚簇索引说到每页数据都是排序的，并且页之间也是排序的，如果是uuid，那么其肯定是随机的，其可能从中间插入，导致页的分裂，产生很多表碎片。如果是自增的，那么其有从小到大自增的，有顺序，那么在插入的时候就添加到当前索引的后续位置。当一页写满，就会自动开辟一个新的页。
+
+> 注：如果自增id用完了，那将字段类型改为bigint，就算每秒1万条数据，跑100年，也没达到bigint的最大值。
+
+### 万年面试题（为什么索引用B+树）
+
+1、 B+树的磁盘读写代价更低：B+树的内部节点并没有指向关键字具体信息的指针，因此其内部节点相对B树更小，如果把所有同一内部节点的关键字存放在同一盘块中，那么盘块所能容纳的关键字数量也越多，一次性读入内存的需要查找的关键字也就越多，相对`IO读写次数就降低`了。
+
+2、由于B+树的数据都存储在叶子结点中，分支结点均为索引，方便扫库，只需要扫一遍叶子结点即可，但是B树因为其分支结点同样存储着数据，我们要找到具体的数据，需要进行一次中序遍历按序来扫，所以B+树更加适合在`区间查询`的情况，所以通常B+树用于数据库索引。
+
+优化器
+
+在开篇的图里面，我们知道了SQL语句从客户端经由网络协议到查询缓存，如果没有命中缓存，再经过解析工作，得到准确的SQL，现在就来到了我们这模块说的优化器。
+
+首先，我们知道每一条SQL都有不同的执行方法，要不通过索引，要不通过全表扫描的方式。
+
+那么问题就来了，MySQL是如何选择时间最短，占用内存最小的执行方法呢？
+
+### 什么是成本？
+
+1.I/O成本。数据存储在硬盘上，我们想要进行某个操作需要将其加载到内存中，这个过程的时间被称为I/O成本。默认是1。
+
+2.CPU成本。在内存对结果集进行排序的时间被称为CPU成本。默认是0.2。
+
+### 单表查询的成本
+
+先来建一个用户表dev_user，里面包括主键id，用户名username，密码password，外键user_info_id，状态status，外键main_station_id，是否外网访问visit，这七个字段。索引有两个，一个是主键的聚簇索引，另一个是显式添加的以username为字段的唯一索引uname_unique。
+
+![img](https://pic2.zhimg.com/80/v2-0a2350522c081078d0a48f2fb0a91959_1440w.jpg)
+
+如果搜索条件是select * from dev_user where username='XXX'，那么MySQL是如何选择相关索引呢？
+
+1.使用所有可能用到的索引
+
+我们可以看到搜索条件username，所以可能走uname_unique索引。也可以做聚簇索引，也就是全表扫描。
+
+2.计算全表扫描代价
+
+我们通过`show table status like ‘dev_user’`命令知道`rows`和`data_length`字段，如下图。
+
+![img](https://pic1.zhimg.com/80/v2-cb21cba082c2c1fbe6c7df9f08afedb0_1440w.jpg)
+
+rows：表示表中的记录条数，但是这个数据不准确，是个估计值。
+
+data_length:表示表占用的存储空间字节数。
+
+```
+data_length=聚簇索引的页面数量X每个页面的大小
+```
+
+反推出页面数量=1589248÷16÷1024=97
+
+I/O成本：97X1=97
+
+CPU成本：6141X0.2=1228
+
+总成本：97+1228=1325
+
+3.计算使用不同索引执行查询的代价
+
+因为要查询出满足条件的所有字段信息，所以要考虑回表成本。
+
+I/O成本=1+1X1=2(范围区间的数量+预计二级记录索引条数)
+
+CPU成本=1X0.2+1X0.2=0.4(读取二级索引的成本+回表聚簇索引的成本)
+
+总成本=I/O成本+CPU成本=2.4
+
+4.对比各种执行方案的代价，找出成本最低的那个
+
+上面两个数字一对比，成本是采用uname_unique索引成本最低。
+
+### 多表查询的成本
+
+对于两表连接查询来说，他的查询成本由下面两个部分构成：
+
+- 单次查询驱动表的成本
+- 多次查询被驱动表的成本（具体查询多次取决于对驱动表查询的结果集有多少个记录）
+
+### index dive
+
+如果前面的搜索条件不是等值，而是区间，如`select * from dev_user where username>'admin' and username<'test'`这个时候我们是无法看出需要回表的数量。
+
+步骤1：先根据username>'admin'这个条件找到第一条记录，称为`区间最左记录`。
+
+步骤2：再根据username<'test'这个条件找到最后一条记录，称为`区间最右记录`。
+
+步骤3：如果区间最左记录和区间最右记录相差不是很远，可以准确统计出需要回表的数量。如果相差很远，就先计算10页有多少条记录，再乘以页面数量，最终模糊统计出来。
+
+## Explain
+
+### 产品来索命
+
+产品：为什么这个页面出来这么慢？
+
+开发：因为你查的数据多呗，他就是这么慢
+
+产品：我不管，我要这个页面快点，你这样，客户怎么用啊
+
+开发：。。。。。。。你行你来
+
+![img](https://pic3.zhimg.com/80/v2-0212e1193ea5618721420773afb818e2_1440w.jpg)
+
+哈哈哈哈，不瞎BB啦，如果有些SQL贼慢，我们需要知道他有没有走索引，走了哪个索引，这个时候我就需要通过explain关键字来深入了解MySQL内部是如何执行的。
+
+![img](https://pic1.zhimg.com/80/v2-2f6b393a3e97d7413255916766731da8_1440w.jpg)
+
+id
+
+一般来说一个select一个唯一id，如果是子查询，就有两个select，id是不一样的，但是凡事有例外，有些子查询的，他们id是一样的。
+
+![img](https://pic3.zhimg.com/80/v2-52db8814443b5f91eea62b904ecdf05a_1440w.jpg)
+
+这是为什么呢？
+
+那是因为MySQL在进行优化的时候已经将子查询改成了连接查询，而连接查询的id是一样的。
+
+### select_type
+
+- simple：不包括union和子查询的查询都算simple类型。
+- primary：包括union，union all，其中最左边的查询即为primary。
+- union：包括union，union all，除了最左边的查询，其他的查询类型都为union。
+
+### table
+
+显示这一行是关于哪张表的。
+
+### type：访问方法
+
+- ref：普通二级索引与常量进行等值匹配
+- ref_or_null：普通二级索引与常量进行等值匹配，该索引可能是null
+- const：主键或唯一二级索引列与常量进行等值匹配
+- range：范围区间的查询
+- all：全表扫描
+
+### possible_keys
+
+对某表进行单表查询时可能用到的索引
+
+### key
+
+经过查询优化器计算不同索引的成本，最终选择成本最低的索引
+
+### rows
+
+- 如果使用全表扫描，那么rows就代表需要扫描的行数
+- 如果使用索引，那么rows就代表预计扫描的行数
+
+### filtered
+
+- 如果全表扫描，那么filtered就代表满足搜索条件的记录的满分比
+- 如果是索引，那么filtered就代表除去索引对应的搜索，其他搜索条件的百分比
+
+## redo日志（物理日志）
+
+InnoDB存储引擎是以页为单位来管理存储空间的，我们进行的增删改查操作都是将页的数据加载到内存中，然后进行操作，再将数据刷回到硬盘上。
+
+那么问题就来了，如果我要给张三转账100块钱，事务已经提交了，这个时候InnoDB把数据加载到内存中，这个时候还没来得及刷入硬盘，突然停电了，数据库崩了。重启之后，发现我的钱没有转成功，这不是尴尬了吗？
+
+解决方法很明显，我们在硬盘加载到内存之后，进行一系列操作，一顿操作猛如虎，还未刷新到硬盘之前，先记录下，在XXX位置我的记录中金额减100，在XXX位置张三的记录中金额加100，然后再进行增删改查操作，最后刷入硬盘。如果未刷入硬盘，在重启之后，先加载之前的记录，那么数据就回来了。
+
+这个记录就叫做重做日志，即redo日志。他的目的是想让已经提交的事务对数据的修改是永久的，就算他重启，数据也能恢复出来。
+
+### log buffer（日志缓冲区）
+
+为了解决磁盘速度过慢的问题，redo日志不能直接写入磁盘，咱先整一大片连续的内存空间给他放数据。这一大片内存就叫做日志缓冲区，即log buffer。到了合适的时候，再刷入硬盘。至于什么时候是合适的，这个下一章节说。
+
+我们可以通过`show VARIABLES like 'innodb_log_buffer_size'`命令来查看当前的日志缓存大小，下图为线上的大小。
+
+![img](https://pic2.zhimg.com/80/v2-4377646c60969700bd9d6e0e1aaa6129_1440w.jpg)
+
+### redo日志刷盘时机
+
+由于redo日志一直都是增长的，且内存空间有限，数据也不能一直待在缓存中， 我们需要将其刷新至硬盘上。
+
+那什么时候刷新到硬盘呢？
+
+- log buffer空间不足。上面有指定缓冲区的内存大小，MySQL认为日志量已经占了 总容量的一半左右，就需要将这些日志刷新到磁盘上。
+- 事务提交时。我们使用redo日志的目的就是将他未刷新到磁盘的记录保存起来，防止 丢失，如果数据提交了，我们是可以不把数据提交到磁盘的，但为了保证持久性，必须 把修改这些页面的redo日志刷新到磁盘。
+- 后台线程不同的刷新 后台有一个线程，大概每秒都会将log buffer里面的redo日志刷新到硬盘上。
+- checkpoint 下下小节讲
+
+### redo日志文件组
+
+我们可以通过`show variables like 'datadir'`命令找到相关目录，底下有两个文件， 分别是ib_logfile0和ib_logfile1,如下图所示。
+
+![img](https://pic3.zhimg.com/80/v2-301b0982b64cb69c71c27b51eca2bace_1440w.jpg)
+
+![img](https://pic3.zhimg.com/80/v2-a469476345acf4c2ff31ab21a2ec6fa6_1440w.jpg)
+
+我们将缓冲区log buffer里面的redo日志刷新到这个两个文件里面，他们写入的方式 是循环写入的，先写ib_logfile0,再写ib_logfile1,等ib_logfile1写满了，再写ib_logfile0。 那这样就会存在一个问题，如果ib_logfile1写满了，再写ib_logfile0，之前ib_logfile0的内容 不就被覆盖而丢失了吗？ 这就是checkpoint的工作啦。
+
+### checkpoint
+
+redo日志是为了系统崩溃后恢复脏页用的，如果这个脏页可以被刷新到磁盘上，那么 他就可以功成身退，被覆盖也就没事啦。
+
+冲突补习
+
+从系统运行开始，就不断的修改页面，会不断的生成redo日志。redo日志是不断 递增的，MySQL为其取了一个名字日志序列号Log Sequence Number，简称lsn。 他的初始化的值为8704，用来记录当前一共生成了多少redo日志。
+
+redo日志是先写入log buffer，之后才会被刷新到磁盘的redo日志文件。MySQL为其 取了一个名字flush_to_disk_lsn。用来说明缓存区中有多少的脏页数据被刷新到磁盘上啦。 他的初始值和lsn一样，后面的差距就有了。
+
+- 做一次checkpoint分为两步
+- 计算当前系统可以被覆盖的redo日志对应的lsn最大值是多少。redo日志可以被覆盖， 意味着他对应的脏页被刷新到磁盘上，只要我们计算出当前系统中最早被修改的oldest_modification, 只要系统中lsn小于该节点的oldest_modification值磁盘的redo日志都是可以被覆盖的。
+- 将lsn过程中的一些数据统计。
+
+## undo日志（这部分不是很明白，所以大概说了）
+
+undo log有两个作用：提供回滚和多个行版本控制(`MVCC`)。
+
+undo log和redo log记录物理日志不一样，它是逻辑日志。可以认为当delete一条记录时，undo log中会记录一条对应的insert记录，反之亦然，当update一条记录时，它记录一条对应相反的update记录。
+
+举个例子:
+
+insert into a(id) values(1);(redo)
+
+这条记录是需要回滚的。
+
+回滚的语句是delete from a where id = 1;(undo)
+
+试想想看。如果没有做insert into a(id) values(1);(redo)
+
+那么delete from a where id = 1;(undo)这句话就没有意义了。
+
+现在看下正确的恢复:
+
+先insert into a(id) values(1);(redo)
+
+然后delete from a where id = 1;(undo)
+
+系统就回到了原先的状态，没有这条记录了
+
+### 存储方式
+
+是存在段之中。
+
+## 事务
+
+### 引言
+
+事务中有一个隔离性特征，理论上在某个事务对某个数据进行访问时，其他事务应该排序，当该事务提交之后，其他事务才能继续访问这个数据。
+
+但是这样子对性能影响太大，我们既想保持事务的隔离性，又想让服务器在出来多个事务时性能尽量高些，所以只能舍弃一部分隔离性而去性能。
+
+### 事务并发执行的问题
+
+- 脏写（这个太严重了，任何隔离级别都不允许发生）
+
+sessionA：修改了一条数据，回滚掉
+
+sessionB：修改了同一条数据，提交掉
+
+对于sessionB来说，明明数据更新了也提交了事务，不能说自己啥都没干
+
+- 脏读：一个事务读到另一个未提交事务修改的数据
+
+session A：查询，得到某条数据
+
+session B：修改某条数据，但是最后回滚掉啦
+
+session A：在sessionB修改某条数据之后，在回滚之前，读取了该条记录
+
+对于session A来说，读到了session回滚之前的脏数据
+
+- 不可重复读：前后多次读取，同一个数据内容不一样
+
+session A：查询某条记录
+session B : 修改该条记录，并提交事务
+session A : 再次查询该条记录，发现前后查询不一致
+
+- 幻读：前后多次读取，数据总量不一致
+
+session A：查询表内所有记录
+session B : 新增一条记录，并查询表内所有记录
+session A : 再次查询该条记录，发现前后查询不一致
+
+四种隔离级别
+数据库都有的四种隔离级别，MySQL事务默认的隔离级别是可重复读，而且MySQL可以解决了幻读的问题。
+
+- 未提交读：脏读，不可重复读，幻读都有可能发生
+- 已提交读：不可重复读，幻读可能发生
+- 可重复读：幻读可能发生
+- 可串行化：都不可能发生
+
+但凡事没有百分百，emmmm，其实MySQL并没有百分之百解决幻读的问题。
+
+举个例子：
+
+session A：查询某条不存在的记录。
+
+session B：新增该条不存在的记录，并提交事务。
+
+session A：再次查询该条不存在的记录，是查询不出来的，但是如果我尝试修改该条记录，并提交，其实他是可以修改成功的。
+
+MVCC
+
+版本链：对于该记录的每次更新，都会将值放在一条undo日志中，算是该记录的一个旧版本，随着更新次数的增多，所有版本都会被roll_pointer属性连接成一个链表，即为版本链。
+readview：
+
+- 未提交读：因为可以读到未提交事务修改的记录，所以可以直接读取记录的最新版本就行
+- 已提交读：每次读取之前都生成一个readview
+- 可重复读：只有在第一次读取的时候才生成readview
+- 可串行化：InnoDB涉及了加锁的方式来访问记录
+
+作者：学习Java的小姐姐
+
+
+
 # SQL优化
 
 ## 如何定位及优化SQL语句的性能问题？创建的索引有没有被使用到?或者说怎么才可以知道这条语句运行很慢的原因？
 
 对于低性能的SQL语句的定位，最重要也是最有效的方法就是使用执行计划，MySQL提供了explain命令来查看语句的执行计划。 我们知道，不管是哪种数据库，或者是哪种数据库引擎，在对一条SQL语句进行执行的过程中都会做很多相关的优化，对于查询语句，最重要的优化方式就是使用索引。 而执行计划，就是显示数据库引擎对于SQL语句的执行的详细情况，其中包含了是否使用索引，使用什么索引，使用的索引的相关信息等。
 
-[![在这里插入图片描述](https://camo.githubusercontent.com/6c30f90d0893f95097bf7bfee7350eac19d2a7cd/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f32303230303331303137313133313538322e706e673f782d6f73732d70726f636573733d696d6167652f77617465726d61726b2c747970655f5a6d46755a33706f5a57356e6147567064476b2c736861646f775f31302c746578745f6148523063484d364c7939696247396e4c6d4e7a5a473475626d56304c31526f61573572563239752c73697a655f31362c636f6c6f725f4646464646462c745f3730)](https://camo.githubusercontent.com/6c30f90d0893f95097bf7bfee7350eac19d2a7cd/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f32303230303331303137313133313538322e706e673f782d6f73732d70726f636573733d696d6167652f77617465726d61726b2c747970655f5a6d46755a33706f5a57356e6147567064476b2c736861646f775f31302c746578745f6148523063484d364c7939696247396e4c6d4e7a5a473475626d56304c31526f61573572563239752c73697a655f31362c636f6c6f725f4646464646462c745f3730)
+<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424152942073.png" alt="image-20200424152942073" style="zoom:50%;" />
 
 执行计划包含的信息 id 有一组数字组成。表示一个查询中各个子查询的执行顺序;
 
@@ -1080,7 +3540,7 @@ partition by key (id) partitions 5;
 5. 通过步骤一的连接，发送结果到客户端
 6. 关掉连接，释放资源
 
-[![在这里插入图片描述](https://camo.githubusercontent.com/56934340f71f6a22f46a38f1ca2df3d7fd54ab31/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f32303230303331303137303933363437382e706e673f782d6f73732d70726f636573733d696d6167652f77617465726d61726b2c747970655f5a6d46755a33706f5a57356e6147567064476b2c736861646f775f31302c746578745f6148523063484d364c7939696247396e4c6d4e7a5a473475626d56304c31526f61573572563239752c73697a655f31362c636f6c6f725f4646464646462c745f3730)](https://camo.githubusercontent.com/56934340f71f6a22f46a38f1ca2df3d7fd54ab31/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f32303230303331303137303933363437382e706e673f782d6f73732d70726f636573733d696d6167652f77617465726d61726b2c747970655f5a6d46755a33706f5a57356e6147567064476b2c736861646f775f31302c746578745f6148523063484d364c7939696247396e4c6d4e7a5a473475626d56304c31526f61573572563239752c73697a655f31362c636f6c6f725f4646464646462c745f3730)
+<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424153049086.png" alt="image-20200424153049086" style="zoom:50%;" />
 
 ## 大表数据查询，怎么优化
 
@@ -1287,6 +3747,207 @@ select id from t where name like ‘abc%’
 
 10.不要在 where 子句中的“=”左边进行函数、算术运算或其他表达式运算，否则系统将可能无法正确使用索引。
 
+
+
+##  Explain执行计划详解
+
+### 1 简要说明
+
+![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119213010171-980491368.png)
+
+| id            | 表格查询的顺序编号。         | 降序查看，id相同的从上到下查查看。id可以为null ，当table为( union ,m,n )类型的时候，id为null，这个时候，id的顺序为 m跟n的后面。 |
+| ------------- | ---------------------------- | ------------------------------------------------------------ |
+| select_type   | 查询的方式                   | 下文详细说明。                                               |
+| table         | 表格名称                     | 表名，别名，( union m,n ）。                                 |
+| partitions    | 分区名称                     | 查询使用到表分区的分区名。                                   |
+| type          | 表连接的类型                 | 下文详细说明。                                               |
+| possible_keys | 可能使用到的索引             | 这里的索引只是可能会有到，实际不一定会用到。                 |
+| key           | 使用到的索引                 | 实际使用的索引。                                             |
+| key_len       | 使用到索引的长度             | 比如多列索引，只用到最左的一列，那么使用到索引的长度则为该列的长度，故该值不一定等于 key 列索引的长度。 |
+| ref           | 谓词的关联信息               | 当 join type 为 const、eq_ref 或者 ref 时，谓词的关联信息。可能为 ：null（非 const \ eq_ref \ ref join type 时）、const（常量）、关联的谓词列名。 |
+| rows          | 扫描的行数                   | 该表格扫描到的行数。这里注意在mysql里边是嵌套链接，所以，需要把所有rows相乘就会得到查询数据行关联的次数 |
+| filtered      | 实际显示行数占扫描rows的比例 | 实际显示的行数 = rows * filtered / 100                       |
+| extra         | 特性使用                     |                                                              |
+
+[回到顶部(go to top)](https://www.cnblogs.com/xinysu/p/7860609.html#_labelTop)
+
+### SELECT_TYPE
+
+1. **SIMPLE**，简单查询方式，不使用UNION跟子查询；
+
+2. **PRIMARY**，该表格位于最外层开始查询，通常会跟其他查询方式组合；
+
+3. **UNION**，UNION 第一个SELECT 为PRIMARY，第二个及之后的所有SELECT 为 UNION SELECT TYPE；
+
+4. UNION RESULT
+
+   ，每个结果集的取出来后，会做合并操作，这个操作就是 UNION RESULT；
+
+   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119213129702-588374643.png)![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(37).png)
+
+5. DEPENDENT UNION
+
+   ，子查询中的UNION操作，从UNION 第二个及之后的所有SELECT语句的SELECT TYPE为 DEPENDENT UNION，这个一般跟DEPENDENT SUBQUERY一起结合应用，子查询中UNION 的第一个为DEPENDENT SUBQUERY；
+
+   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119213147015-783382219.png)
+
+6. DEPENDENT SUBQUERY
+
+   ，子查询中内层的第一个SELECT，依赖于外部查询的结果集；
+
+   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119213158218-270752088.png)
+
+7. SUBQUERY
+
+   ，子查询内层查询的第一个SELECT，结果不依赖于外部查询结果集（不会被数据库引擎改写的情况）；
+
+   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119213203531-919980455.png)
+
+8. DERIVED
+
+   ，查询使用内联视图；
+
+   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119213209656-1796980212.png)
+
+9. MATERIALIZED
+
+   ，子查询物化，表出现在非相关子查询中 并且需要进行物化时会出现MATERIALIZED关键词；
+
+   - ![img](https://img2018.cnblogs.com/blog/608061/201812/608061-20181201222221332-1337243417.png)
+
+10. UNCACHEABLE SUBQUERY
+
+    ，结果集无法缓存的子查询，需要逐次查询；
+
+    - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119213225343-2134061661.png)![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(43).png)
+
+11. UNCACHEABLE UNION
+
+    ，表示子查询不可被物化 需要逐次运行。
+
+    - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119213230359-1797725011.png)
+
+[回到顶部(go to top)](https://www.cnblogs.com/xinysu/p/7860609.html#_labelTop)
+
+###   TYPE
+
+   性能排序：null->system->const->eq-ref->ref->fulltext->ref_or_null->index_merge->unique_subquery->index_subquery->range->index->ALL
+
+1. null
+
+   ，不访问任何一个表格
+
+   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220221562-1941538266.png)![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(45).png)
+
+2. system
+
+   - 官网解释：The table has only one row (= system table). This is a special case of the [const](https://dev.mysql.com/doc/refman/5.7/en/explain-output.html#jointype_const) join type.
+   - join type 为const，并且表格仅含有1行记录。
+
+3. const
+
+   - 主键或者唯一索引的常量查询，表格最多只有1行记录符合查询，通常const使用到主键或者唯一索引进行定值查询。
+   - 常量查询非常快。
+   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220349734-69873590.png)![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(46).png)
+
+4. eq_ref
+
+   - join 查询过程中，关联条件为主键或者唯一索引，出来的行数不止一行
+   - eq_ref是一种性能非常好的 join 操作。![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(47).png)
+   - 例子说明：首先从su表格查询所有数据共7行出来，然后每一行跟 xin 的主键id中的1行做匹配。
+   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220433765-1802813303.png)
+
+5. ref
+
+   - 非聚集索引的常量查询
+   - 性能也是很不错的。
+   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220526796-647910285.png)![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(48).png)
+
+6. fulltext
+
+   - 查询的过程中，使用到了 fulltext 索引（fulltext index在innodb引擎中，只有5.6版本之后的支持）
+   - 例子是innodb引擎下、带fulltext index的表格查询
+   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220540265-1865474177.png)![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(49).png)
+
+7. ref_or_null
+
+   - 跟ref查询类似，在ref的查询基础上，不过会加多一个null值的条件查询
+   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220600312-1531705376.png)![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(50).png)
+
+8. index merg
+
+   - 当条件谓词使用到多个索引的最左边列并且谓词之间的连接为or的情况下，会使用到 索引联合查询
+   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220611156-868108546.png)
+
+9. unique subquery
+
+   - eq_ref的一个分支，查询主键的子查询：
+   - value IN (SELECT primary_key FROM single_table WHERE some_expr)
+   - *暂时无法模拟出来，目前在5.7.17版本怎么测试，出来的type都是 eq_ref*
+
+10. index subquery
+
+    - ref的一个分支，查询非聚集索引的子查询：
+    - value IN (SELECT key_column FROM single_table WHERE some_expr)
+    - *暂时无法模拟出来，目前在5.7.17版本怎么测试，出来的type都是 ref*
+
+11. range
+
+    - 当谓词使用到索引范围查询的时候：=、<>、>、>=、<、<=、IS NULL、BETWEEN、IN、<=> (这是个表达式：左边可以推出右边,右边也可推出左边)
+    - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220636609-1394291654.png)
+
+12. index
+
+    - 使用到索引，但是不是索引查找，而是对索引树做一个扫描，即使是索引扫描，大多数情况下也是比全表扫描性能要好的，因为索引树上的键值只有索引列键值+主键，而全表扫描则是在 聚集索引树（主键+所有列）上进行扫描，索引树相比之下要廋得多跟小得多了。
+    - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220647093-1271534948.png)![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(53).png)
+
+13. all
+
+    - 全表扫描，性能比较差。
+    - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220659796-1493381634.png)![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(54).png)
+    - 关于 index跟all，这里再举一个例子说明下
+      - 下图中，表格su有3个索引：主键、ix_age、ix_name，这三个索引树的内容分别为：主键id+所有列、age+主键id、name+主键id，依次，当扫描主键id查询的时候，这三个索引都能够提供 主键id列，那么哪个性能比较好呢？索引树最小的，扫描次数最少的则为最优，根据索引数内容可得大小：ix_age < ix_name < pk，故执行计划会选择 ix_age。
+      - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220714109-349225041.png)
+
+[回到顶部(go to top)](https://www.cnblogs.com/xinysu/p/7860609.html#_labelTop)
+
+### ref
+
+   当 join type 为 eq_ref 或者 ref 时，谓词的关联信息。可能为 ：null（非 eq_ref\ref join type时）、const（常量）、关联的谓词列名。
+
+ 
+
+ ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220743515-924472895.png)
+
+[回到顶部(go to top)](https://www.cnblogs.com/xinysu/p/7860609.html#_labelTop)
+
+### extra  
+
+- 常用到
+
+- 1. Using index，使用到索引
+  2. Using index conditio，使用到索引过滤
+  3. Using MRR，使用到索引内部排序
+  4. Using where，使用到where条件
+  5. Using temporary，使用到临时表
+
+1. Using index
+   - 索引覆盖，也就是不止要使用到索引，而且没有回表查询
+   - 举个例子说明
+     - ![img](data:image/png;base64,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)
+   - 这两个查询中，条件都是一样，但是第一个返回的是所有列，而索引 IX_age上仅包含主键列跟索引键值，故需要再根据主键的值去PK树上找到对应的列，这个操作称为回表，所以第一个查询中extra没有USING INDEX，而第二个查询有。
+2. Using index conditio，简称 ICP
+3. Using MRR，简称 MRR
+4. Using where
+   - 根据where条件，先取出数据，再跟其他表格关联查询
+5. Using filesort，无法利用索引来完成的排序
+6. Using temporary，使用到临时表
+7. 使用到临时表，表数量较少的情况下，临时表使用缓存，但是比较大的时候，则会磁盘存储，这种情况下，性能将会急剧下降
+
+
+
+
+
 # 数据库优化
 
 ## 为什么要优化
@@ -1351,7 +4012,7 @@ select id from t where name like ‘abc%’
 
 **简单来说垂直拆分是指数据表列的拆分****，把一张列比较多的表拆分为多张表**。 如下图所示，这样来说大家应该就更容易理解了。
 
-[![img](https://camo.githubusercontent.com/587d1004670ca61b8c7682ea9733de6ca828baf0/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c793931633256794c57647662475174593252754c6e687064485575615738764d6a41784f4338324c7a45324c7a45324e4441344e444d314e474a684d6d55775a6d513f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)](https://camo.githubusercontent.com/587d1004670ca61b8c7682ea9733de6ca828baf0/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c793931633256794c57647662475174593252754c6e687064485575615738764d6a41784f4338324c7a45324c7a45324e4441344e444d314e474a684d6d55775a6d513f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)
+![image-20200424153126354](/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424153126354.png)
 
 **垂直拆分的优点**： 可以使得行数据变小，在查询时减少读取的Block数，减少I/O次数。此外，垂直分区可以简化表的结构，易于维护。
 
@@ -1359,7 +4020,7 @@ select id from t where name like ‘abc%’
 
 **垂直分表** 把主键和一些列放在一个表，然后把主键和另外的列放在另一个表中
 
-[![img](https://camo.githubusercontent.com/4f7ea49095a73c6215960853957d73d6c8686c6f/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c79397462574a706569357863476c6a4c6d4e754c323174596d6c36583270775a79393064564e6853324d3255325a51636a68304e4642615656464a5655737a56486c306157463354305652613264465a6e4243546d34785a6b4e74644556684d6b52614e546c4953464e5361574e325345497a65553433596b354c5931686b63334e575a47464e623235544f45464b616e5935634664424c7a59304d413f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)](https://camo.githubusercontent.com/4f7ea49095a73c6215960853957d73d6c8686c6f/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c79397462574a706569357863476c6a4c6d4e754c323174596d6c36583270775a79393064564e6853324d3255325a51636a68304e4642615656464a5655737a56486c306157463354305652613264465a6e4243546d34785a6b4e74644556684d6b52614e546c4953464e5361574e325345497a65553433596b354c5931686b63334e575a47464e623235544f45464b616e5935634664424c7a59304d413f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)
+<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424153147833.png" alt="image-20200424153147833" style="zoom:50%;" />
 
 **适用场景** 1、如果一个表中某些列常用，另外一些列不常用 2、可以使数据行变小，一个数据页能存储更多数据，查询时减少I/O次数 **缺点**
 
@@ -1373,7 +4034,7 @@ select id from t where name like ‘abc%’
 
 水平拆分是指数据表行的拆分，表的行数超过200万行时，就会变慢，这时可以把一张的表的数据拆成多张表来存放。举个例子：我们可以将用户信息表拆分成多个用户信息表，这样就可以避免单一表数据量过大对性能造成影响。
 
-[![数据库水平拆分](https://camo.githubusercontent.com/4cebf02dbd8ca2acbaabab576d36a3f716d880fb/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c793931633256794c57647662475174593252754c6e687064485575615738764d6a41784f4338324c7a45324c7a45324e4441344e4749335a546c6c4e44497a5a544d3f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)](https://camo.githubusercontent.com/4cebf02dbd8ca2acbaabab576d36a3f716d880fb/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c793931633256794c57647662475174593252754c6e687064485575615738764d6a41784f4338324c7a45324c7a45324e4441344e4749335a546c6c4e44497a5a544d3f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)
+<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424153206236.png" alt="image-20200424153206236" style="zoom:50%;" />
 
 水平拆分可以支持非常大的数据量。需要注意的一点是:分表仅仅是解决了单一表数据过大的问题，但由于表的数据还是在同一台机器上，其实对于提升MySQL并发能力没有什么意义，所以 **水平拆分最好分库** 。
 
@@ -1383,7 +4044,7 @@ select id from t where name like ‘abc%’
 
 **水平分表：** 表很大，分割后可以降低在查询时需要读的数据和索引的页数，同时也降低了索引的层数，提高查询次数
 
-[![img](https://camo.githubusercontent.com/a5e5bb603af35811095ceec7a73011d71d3542b7/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c79397462574a706569357863476c6a4c6d4e754c323174596d6c36583270775a79393064564e6853324d3255325a51636a68304e4642615656464a5655737a56486c3061574633543056526132646b51567079553159334d326c694d575a6b52454e5953324d3351556436576d68696433466a53305a56576b7047575468774d465a6b565852504d334a4e597a5a3265444642647a56424c7a59304d413f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)](https://camo.githubusercontent.com/a5e5bb603af35811095ceec7a73011d71d3542b7/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c79397462574a706569357863476c6a4c6d4e754c323174596d6c36583270775a79393064564e6853324d3255325a51636a68304e4642615656464a5655737a56486c3061574633543056526132646b51567079553159334d326c694d575a6b52454e5953324d3351556436576d68696433466a53305a56576b7047575468774d465a6b565852504d334a4e597a5a3265444642647a56424c7a59304d413f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)
+<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424153221674.png" alt="image-20200424153221674" style="zoom:50%;" />
 
 **适用场景** 1、表中的数据本身就有独立性，例如表中分表记录各个地区的数据或者不同时期的数据，特别是有些数据常用，有些不常用。 2、需要把数据存放在多个介质上。
 
@@ -1422,7 +4083,7 @@ select id from t where name like ‘abc%’
 
 般来讲，分页时需要按照指定字段进行排序。当排序字段就是分片字段的时候，我们通过分片规则可以比较容易定位到指定的分片，而当排序字段非分片字段的时候，情况就会变得比较复杂了。为了最终结果的准确性，我们需要在不同的分片节点中将数据进行排序并返回，并将不同分片返回的结果集进行汇总和再次排序，最后再返回给用户。如下图所示：
 
-[![在这里插入图片描述](https://camo.githubusercontent.com/8f0df61811b17898a7bc5be2c0606c12e8f479a7/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f32303230303331303137303735333834382e706e673f782d6f73732d70726f636573733d696d6167652f77617465726d61726b2c747970655f5a6d46755a33706f5a57356e6147567064476b2c736861646f775f31302c746578745f6148523063484d364c7939696247396e4c6d4e7a5a473475626d56304c31526f61573572563239752c73697a655f31362c636f6c6f725f4646464646462c745f3730)](https://camo.githubusercontent.com/8f0df61811b17898a7bc5be2c0606c12e8f479a7/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f32303230303331303137303735333834382e706e673f782d6f73732d70726f636573733d696d6167652f77617465726d61726b2c747970655f5a6d46755a33706f5a57356e6147567064476b2c736861646f775f31302c746578745f6148523063484d364c7939696247396e4c6d4e7a5a473475626d56304c31526f61573572563239752c73697a655f31362c636f6c6f725f4646464646462c745f3730)
+<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424153306289.png" alt="image-20200424153306289" style="zoom:50%;" />
 
 ## MySQL的复制原理以及流程
 
@@ -1458,7 +4119,7 @@ select id from t where name like ‘abc%’
 
 复制过程
 
-[![img](https://camo.githubusercontent.com/bddeb50e28e0c155732e328b8ff0f4637c95071b/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c793931633256794c57647662475174593252754c6e687064485575615738764d6a41784f4338354c7a49784c7a45324e575a694e6a677a4d6a49794d4456694d6d553f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)](https://camo.githubusercontent.com/bddeb50e28e0c155732e328b8ff0f4637c95071b/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c793931633256794c57647662475174593252754c6e687064485575615738764d6a41784f4338354c7a49784c7a45324e575a694e6a677a4d6a49794d4456694d6d553f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67)
+<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424153328526.png" alt="image-20200424153328526" style="zoom: 33%;" />
 
 Binary log：主数据库的二进制日志
 
@@ -1533,6 +4194,235 @@ xtrabackup 属于物理备份，直接拷贝表空间文件，同时不断扫描
 使用 **myisamchk** 来修复，具体步骤：
 
  1）修复前将mysql服务停止。 2）打开命令行方式，然后进入到mysql的/bin目录。 3）执行myisamchk –recover 数据库所在路径/*.MYI 使用repair table 或者 OPTIMIZE table命令来修复，REPAIR TABLE table_name 修复表 OPTIMIZE TABLE table_name 优化表 REPAIR TABLE 用于修复被破坏的表。 OPTIMIZE TABLE 用于回收闲置的数据库空间，当表上的数据行被删除时，所占据的磁盘空间并没有立即被回收，使用了OPTIMIZE TABLE命令后这些空间将被回收，并且对磁盘上的数据行进行重排（注意：是磁盘上，而非数据库）
+
+
+
+# MySQL性能优化的21个最佳实践
+
+ 今天，数据库的操作越来越成为整个应用的性能瓶颈了，这点对于Web应用尤其明显。关于数据库的性能，这并不只是DBA才需要担心的事，而这更是我们程序员需要去关注的事情。当我们去设计数据库表结构，对操作数据库时(尤其是查表时的SQL语句)，我们都需要注意数据操作的性能。这里，我们不会讲过多的SQL语句的优化，而只是针对MySQL这一Web应用最多的数据库。希望下面的这些优化技巧对你有用。
+
+## 1.查询缓存 优化你的查询
+
+　　大多数的MySQL服务器都开启了查询缓存。这是提高性最有效的方法之一，而且这是被MySQL的数据库引擎处理的。当有很多相同的查询被执行了多次的时候，这些查询结果会被放到一个缓存中，这样，后续的相同的查询就不用操作表而直接访问缓存结果了。
+
+　　这里最主要的问题是，对于程序员来说，这个事情是很容易被忽略的。因为，我们某些查询语句会让MySQL不使用缓存。请看下面的示例：
+
+![img](https://img-blog.csdn.net/20180214110655862)
+
+　　上面两条SQL语句的差别就是 CURDATE() ，MySQL的查询缓存对这个函数不起作用。所以，像 NOW() 和 RAND() 或是其它的诸如此类的SQL函数都不会开启查询缓存，因为这些函数的返回是会不定的易变的。所以，你所需要的就是用一个变量来代替MySQL的函数，从而开启缓存。
+
+## 2.EXPLAIN SELECT查询
+
+　　使用 EXPLAIN 关键字可以让你知道MySQL是如何处理你的SQL语句的。这可以帮你分析你的查询语句或是表结构的性能瓶颈。
+
+EXPLAIN 的查询结果还会告诉你你的索引主键被如何利用的，你的数据表是如何被搜索和排序的……等等，等等。
+
+　　挑一个你的SELECT语句(推荐挑选那个最复杂的，有多表联接的)，把关键字EXPLAIN加到前面。你可以使用phpmyadmin来做这个事。然后，你会看到一张表格。下面的这个示例中，我们忘记加上了group_id索引，并且有表联接：
+![img](https://img-blog.csdn.net/20180214110804527)
+
+　　当我们为 group_id 字段加上索引后：
+![img](https://img-blog.csdn.net/20180214110836429)
+
+　　我们可以看到，前一个结果显示搜索了 7883 行，而后一个只是搜索了两个表的 9 和 16 行。查看rows列可以让我们找到潜在的性能问题。
+
+## 3.当只要一行数据时使用LIMIT 1
+
+　　当你查询表的有些时候，你已经知道结果只会有一条结果，但因为你可能需要去fetch游标，或是你也许会去检查返回的记录数。
+
+　　在这种情况下，加上 LIMIT 1 可以增加性能。这样一样，MySQL数据库引擎会在找到一条数据后停止搜索，而不是继续往后查少下一条符合记录的数据。
+
+　　下面的示例，只是为了找一下是否有“中国”的用户，很明显，后面的会比前面的更有效率。(请注意，第一条中是Select *，第二条是Select 1)
+
+![img](https://img-blog.csdn.net/20180214110916420)
+
+## 4.为搜索字段建索引
+
+　　索引并不一定就是给主键或是唯一的字段。如果在你的表中，有某个字段你总要会经常用来做搜索，那么，请为其建立索引吧。
+
+![img](https://img-blog.csdn.net/20180214110953991)
+
+　　从上图你可以看到那个搜索字串 “last_name LIKE ‘a%’”，一个是建了索引，一个是没有索引，性能差了4倍左右。
+
+　　另外，你应该也需要知道什么样的搜索是不能使用正常的索引的。例如，当你需要在一篇大的文章中搜索一个词时，如： “WHEREpost_content LIKE ‘%apple%’”，索引可能是没有意义的。你可能需要使用MySQL全文索引或是自己做一个索引(比如说：搜索关键词或是Tag什么的)
+
+## 5.在Join表的时候使用相当类型的例，并将其索引
+
+　　如果你的应用程序有很多 JOIN 查询，你应该确认两个表中Join的字段是被建过索引的。这样，MySQL内部会启动为你优化Join的SQL语句的机制。
+
+　　而且，这些被用来Join的字段，应该是相同的类型的。例如：如果你要把 DECIMAL 字段和一个 INT 字段Join在一起，MySQL就无法使用它们的索引。对于那些STRING类型，还需要有相同的字符集才行。(两个表的字符集有可能不一样)
+
+![img](https://img-blog.csdn.net/20180214111032980)
+
+## 6.千万不要ORDER BY RAND()
+
+
+　　想打乱返回的数据行?随机挑一个数据?真不知道谁发明了这种用法，但很多新手很喜欢这样用。但你确不了解这样做有多么可怕的性能问题。
+
+　　如果你真的想把返回的数据行打乱了，你有N种方法可以达到这个目的。这样使用只让你的数据库的性能呈指数级的下降。这里的问题是：MySQL会不得不去执行RAND()函数(很耗CPU时间)，而且这是为了每一行记录去记行，然后再对其排序。就算是你用了Limit 1也无济于事(因为要排序)
+
+　　下面的示例是随机挑一条记录
+
+![img](https://img-blog.csdn.net/20180214111151515)
+
+
+## 7.避免SELECT *
+
+　　从数据库里读出越多的数据，那么查询就会变得越慢。并且，如果你的数据库服务器和WEB服务器是两台独立的服务器的话，这还会增加网络传输的负载。
+
+　　所以，你应该养成一个需要什么就取什么的好的习惯。
+
+![img](https://img-blog.csdn.net/20180214111212721)
+
+## 8.永远为每张表设置一个ID
+
+　　我们应该为数据库里的每张表都设置一个ID做为其主键，而且最好的是一个INT型的(推荐使用UNSIGNED)，并设置上自动增加的AUTO_INCREMENT标志。
+
+　　就算是你 users 表有一个主键叫 “email”的字段，你也别让它成为主键。使用 VARCHAR 类型来当主键会使用得性能下降。另外，在你的程序中，你应该使用表的ID来构造你的数据结构。
+
+　　而且，在MySQL数据引擎下，还有一些操作需要使用主键，在这些情况下，主键的性能和设置变得非常重要，比如，集群，分区……
+
+　　在这里，只有一个情况是例外，那就是“关联表”的“外键”，也就是说，这个表的主键，通过若干个别的表的主键构成。我们把这个情况叫做“外键”。比如：有一个“学生表”有学生的ID，有一个“课程表”有课程ID，那么，“成绩表”就是“关联表”了，其关联了学生表和课程表，在成绩表中，学生ID和课程ID叫“外键”其共同组成主键。
+
+## 9.使用ENUM而不是VARCHAR
+
+ENUM 类型是非常快和紧凑的。在实际上，其保存的是 TINYINT，但其外表上显示为字符串。这样一来，用这个字段来做一些选项列表变得相当的完美。
+
+　　如果你有一个字段，比如“性别”，“国家”，“民族”，“状态”或“部门”，你知道这些字段的取值是有限而且固定的，那么，你应该使用 ENUM 而不是 VARCHAR。
+
+MySQL也有一个“建议”(见第十条)告诉你怎么去重新组织你的表结构。当你有一个 VARCHAR 字段时，这个建议会告诉你把其改成 ENUM 类型。使用 PROCEDUREANALYSE() 你可以得到相关的建议。
+
+## 10.从PROCEDURE ANALYSE()取得建议
+
+PROCEDURE ANALYSE()会让 MySQL 帮你去分析你的字段和其实际的数据，并会给你一些有用的建议。只有表中有实际的数据，这些建议才会变得有用，因为要做一些大的决定是需要有数据作为基础的。
+
+　　例如，如果你创建了一个 INT 字段作为你的主键，然而并没有太多的数据，那么，PROCEDURE ANALYSE()会建议你把这个字段的类型改成 MEDIUMINT 。或是你使用了一个 VARCHAR 字段，因为数据不多，你可能会得到一个让你把它改成 ENUM 的建议。这些建议，都是可能因为数据不够多，所以决策做得就不够准。
+
+　　在phpmyadmin里，你可以在查看表时，点击 “Propose table structure” 来查看这些建议
+
+![img](https://img-blog.csdn.net/20180214111316232)
+　　一定要注意，这些只是建议，只有当你的表里的数据越来越多时，这些建议才会变得准确。一定要记住，你才是最终做决定的人。
+
+## 11.尽可能的使用NOT NULL
+
+　　除非你有一个很特别的原因去使用 NULL 值，你应该总是让你的字段保持 NOT NULL。这看起来好像有点争议，请往下看。
+
+　　首先，问问你自己“Empty”和“NULL”有多大的区别(如果是INT，那就是0和NULL)?如果你觉得它们之间没有什么区别，那么你就不要使用NULL。(你知道吗?在 Oracle 里，NULL 和 Empty 的字符串是一样的!)
+
+　　不要以为 NULL 不需要空间，其需要额外的空间，并且，在你进行比较的时候，你的程序会更复杂。当然，这里并不是说你就不能使用NULL了，现实情况是很复杂的，依然会有些情况下，你需要使用NULL值。
+
+## 12. Prepared Statements
+
+Prepared Statements很像存储过程，是一种运行在后台的SQL语句集合，我们可以从使用 prepared statements 获得很多好处，无论是性能问题还是安全问题。
+
+Prepared Statements可以检查一些你绑定好的变量，这样可以保护你的程序不会受到“SQL注入式”攻击。当然，你也可以手动地检查你的这些变量，然而，手动的检查容易出问题，而且很经常会被程序员忘了。当我们使用一些framework或是ORM的时候，这样的问题会好一些。
+
+　　在性能方面，当一个相同的查询被使用多次的时候，这会为你带来可观的性能优势。你可以给这些Prepared Statements定义一些参数，而MySQL只会解析一次。
+
+　　虽然最新版本的MySQL在传输Prepared Statements是使用二进制形势，所以这会使得网络传输非常有效率。
+
+　　当然，也有一些情况下，我们需要避免使用Prepared Statements，因为其不支持查询缓存。但据说版本5.1后支持了。
+
+　　在PHP中要使用prepared statements，你可以查看其使用手册：mysqli 扩展或是使用数据库抽象层，如： PDO.
+![img](https://img-blog.csdn.net/20180214111352820)
+
+
+## 13.无缓冲的查询
+
+　　正常的情况下，当你在当你在你的脚本中执行一个SQL语句的时候，你的程序会停在那里直到没这个SQL语句返回，然后你的程序再往下继续执行。你可以使用无缓冲查询来改变这个行为。
+
+mysql_unbuffered_query()发送一个SQL语句到MySQL而并不像mysql_query()一样去自动fethch和缓存结果。这会相当节约很多可观的内存，尤其是那些会产生大量结果的查询语句，并且，你不需要等到所有的结果都返回，只需要第一行数据返回的时候，你就可以开始马上开始工作于查询结果了。
+
+　　然而，这会有一些限制。因为你要么把所有行都读走，或是你要在进行下一次的查询前调用 mysql_free_result() 清除结果。而且， mysql_num_rows() 或 mysql_data_seek() 将无法使用。所以，是否使用无缓冲的查询你需要仔细考虑。
+
+## 14.把IP地址存成UNSIGNED INT
+
+　　很多程序员都会创建一个 VARCHAR(15) 字段来存放字符串形式的IP而不是整形的IP。如果你用整形来存放，只需要4个字节，并且你可以有定长的字段。而且，这会为你带来查询上的优势，尤其是当你需要使用这样的WHERE条件：IP between ip1 andip2。
+
+存 select inet_aton('10.10.10.10');  	取 select inet_ntoa('168430090');
+
+　　我们必需要使用UNSIGNED INT，因为 IP地址会使用整个32位的无符号整形。
+
+　　而你的查询，你可以使用 INET_ATON() 来把一个字符串IP转成一个整形，并使用 INET_NTOA() 把一个整形转成一个字符串IP。在PHP中，也有这样的函数 ip2long() 和 long2ip()。
+![img](https://img-blog.csdn.net/20180214111436390)
+
+## 15.固定长度的表会更快
+
+　　如果表中的所有字段都是“固定长度”的，整个表会被认为是 “static” 或 “fixed-length”。例如，表中没有如下类型的字段： VARCHAR，TEXT，BLOB。只要你包括了其中一个这些字段，那么这个表就不是“固定长度静态表”了，这样，MySQL 引擎会用另一种方法来处理。
+
+　　固定长度的表会提高性能，因为MySQL搜寻得会更快一些，因为这些固定的长度是很容易计算下一个数据的偏移量的，所以读取的自然也会很快。而如果字段不是定长的，那么，每一次要找下一条的话，需要程序找到主键。
+
+　　并且，固定长度的表也更容易被缓存和重建。不过，唯一的副作用是，固定长度的字段会浪费一些空间，因为定长的字段无论你用不用，他都是要分配那么多的空间。
+
+　　使用“垂直分割”技术(见下一条)，你可以分割你的表成为两个一个是定长的，一个则是不定长的。
+
+## 16.垂直分割
+
+“垂直分割”是一种把数据库中的表按列变成几张表的方法，这样可以降低表的复杂度和字段的数目，从而达到优化的目的。(以前，在银行做过项目，见过一张表有100多个字段，很恐怖)
+
+　　示例一：在Users表中有一个字段是家庭地址，这个字段是可选字段，相比起，而且你在数据库操作的时候除了个人信息外，你并不需要经常读取或是改写这个字段。那么，为什么不把他放到另外一张表中呢? 这样会让你的表有更好的性能，大家想想是不是，大量的时候，我对于用户表来说，只有用户ID，用户名，口令，用户角色等会被经常使用。小一点的表总是会有好的性能。
+
+　　示例二：你有一个叫 “last_login” 的字段，它会在每次用户登录时被更新。但是，每次更新时会导致该表的查询缓存被清空。所以，你可以把这个字段放到另一个表中，这样就不会影响你对用户ID，用户名，用户角色的不停地读取了，因为查询缓存会帮你增加很多性能。
+
+　　另外，你需要注意的是，这些被分出去的字段所形成的表，你不会经常性地去Join他们，不然的话，这样的性能会比不分割时还要差，而且，会是极数级的下降。
+
+## 17.拆分大的DELETE或INSERT语句
+
+　　如果你需要在一个在线的网站上去执行一个大的 DELETE 或 INSERT 查询，你需要非常小心，要避免你的操作让你的整个网站停止相应。因为这两个操作是会锁表的，表一锁住了，别的操作都进不来了。
+
+Apache 会有很多的子进程或线程。所以，其工作起来相当有效率，而我们的服务器也不希望有太多的子进程，线程和数据库链接，这是极大的占服务器资源的事情，尤其是内存。
+
+　　如果你把你的表锁上一段时间，比如30秒钟，那么对于一个有很高访问量的站点来说，这30秒所积累的访问进程/线程，数据库链接，打开的文件数，可能不仅仅会让你泊WEB服务Crash，还可能会让你的整台服务器马上掛了。
+
+　　所以，如果你有一个大的处理，你定你一定把其拆分，使用 LIMIT 条件是一个好的方法。下面是一个示例：
+
+![img](https://img-blog.csdn.net/20180214111517892)
+
+## 18.越小的列会越快
+
+
+　　对于大多数的数据库引擎来说，硬盘操作可能是最重大的瓶颈。所以，把你的数据变得紧凑会对这种情况非常有帮助，因为这减少了对硬盘的访问。
+
+　　参看 MySQL 的文档 StorageRequirements 查看所有的数据类型。
+
+　　如果一个表只会有几列罢了(比如说字典表，配置表)，那么，我们就没有理由使用 INT 来做主键，使用 MEDIUMINT,SMALLINT 或是更小的 TINYINT 会更经济一些。如果你不需要记录时间，使用 DATE 要比 DATETIME 好得多。
+
+　　当然，你也需要留够足够的扩展空间，不然，你日后来干这个事，你会死的很难看，参看Slashdot的例子(2009年11月06日)，一个简单的ALTER TABLE语句花了3个多小时，因为里面有一千六百万条数据。
+
+## 19.选择正确的存储引擎
+
+　　在 MySQL 中有两个存储引擎 MyISAM 和 InnoDB，每个引擎都有利有弊。酷壳以前文章《MySQL: InnoDB 还是 MyISAM?》讨论和这个事情。
+
+   MyISAM 适合于一些需要大量查询的应用，但其对于有大量写操作并不是很好。甚至你只是需要update一个字段，整个表都会被锁起来，而别的进程，就算是读进程都无法操作直到读操作完成。另外，MyISAM 对于 SELECT COUNT(*) 这类的计算是超快无比的。
+
+InnoDB 的趋势会是一个非常复杂的存储引擎，对于一些小的应用，它会比 MyISAM 还慢。他是它支持“行锁” ，于是在写操作比较多的时候，会更优秀。并且，他还支持更多的高级应用，比如：事务。
+
+　　下面是MySQL的手册
+
+target=”_blank”MyISAMStorage Engine
+
+InnoDB StorageEngine
+
+## 20.使用一个对象关系映射器(Object RelationalMapper)
+
+　　使用 ORM (ObjectRelational Mapper)，你能够获得可靠的性能增涨。一个ORM可以做的所有事情，也能被手动的编写出来。但是，这需要一个高级专家。
+
+ORM 的最重要的是“Lazy Loading”，也就是说，只有在需要的去取值的时候才会去真正的去做。但你也需要小心这种机制的副作用，因为这很有可能会因为要去创建很多很多小的查询反而会降低性能。
+
+ORM 还可以把你的SQL语句打包成一个事务，这会比单独执行他们快得多得多。
+
+　　目前，个人最喜欢的PHP的ORM是：Doctrine。
+
+## 21.小心永久链接
+
+“永久链接”的目的是用来减少重新创建MySQL链接的次数。当一个链接被创建了，它会永远处在连接的状态，就算是数据库操作已经结束了。而且，自从我们的Apache开始重用它的子进程后——也就是说，下一次的HTTP请求会重用Apache的子进程，并重用相同的 MySQL 链接。
+
+PHP手册：mysql_pconnect()
+
+　　在理论上来说，这听起来非常的不错。但是从个人经验(也是大多数人的)上来说，这个功能制造出来的麻烦事更多。因为，你只有有限的链接数，内存问题，文件句柄数，等等。
+
+　　而且，Apache 运行在极端并行的环境中，会创建很多很多的了进程。这就是为什么这种“永久链接”的机制工作地不好的原因。在你决定要使用“永久链接”之前，你需要好好地考虑一下你的整个系统的架构。
+
+
 
 # 影响MySQL性能的配置参数
 
@@ -1867,3 +4757,1197 @@ mongodb是文档型的非关系型数据库，其优势在于查询功能比较�
 1.速度快：使用标准C写，所有数据都在内存中完成，读写速度分别达到10万/20万。 2.持久化：对数据的更新采用Copy-on-write技术，可以异步地保存到磁盘上，主要有两种策略，
 
  一是根据时间，更新次数的快照（save30010）二是基于语句追加方式(Append-onlyfile，aof)。 3.自动操作：对不同数据类型的操作都是自动的，很安全。 4.快速的主--从复制，官方提供了一个数据，Slave在21秒即完成了对Amazon网站10Gkeyset的复制。 5.Sharding技术：很容易将数据分布到多个Redis实例中，数据库的扩展是个永恒的话题，在关系型数据库中，主要是以添加硬件、以分区为主要技术形式的纵向扩展解决了很多的应用场景，但随着web2.0、移动互联网、云计算等应用的兴起，这种扩展模式已经不太适合了，所以近年来，像采用主从配置、数据库复制形式的，Sharding这种技术把负载分布到多个特理节点上去的横向扩展方式用处越来越多。
+
+**这里对 Redis 数据库做下小结。**
+
+1. 提高了 DB 的可扩展性，只需要将新加的数据放到新加的服务器上就可以了
+2. 提高了 DB 的可用性，只影响到需要访问的 shard 服务器上的数据的用户
+3. 提高了 DB 的可维护性，对系统的升级和配置可以按 shard 一个个来搞，对服务产生的影响较小
+4. 小的数据库存的查询压力小，查询更快，性能更好
+
+
+
+# 优化面试题
+
+1、一张表，里面有ID自增主键，当insert了17条记录之后，删除了第15,16,17条记录，再把Mysql重启，再insert一条记录，这条记录的ID是18还是15？
+1) 如果表的类型是MyISAM，那么是18
+	因为MyISAM表会把自增主键的最大ID记录到数据文件里，重启MySQL自增主键的最大ID也不会丢失
+
+2) 如果表的类型是InnoDB，那么是15
+	InnoDB表只是把自增主键的最大ID记录到内存中，所以重启数据库或者是对表进行OPTIMIZE操作，都会导致最大ID丢失
+
+2、Mysql的技术特点是什么？
+	Mysql数据库软件是一个客户端或服务器系统，其中包括：支持各种客户端程序和库的多线程SQL服务器、不同的后端、广泛的应用程序编程接口和管理工具。
+
+3、Heap表是什么？
+	HEAP表存在于内存中，用于临时高速存储。
+	BLOB或TEXT字段是不允许使用的的，因为要保存在硬盘上
+	只能使用比较运算符=，<，>，=>，=<
+	HEAP表不支持AUTO_INCREMENT，索引不可为NULL
+
+4、Mysql服务器默认端口是什么？
+	Mysql服务器的默认端口是3306。
+
+5、与Oracle相比，Mysql有什么优势？
+	Mysql是开源软件，随时可用，无需付费。
+	Mysql是便携式的
+	带有命令提示符的GUI。
+	使用Mysql查询浏览器支持管理
+
+6、如何区分FLOAT和DOUBLE？
+
+以下是FLOAT和DOUBLE的区别：
+	浮点数以8位精度存储在FLOAT中，并且有四个字节。
+	浮点数存储在DOUBLE中，精度为18位，有八个字节。
+
+7、区分CHAR_LENGTH和LENGTH？
+	CHAR_LENGTH是字符数，而LENGTH是字节数。Latin字符的这两个数据是相同的，但是对
+	于Unicode和其他编码，它们是不同的。
+
+8、请简洁描述Mysql中InnoDB支持的四种事务隔离级别名称，以及逐级之间的区别？
+
+SQL标准定义的四个隔离级别为：
+readuncommited：读到未提交数据
+readcommitted：脏读，不可重复读
+repeatableread：可重读
+serializable：串行事物
+
+9、在Mysql中ENUM的用法是什么？
+
+ENUM是一个字符串对象，用于指定一组预定义的值，并可在创建表时使用。
+Createtablesize(nameENUM('Smail,'Medium','Large');
+
+10、如何定义REGEXP？
+	REGEXP是模式匹配，其中匹配模式在搜索值的任何位置。
+
+11、CHAR和VARCHAR的区别？
+	以下是CHAR和VARCHAR的区别：
+	CHAR和VARCHAR类型在存储和检索方面有所不同
+	CHAR列长度固定为创建表时声明的长度，长度值范围是1到255
+	当CHAR值被存储时，它们被用空格填充到特定长度，检索CHAR值时需删除尾随空格。
+
+12、列的字符串类型可以是什么？
+字符串类型是：
+SET
+BLOB
+ENUM
+CHAR
+TEXT
+VARCHAR
+
+13、如何获取当前的Mysql版本？
+	SELECT VERSION();用于获取当前Mysql的版本。
+14、Mysql中使用什么存储引擎？
+
+存储引擎称为表类型，数据使用各种技术存储在文件中。
+技术涉及：
+Storagemechanism
+Lockinglevels
+Indexing
+Capabilitiesandfunctions.
+
+15、Mysql驱动程序是什么？
+
+以下是Mysql中可用的驱动程序：
+PHP驱动程序
+JDBC驱动程序
+ODBC驱动程序
+CWRAPPER
+PYTHON驱动程序
+PERL驱动程序
+RUBY驱动程序
+CAP11PHP驱动程序
+Ado.net5.mxj
+
+16、TIMESTAMP在UPDATECURRENT_TIMESTAMP数据类型上做什么？
+创建表时TIMESTAMP列用Zero更新。只要表中的其他字段发生更改，UPDATE
+CURRENT_TIMESTAMP修饰符就将时间戳字段更新为当前时间。
+
+17、主键和候选键有什么区别？
+表格的每一行都由主键唯一标识,一个表只有一个主键。
+主键也是候选键。按照惯例，候选键可以被指定为主键，并且可以用于任何外键引用。
+
+18、如何使用Unixshell登录Mysql？
+我们可以通过以下命令登录：
+[mysqldir]/bin/mysql-h host name -u
+
+19、myisamchk是用来做什么的？
+它用来压缩MyISAM表，这减少了磁盘或内存使用。
+20、MYSQL数据库服务器性能分析的方法命令有哪些?
+
+21、如何控制HEAP表的最大尺寸？
+Heal表的大小可通过称为max_heap_table_size的Mysql配置变量来控制。
+
+22、MyISAMStatic和MyISAMDynamic有什么区别？
+
+在MyISAMStatic上的所有字段有固定宽度。
+
+动态MyISAM表将具有像TEXT，BLOB等字段，以适应不同长度的数据类型。
+
+MyISAMStatic在受损情况下更容易恢复。
+
+23、federated表是什么？
+federated表，允许访问位于其他服务器数据库上的表。
+
+24、如果一个表有一列定义为TIMESTAMP，将发生什么？
+每当行被更改时，时间戳字段将获取当前时间戳。
+
+25、列设置为AUTOINCREMENT时，如果在表中达到最大值，会发生什么情况？
+它会停止递增，任何进一步的插入都将产生错误，因为密钥已被使用。
+
+26、怎样才能找出最后一次插入时分配了哪个自动增量？
+LAST_INSERT_ID将返回由Auto_increment分配的最后一个值，并且不需要指定表名称。
+
+27、你怎么看到为表格定义的所有索引？
+	索引是通过以下方式为表格定义的：
+	SHOW INDEX FROM
+
+28.、LIKE声明中的％和_是什么意思？
+	％对应于0个或更多字符，_只是LIKE语句中的一个字符。
+
+29、如何在Unix和Mysql时间戳之间进行转换？
+	UNIX_TIMESTAMP是从Mysql时间戳转换为Unix时间戳的命令
+	FROM_UNIXTIME是从Unix时间戳转换为Mysql时间戳的命令
+30、列对比运算符是什么？
+在SELECT语句的列比较中使用=，<>，<=，<，>=，>，<<，>>，<=>，AND，OR或LIKE运算符。
+
+31、我们如何得到受查询影响的行数？
+	行数可以通过以下代码获得：
+	SELECT COUNT(user_id) FROM users;
+
+32、Mysql查询是否区分大小写？
+不区分
+	SELECTVERSION(),CURRENT_DATE;
+	SeLectversion(),current_date;
+	seleCtvErSiOn(),current_DATE;
+	所有这些例子都是一样的，Mysql不区分大小写。
+
+33.、LIKE和REGEXP操作有什么区别？
+	LIKE和REGEXP运算符用于表示^和％。
+	SELECT*FROMemployeeWHEREemp_nameREGEXP"^b";
+	SELECT*FROMemployeeWHEREemp_nameLIKE"%b";
+
+34.、BLOB和TEXT有什么区别？
+BLOB是一个二进制对象，可以容纳可变数量的数据。有四种类型的BLOB-
+TINYBLOB
+BLOB
+MEDIUMBLOB和
+LONGBLOB
+它们只能在所能容纳价值的最大长度上有所不同。
+TEXT是一个不区分大小写的BLOB。四种TEXT类型
+TINYTEXT
+TEXT
+MEDIUMTEXT和
+LONGTEXT
+它们对应于四种BLOB类型，并具有相同的最大长度和存储要求。
+BLOB和TEXT类型之间的唯一区别在于对BLOB值进行排序和比较时区分大小写，对TEXT值不区分大小写。
+
+35、mysql_fetch_array和mysql_fetch_object的区别是什么？
+以下是mysql_fetch_array和mysql_fetch_object的区别：
+	mysql_fetch_array（）-将结果行作为关联数组或来自数据库的常规数组返回。
+	mysql_fetch_object-从数据库返回结果行作为对象。
+
+36、我们如何在mysql中运行批处理模式？
+
+mysql既可以交互式地使用mysql输入查询并且查看结果。也可以以批模式运行mysql。为了做到这些，把你想要运行的命令放在一个文件中，然后告诉mysql从文件读取它的输入：
+
+```
+shell> mysql < batch-file1
+```
+
+如果在Windows下运行mysql，并且文件中有一些可以造成问题的特殊字符，可以这样操作：
+
+```
+C:\> mysql -e "source batch-file"1
+```
+
+如果你需要在命令行上指定连接参数，命令应为：
+
+```
+shell> mysql -h host -u user -p < batch-file
+Enter password: ********
+```
+
+37、MyISAM表格将在哪里存储，并且还提供其存储格式？
+每个MyISAM表格以三种格式存储在磁盘上：
+	·“.frm”文件存储表定义
+	·数据文件具有“.MYD”（MYData）扩展名
+	索引文件具有“.MYI”（MYIndex）扩展名
+38.、Mysql中有哪些不同的表格？
+共有5种类型的表格：
+	MyISAM
+	Heap
+	Merge
+	INNODB
+	ISAM
+	MyISAM是Mysql的默认存储引擎5.5之前。
+39、ISAM是什么？
+ISAM简称为索引顺序访问方法。它是由IBM开发的，用于在磁带等辅助存储系统上存储和
+检索数据。
+
+40、InnoDB是什么？
+	lnnoDB是一个由Oracle公司开发的InnobaseOy事务安全存储引擎。
+
+41、Mysql如何优化DISTINCT？
+	DISTINCT在所有列上转换为GROUPBY，并与ORDER BY子句结合使用。
+	SELECT DISTINCT t1.a FROM t1,t2 where t1.a=t2.a;
+
+42、如何输入字符为十六进制数字？
+	如果想输入字符为十六进制数字，可以输入带有单引号的十六进制数字和前缀（X），或者
+只用（Ox）前缀输入十六进制数字。
+	如果表达式上下文是字符串，则十六进制数字串将自动转换为字符串。
+
+43、如何显示前50行？
+在Mysql中，使用以下代码查询显示前50行：
+SELECT*FROM LIMIT0,50;
+
+44、可以使用多少列创建索引？
+	任何标准表最多可以创建16个索引列。
+
+45、NOW（）和CURRENT_DATE（）有什么区别？
+	NOW（）命令用于显示当前年份，月份，日期，小时，分钟和秒。
+	CURRENT_DATE（）仅显示当前年份，月份和日期。
+
+46、什么样的对象可以使用CREATE语句创建？
+以下对象是使用CREATE语句创建的：
+	DATABASE
+	EVENT
+	FUNCTION
+	INDEX
+	PROCEDURE
+	TABLE
+	TRIGGER
+	USER
+	VIEW
+47、Mysql表中允许有多少个TRIGGERS？在Mysql表中允许有六个触发器，如下：
+BEFOREINSERT
+AFTERINSERT
+BEFOREUPDATE
+AFTERUPDATE
+BEFOREDELETE
+AFTERDELETE
+
+48、什么是非标准字符串类型？
+以下是非标准字符串类型：
+TINYTEXT
+TEXT
+MEDIUMTEXT
+LONGTEXT
+
+49、什么是通用SQL函数？
+CONCAT(A,B)-连接两个字符串值以创建单个字符串输出。通常用于将两个或多个字段合并为一个字段。
+FORMAT(X,D)-格式化数字X到D有效数字。
+CURRDATE(),CURRTIME()-返回当前日期或时间。
+NOW（）-将当前日期和时间作为一个值返回。
+MONTH（），DAY（），YEAR（），WEEK（），WEEKDAY（）-从日期值中提取给定数据。
+HOUR（），MINUTE（），SECOND（）-从时间值中提取给定数据。
+DATEDIFF（A，B）-确定两个日期之间的差异，通常用于计算年龄
+SUBTIMES（A，B）-确定两次之间的差异。
+FROMDAYS（INT）-将整数天数转换为日期值。
+
+50、解释访问控制列表
+ACL（访问控制列表）是与对象关联的权限列表。这个列表是Mysql服务器安全模型的基础，它有助于排除用户无法连接的问题。
+Mysql将ACL（也称为授权表）缓存在内存中。当用户尝试认证或运行命令时，Mysql会按照预定的顺序检查ACL的认证信息和权限。
+
+51、MYSQL支持事务吗？
+在缺省模式下，MYSQL是autocommit模式的，所有的数据库更新操作都会即时提交，所以在缺省情况下，mysql是不支持事务的。
+但是如果你的MYSQL表类型是使用InnoDBTables或BDBtables的话，你的MYSQL就可以使用事务处理,使用SETAUTOCOMMIT=0就可以使MYSQL允许在非autocommit模式，在非autocommit模式下，你必须使用COMMIT来提交你的更改，或者用ROLLBACK来回滚你的更改。
+
+```sql
+START TRANSACTION;
+SELECT@A:=SUM(salary)FROM table1 WHERE type=1;
+UPDATE table2 SET summmary=@A WHERE type=1;
+COMMIT;
+```
+
+52、mysql里记录货币用什么字段类型好
+NUMERIC和DECIMAL类型被Mysql实现为同样的类型，这在SQL92标准允许。他们被用于保存值，该值的准确精度是极其重要的值，例如与金钱有关的数据。当声明一个类是这些类型之一时，精度和规模的能被(并且通常是)指定；
+salaryDECIMAL(9,2)
+在这个例子中，9(precision)代表将被用于存储值的总的小数位数，而2(scale)代表将被用于存储小数点后的位数。
+
+因此，在这种情况下，能被存储在salary列中的值的范围是从-9999999.99到9999999.99。在ANSI/ISOSQL92中，句法DECIMAL(p)等价于DECIMAL(p,0)。
+
+同样，句法DECIMAL等价于DECIMAL(p,0)，这里实现被允许决定值p。Mysql当前不支持DECIMAL/NUMERIC数据类型的这些变种形式的任一种。
+这一般说来不是一个严重的问题，因为这些类型的主要益处得自于明显地控制精度和规模的能力。
+
+DECIMAL和NUMERIC值作为字符串存储，而不是作为二进制浮点数，以便保存那些值的小数精度。
+一个字符用于值的每一位、小数点(如果scale>0)和“-”符号(对于负值)。如果scale是0，
+DECIMAL和NUMERIC值不包含小数点或小数部分。
+
+DECIMAL和NUMERIC值得最大的范围与DOUBLE一样，但是对于一个给定的DECIMAL或NUMERIC列，实际的范围可由制由给定列的precision或scale限制。
+
+当这样的列赋给了小数点后面的位超过指定scale所允许的位的值，该值根据scale四舍五入。
+当一个DECIMAL或NUMERIC列被赋给了其大小超过指定(或缺省的）precision和scale隐含的范围的值，Mysql存储表示那个范围的相应的端点值。
+
+53、MYSQL数据表在什么情况下容易损坏？
+服务器突然断电导致数据文件损坏。
+强制关机，没有先关闭mysql服务等。
+
+54、mysql有关权限的表都有哪几个？
+
+Mysql服务器通过权限表来控制用户对数据库的访问，权限表存放在mysql数据库里，由mysql_install_db脚本初始化。这些权限表分别user，db，table_priv，columns_priv和host。
+
+55、Mysql中有哪几种锁？
+
+MyISAM支持表锁，InnoDB支持表锁和行锁，默认为行锁
+表级锁：开销小，加锁快，不会出现死锁。锁定粒度大，发生锁冲突的概率最高，并发量最低
+行级锁：开销大，加锁慢，会出现死锁。锁力度小，发生锁冲突的概率小，并发度最高
+
+
+
+
+
+# 面试专题
+
+## 1.数据库三范式是什么?
+
+1.第一范式（1NF）：字段具有原子性,不可再分。(所有关系型数据库系统都满足第一范式数据库表中的字段都是单一属性的，不可再分)
+2.第二范式（2NF）是在第一范式（1NF）的基础上建立起来的，即满足第二范式（2NF）必须先满足第一范式（1NF）。要求数据库表中的每个实例或行必须可以被惟一地区分。通常需要为表加上一个列，以存储各个实例的惟一标识。这个惟一属性列被称为主关键字或主键。
+3.满足第三范式（3NF）必须先满足第二范式（2NF）。简而言之，第三范式（3NF）要求一个数据库表中不包含已在其它表中已包含的非主关键字信息。>所以第三范式具有如下特征：>>1.每一列只有一个值>>2.每一行都能区分。>>3.每一个表都不包含其他表已经包含的非主关键字信息。
+
+## 2.有哪些数据库优化方面的经验?
+
+1.用PreparedStatement，一般来说比Statement性能高：一个sql发给服务器去执行，涉及步骤：语法检查、语义分析，编译，缓存。
+2.有外键约束会影响插入和删除性能，如果程序能够保证数据的完整性，那在设计数据库时就去掉外键。
+3.表中允许适当冗余，譬如，主题帖的回复数量和最后回复时间等
+4.UNIONALL要比UNION快很多，所以，如果可以确认合并的两个结果集中不包含重复数据且不需要排序时的话，那么就使用UNIONALL。>>UNION和UNIONALL关键字都是将两个结果集合并为一个，但这两者从使用和效率上来说都有所不同。
+
+1.对重复结果的处理：UNION在进行表链接后会筛选掉重复的记录，UnionAll不会去除重复记录。
+
+2.对排序的处理：Union将会按照字段的顺序进行排序；UNIONALL只是简单的将两个结果合并后就返回。
+
+## 3.请简述常用的索引有哪些种类?
+
+1.普通索引:即针对数据库表创建索引
+2.唯一索引:与普通索引类似，不同的就是：MySQL数据库索引列的值必须唯一，但允许有空值
+3.主键索引:它是一种特殊的唯一索引，不允许有空值。一般是在建表的时候同时创建主键索引
+4.组合索引:为了进一步榨取MySQL的效率，就要考虑建立组合索引。即将数据库表中的多个字段联合起来作为一个组合索引。
+
+## 4.mysql中索引的工作机制是什么？
+数据库索引，是数据库管理系统中一个排序的数据结构，以协助快速查询、更新数据库表中数据。索引的实现通常使用B树及其变种B+树
+
+## 5.MySQL的基础操作命令:
+
+1.MySQL是否处于运行状态:Debian上运行命令service mysql status，在RedHat上运行命令servicemysqldstatus
+2.开启或停止MySQL服务:运行命令service mysqld start开启服务；运行命令service mysqld stop停止服务
+3.Shell登入MySQL:运行命令mysql-uroot-p
+4.列出所有数据库:运行命令show databases;
+5.切换到某个数据库并在上面工作:运行命令use databasename;进入名为databasename的数据库
+6.列出某个数据库内所有表:showtables;
+7.获取表内所有Field对象的名称和类型:describetable_name;
+
+## 6.mysql的复制原理以及流程
+
+Mysql内建的复制功能是构建大型，高性能应用程序的基础。将Mysql的数据分布到多个系统上去，这种分布的机制，是通过将Mysql的某一台主机的数据复制到其它主机（slaves）上，并重新执行一遍来实现的。
+
+复制过程中一个服务器充当主服务器，而一个或多个其它服务器充当从服务器。主服务器将更新写入二进制日志文件，并维护文件的一个索引以跟踪日志循环。这些日志可以记录发送到从服务器的更新。当一个从服务器连接主服务器时，它通知主服务器在日志中读取的最后一次成功更新的位置。从服务器接收从那时起发生的任何更新，然后封锁并等待主服务器通知新的更新。
+
+过程如下：
+
+1.主服务器把更新记录到二进制日志文件中。
+
+2.从服务器把主服务器的二进制日志拷贝到自己的中继日志（replaylog）中。
+
+3.从服务器重做中继日志中的时间，把更新应用到自己的数据库上。
+
+## 7.mysql支持的复制类型?
+
+1.基于语句的复制：在主服务器上执行的SQL语句，在从服务器上执行同样的语句。
+
+MySQL默认采用基于语句的复制，效率比较高。一旦发现没法精确复制时，会自动选着基于行的复制。
+
+2.基于行的复制：把改变的内容复制过去，而不是把命令在从服务器上执行一遍.从mysql5.0开始支持
+3.混合类型的复制:默认采用基于语句的复制，一旦发现基于语句的无法精确的复制时，就会采用基于行的复制。
+
+## 8.mysql中myisam与innodb的区别？
+
+1.事务支持
+
+MyISAM：强调的是性能，每次查询具有原子性,其执行数度比InnoDB类型更快，但是不提供事务支持。
+
+InnoDB：提供事务支持事务，外部键等高级数据库功能。具有事务(commit)、回滚(rollback)和崩溃修复能力(crashrecoverycapabilities)的事务安全(transaction-safe(ACIDcompliant))型表。
+2.InnoDB支持行级锁，而MyISAM支持表级锁.>>用户在操作myisam表时，select，update，delete，insert语句都会给表自动加锁，如果加锁以后的表满足insert并发的情况下，可以在表的尾部插入新的数据。
+3.InnoDB支持MVCC,而MyISAM不支持
+4.InnoDB支持外键，而MyISAM不支持
+5.表主键>MyISAM：允许没有任何索引和主键的表存在，索引都是保存行的地址。>InnoDB：如果没有设定主键或者非空唯一索引，就会自动生成一个6字节的主键(用户不可见)，数据是主索引的一部分，附加索引保存的是主索引的值。
+6.InnoDB不支持全文索引，而MyISAM支持。
+7.可移植性、备份及恢复>MyISAM：数据是以文件的形式存储，所以在跨平台的数据转移中会很方便。在备份和恢复时可单独针对某个表进行操作。>InnoDB：免费的方案可以是拷贝数据文件、备份binlog，或者用mysqldump，在数据量达到几十G的时候就相对痛苦了
+8.存储结构
+
+MyISAM：每个MyISAM在磁盘上存储成三个文件。第一个文件的名字以表的名字开始，扩展名指出文件类型。.frm文件存储表定义。数据文件的扩展名为.MYD(MYData)。索引文件的扩展名是.MYI(MYIndex)。
+
+InnoDB：所有的表都保存在同一个数据文件中（也可能是多个文件，或者是独立的表空间文件），InnoDB表的大小只受限于操作系统文件的大小，一般为2GB。
+
+## 9.mysql中varchar与char的区别以及varchar(50)中的50代表的涵义？
+
+1.varchar与char的区别:char是一种固定长度的类型，varchar则是一种可变长度的类型.
+2.varchar(50)中50的涵义:最多存放50个字节
+3.int（20）中20的涵义:int(M)中的Mindicatesthemaximum displaywidth(最大显示宽度)forintegertypes.Themaximum legaldisplaywidthis255.
+
+## 10.MySQL中InnoDB支持的四种事务隔离级别名称，以及逐级之间的区别？
+
+1.ReadUncommitted（读取未提交内容）
+
+​	在该隔离级别，所有事务都可以看到其他未提交事务的执行结果。本隔离级别很少用于实际应用，因为它的性能也不比其他级别好多少。读取未提交的数据，也被称之为脏读（DirtyRead）。
+
+2.ReadCommitted（读取提交内容）
+
+​	这是大多数数据库系统的默认隔离级别（但不是MySQL默认的）。它满足了隔离的简单定义：一
+个事务只能看见已经提交事务所做的改变。这种隔离级别也支持所谓的不可重复读（NonrepeatableRead），因为同一事务的其他实例在该实例处理其间可能会有新的commit，所以同一select可能返回不同结果。
+
+3.RepeatableRead（可重读）
+
+​	这是MySQL的默认事务隔离级别，它确保同一事务的多个实例在并发读取数据时，会看到同样的数据行。不过理论上，这会导致另一个棘手的问题：幻读（PhantomRead）。简单的说，幻读指当用户读取某一范围的数据行时，另一个事务又在该范围内插入了新行，当用户再读取该范围的数据行时，会发现有新的“幻影”行。InnoDB和Falcon存储引擎通过多版本并发控制（MVCC，MultiversionConcurrencyControl间隙锁）机制解决了该问题。注：其实多版本只是解决不可重复读问题，而加上间隙锁（也就是它这里所谓的并发控制）才解决了幻读问题。
+
+4.Serializable（可串行化）
+
+​	这是最高的隔离级别，它通过强制事务排序，使之不可能相互冲突，从而解决幻读问题。简言之，它是在每个
+读的数据行上加上共享锁。在这个级别，可能导致大量的超时现象和锁竞争。
+
+## 11.表中有大字段X（例如：text类型），且字段X不会经常更新，以读为主，将该字段拆成子表好处是什么？
+
+
+如果字段里面有大字段（text,blob)类型的，而且这些字段的访问并不多，这时候放在一起就变成缺点了。MYSQL数据库的记录存储是按行存储的，数据块大小又是固定的（16K），每条记录越小，相同的块存储的记录就越多。此时应该把大字段拆走，这样应付大部分小字段的查询时，就能提高效率。当需要查询大字段时，此时的关联查询是不可避免的，但也是值得的。拆分开后，对字段的UPDAE就要UPDATE多个表了
+
+## 12.MySQL中InnoDB引擎的行锁是通过加在什么上完成（或称实现）的？
+
+InnoDB行锁是通过给索引上的索引项加锁来实现的，这一点MySQL与Oracle不同，后者是通过在数据块中对相应数据行加锁来实现的。InnoDB这种行锁实现特点意味着：只有通过索引条件检索数据，InnoDB才使用行级锁，否则，InnoDB将使用表锁！
+
+## 13.MySQL中控制内存分配的全局参数，有哪些？
+
+1.Keybuffersize：>keybuffersize指定索引缓冲区的大小，它决定索引处理的速度，尤其是索引读的速度。通过检查状态值Keyreadrequests和Keyreads，可以知道keybuffersize设置是否合理。比例keyreads/keyreadrequests应该尽可能的低，至少是1:100，1:1000更好（上述状态值可以使用SHOWSTATUSLIKE‘keyread%'获得）。>keybuffersize只对MyISAM表起作用。
+即使你不使用MyISAM表，但是内部的临时磁盘表是MyISAM表，也要使用该值。可以使用检查状态值createdtmpdisktables得知详情。对于1G内存的机器，如果不使用MyISAM表，推荐值是16M（8-64M）>keybuffersize设置注意事项>>>
+
+1.单个keybuffer的大小不能超过4G，如果设置超过4G，就有可能遇到下面3个
+http://bugs.mysql.com/bug.php?id=29446
+http://bugs.mysql.com/bug.php?id=29419
+http://bugs.mysql.com/bug.php?id=5731
+
+2.建议keybuffer设置为物理内存的1/4(针对MyISAM引擎)，甚至是物理内存的30%~40%，如果keybuffersize设置太大，系统就会频繁的换页，降低系统性能。因为MySQL使用操作系统的缓存来缓存数据，所以我们得为系统留够足够的内存；在很多情况下数据要比索引大得多。>>>3.如果机器性能优越，可以设置多个keybuffer,分别让不同的keybuffer来缓存专门的索引
+
+2.innodb buffer pool_size>表示缓冲池字节大小，InnoDB缓存表和索引数据的内存区域。mysql默认的值是128M。最大值与你的CPU体系结构有关，在32位操作系统，最大值是4294967295(2^32-1)，在64位操作系统，最大值为18446744073709551615(2^64-1)。>在32位操作系统中，CPU和操作系统实用的最大大小低于设置的最大值。如果设定的缓冲池的大小大于1G，设置innodbbufferpoolinstances的值大于1
+
+数据读写在内存中非常快,innodb buffer poolsize减少了对磁盘的读写。当数据提交或满足检查点条件后才一次性将内存数据刷新到磁盘中。然而内存还有操作系统或数据库其他进程使用,一般设置bufferpool大小为总内存的3/4至4/5。若设置不当,内存使用可能浪费或者使用过多。对于繁忙的服务器,bufferpool将划分为多个实例以提高系统并发性,减少线程间读写缓存的争用。bufferpool的大小首先受innodbbufferpool_instances影响,当然影响较小。
+
+3.querycachesize>当mysql接收到一条select类型的query时，mysql会对这条query进行hash计算而得到一个hash值，然后通过该hash值到querycache中去匹配，如果没有匹配中，则将这个hash值存放在一个hash链表中，同时将query的结果集存放进cache中，存放hash值的链表的每一个hash节点存放了相应query结果集在cache中的地址，以及该query所涉及到的一些table的相关信息；如果通过hash值匹配到了一样的query，则直接将cache中相应的query结果集返回给客户端。如果mysql任何一个表中的任何一条数据发生了变化，便会通知querycache需要与该table相关的query的cache全部失效，并释放占用的内存地址。
+
+querycache优缺点：
+
+1.query语句的hash计算和hash查找带来的资源消耗。mysql会对每条接收到的select类型的query进行hash计算然后查找该query的cache是否存在，虽然hash计算和查找的效率已经足够高了，一条query所带来的消耗可以忽略，但一旦涉及到高并发，有成千上万条query时，hash计算和查找所带来的开销就的重视了；
+
+2.querycache的失效问题。如果表变更比较频繁，则会造成querycache的失效率非常高。表变更不仅仅指表中的数据发生变化，还包括结构或者索引的任何变化；
+
+3.对于不同sql但同一结果集的query都会被缓存，这样便会造成内存资源的过渡消耗。sql的字符大小写、空格或者注释的不同，缓存都是认为是不同的sql（因为他们的hash值会不同）；
+
+4.相关参数设置不合理会造成大量内存碎片，相关的参数设置会稍后介绍。
+
+4.readbuffersize>是MySQL读入缓冲区大小。对表进行顺序扫描的请求将分配一个读入缓冲区，MySQL会为它分配一段内存缓冲区。readbuffersize变量控制这一缓冲区的大小。如果对表的顺序扫描请求非常频繁，并且你认为频繁扫描进行得太慢，可以通过增加该变量值以及内存缓冲区大小提高其性能。
+
+## 14.若一张表中只有一个字段VARCHAR(N)类型，utf8编码，则N最大值为多少(精确到数量级即可)?
+由于utf8的每个字符最多占用3个字节。而MySQL定义行的长度不能超过65535，因此N的最大值计算方法为：(65535-1-2)/3。减去1的原因是实际存储从第二个字节开始，减去2的原因是因为要在列表长度存储实际的字符
+长度，除以3是因为utf8限制：每个字符最多占用3个字节。
+
+## 15.[SELECT*]和[SELECT全部字段]的2种写法有何优缺点?
+
+1.前者要解析数据字典，后者不需要
+2.结果输出顺序，前者与建表列顺序相同，后者按指定字段顺序。
+3.表字段改名，前者不需要修改，后者需要改
+4.后者可以建立索引进行优化，前者无法优化
+5.后者的可读性比前者要高
+
+## 16.HAVNG子句和WHERE的异同点?
+
+1.语法上：where用表中列名，having用select结果别名
+2.影响结果范围：where从表读出数据的行数，having返回客户端的行数
+3.索引：where可以使用索引，having不能使用索引，只能在临时结果集操作
+4.where后面不能使用聚集函数，having是专门使用聚集函数的。
+
+## 17.MySQL当记录不存在时insert,当记录存在时update，语句怎么写？
+
+```sql
+INSERT INTO table (a,b,c) VALUES (1,2,3) ON DUPLICATE KEY UPDATE c=c+1;
+```
+
+## 18.MySQL的insert和update的select语句语法
+
+`insert into student(stuid,stuname,deptid)`
+
+`select 'xzm' from student where stuid>8;
+update studenta set a.stuname=concat(b.stuname,b.stuID) wherea.stuID=10;`
+
+# 20个数据库常见面试题讲解
+
+## 1、事务四大特性（ACID）原子性、一致性、隔离性、持久性？
+
+**原子性（Atomicity）**
+
+**·** **原子性是指事务包含的所有操作要么全部成功，要么全部失败回滚**，因此事务的操作如果成功就必须要完全应用到数据库，如果操作失败则不能对数据库有任何影响。
+
+**一致性（Consistency）**
+
+** 事务开始前和结束后，数据库的完整性约束没有被破坏。比如A向B转账，不可能A扣了钱，B却没收到**。
+
+** 隔离性（Isolation）**
+
+** 隔离性是当多个用户并发访问数据库时，比如操作同一张表时，数据库为每一个用户开启的事务，不能被其他事务的操作所干扰，多个并发事务之间要相互隔离 **。
+
+同一时间，只允许一个事务请求同一数据，不同的事务之间彼此没有任何干扰。比如A正在从一张银行卡中取钱，在A取钱的过程结束前，B不能向这张卡转账。
+
+**关于事务的隔离性数据库提供了多种隔离级别，稍后会介绍到**。  
+
+** 持久性（Durability）**
+
+**持久性是指一个事务一旦被提交了，那么对数据库中的数据的改变就是永久性的，即便是在数据库系统遇到故障的情况下也不会丢失提交事务的操作**。
+
+## 2、事务的并发？事务隔离级别，每个级别会引发什么问题，MySQL默认是哪个级别？
+
+从理论上来说, 事务应该彼此完全隔离, 以避免并发事务所导致的问题，然而, 那样会对性能产生极大的影响, 因为事务必须按顺序运行， **在实际开发中, 为了提升性能, 事务会以较低的隔离级别运行， 事务的隔离级别可以通过隔离事务属性指定**。
+
+### 2.1 事务的并发问题
+
+（1）**脏读**：事务A读取了事务B更新的数据，然后B回滚操作，那么A读取到的数据是脏数据
+
+（2）**不可重复读** ：事务 A 多次读取同一数据，事务 B 在事务A多次读取的过程中，对数据作了更新并提交，导致事务A多次读取同一数据时，结果因此本事务先后两次读到的数据结果会不一致。
+
+（3）**幻读**：幻读解决了不重复读，保证了同一个事务里，查询的结果都是事务开始时的状态（一致性）。
+
+例如：事务T1对一个表中所有的行的某个数据项做了从“1”修改为“2”的操作 这时事务T2又对这个表中插入了一行数据项，而这个数据项的数值还是为“1”并且提交给数据库。 而操作事务T1的用户如果再查看刚刚修改的数据，会发现还有跟没有修改一样，其实这行是从事务T2中添加的，就好像产生幻觉一样，这就是发生了幻读。
+
+**小结**：不可重复读的和幻读很容易混淆，**不可重复读侧重于修改，幻读侧重于新增或删除**。
+
+解决不可重复读的问题只需锁住满足条件的行，解决幻读需要锁表。   
+
+### 2.2 事务的隔离级别
+
+| **事务隔离级别**    | **脏读** | **不可重复读** | **幻读** |
+| ------------------------- | -------------- | -------------------- | -------------- |
+| 读未提交 read-uncommitted | 是             | 是                   | 是             |
+| 不可重复读 read-committed | 否             | 是                   | 是             |
+| 可重复读 repeatable-read  | 否             | 否                   | 是             |
+| 串行化 serializable       | 否             | 否                   | 否             |
+
+**读未提交**：另一个事务修改了数据，但尚未提交，而本事务中的SELECT会读到这些未被提交的数据**脏读**
+
+**不可重复读**：事务 A 多次读取同一数据，事务 B 在事务A多次读取的过程中，对数据作了更新并提交，导致事务A多次读取同一数据时，结果因此本事务先后两次读到的数据结果会不一致。
+
+**可重复读**：在同一个事务里，SELECT的结果是事务开始时时间点的状态，因此，同样的SELECT操作读到的结果会是一致的。但是，会有**幻读**现象
+
+**串行化**：最高的隔离级别，在这个隔离级别下，不会产生任何异常。并发的事务，就像事务是在一个个按照顺序执行一样
+
+### **2.3 MySQL默认的事务隔离级别为repeatable-read**
+
+**MySQL 支持 4 中事务隔离级别**.
+
+· 事务的隔离级别要得到底层数据库引擎的支持, 而不是应用程序或者框架的支持.
+
+· Oracle 支持的 2 种事务隔离级别：READ_COMMITED , SERIALIZABLE
+
+### **2.3补充**
+
+1. SQL规范所规定的标准，不同的数据库具体的实现可能会有些差异
+
+2. MySQL中默认事务隔离级别是“可重复读”时并不会锁住读取到的行
+
+**事务隔离级别**：**未提交读时**，写数据只会锁住相应的行。
+
+**事务隔离级别为**：**可重复读时**，写数据会锁住整张表。
+
+**事务隔离级别为**：**串行化时**，读写数据都会锁住整张表。
+
+**隔离级别越高**，**越能保证数据的完整性和一致性**，但是对并发性能的影响也越大，鱼和熊掌不可兼得啊。**对于多数应用程序，可以优先考虑把数据库系统的隔离级别设为Read Committed，它能够避免脏读取，而且具有较好的并发性能**。尽管它会导致不可重复读、幻读这些并发问题，在可能出现这类问题的个别场合，可以由应用程序采用悲观锁或乐观锁来控制。
+
+## 3、MySQL常见的三种存储引擎（InnoDB、MyISAM、MEMORY）的区别？
+
+MySQL存储引擎中的MyISAM和InnoDB区别详解 blog.csdn.net/lc0817/arti…
+
+MySQL存储引擎之MyISAM和Innodb总结性梳理 www.cnblogs.com/kevingrace/…
+
+***\*3.1\**** ***\*MySQL存储引擎MyISAM与InnoDB如何选择\****
+
+MySQL有多种存储引擎，每种存储引擎有各自的优缺点，可以择优选择使用：MyISAM、InnoDB、MERGE、MEMORY(HEAP)、BDB(BerkeleyDB)、EXAMPLE、FEDERATED、ARCHIVE、CSV、BLACKHOLE。
+
+***\*虽然MySQL里的存储引擎不只是MyISAM与InnoDB这两个，但常用的就是两个\****。
+
+***\*两种存储引擎的大致区别表现在\****：
+
+**·** ***\*InnoDB支持事务，MyISAM不支持\****，这一点是非常之重要。事务是一种高级的处理方式，如在一些列增删改中只要哪个出错还可以回滚还原，而MyISAM就不可以了。
+
+**·** ***\*MyISAM适合查询以及插入为主的应用\****。
+
+**·** ***\*InnoDB适合频繁修改以及涉及到安全性较高的应用\****。
+
+· InnoDB支持外键，MyISAM不支持。
+
+**·** ***\*从MySQL5.5.5以后，InnoDB是默认引擎\****。
+
+· InnoDB不支持FULLTEXT类型的索引。
+
+**·** ***\*InnoDB中不保存表的行数\****，如select count(*) from table时，InnoDB需要扫描一遍整个表来计算有多少行，但是MyISAM只要简单的读出保存好的行数即可。注意的是，当count(*)语句包含where条件时MyISAM也需要扫描整个表。
+
+· 对于自增长的字段，InnoDB中必须包含只有该字段的索引，但是在MyISAM表中可以和其他字段一起建立联合索引。
+
+· DELETE FROM table时，***\*InnoDB不会重新建立表，而是一行一行的 删除，效率非常慢\****。***\*MyISAM则会重建表\****。
+
+· InnoDB支持行锁（某些情况下还是锁整表，如 update table set a=1 where user like '%lee%'。
+
+***\*3.2\*******\*关于MySQL数据库提供的两种存储引擎，MyISAM与InnoDB选择使用：\****
+
+**·** ***\*INNODB会支持一些关系数据库的高级功能\****，***\*如事务功能和行级锁，MyISAM不支持\****。
+
+**·** ***\*MyISAM的性能更优，占用的存储空间少\****，所以，选择何种存储引擎，视具体应用而定。
+
+**·** ***\*如果你的应用程序一定要使用事务，毫无疑问你要选择INNODB引擎\****。但要注意，INNODB的行级锁是有条件的。在where条件没有使用主键时，照样会锁全表。比如DELETE FROM mytable这样的删除语句。
+
+**·** ***\*如果你的应用程序对查询性能要求较高，就要使用MyISAM了\****。***\*MyISAM索引和数据是分开的，而且其索引是压缩的，可以更好地利用内存\****。所以它的***\*查询性能明显优于INNODB\****。压缩后的索引也能节约一些磁盘空间。***\*MyISAM拥有全文索引的功能，这可以极大地优化LIKE查询的效率\****。
+
+有人说MyISAM只能用于小型应用，其实这只是一种偏见。如果数据量比较大，这是需要通过升级架构来解决，比如分表分库，而不是单纯地依赖存储引擎。
+
+***\*现在一般都是选用innodb了，主要是MyISAM的全表锁，读写串行问题，并发效率锁表，效率低\****，MyISAM对于读写密集型应用一般是不会去选用的。
+
+***\*3.3\**** ***\*MEMORY存储引擎\****
+
+***\*MEMORY是MySQL中一类特殊的存储引擎。它使用存储在内存中的内容来创建表，而且数据全部放在内存中\****。这些特性与前面的两个很不同。
+
+每个基于MEMORY存储引擎的表实际对应一个磁盘文件。该文件的文件名与表名相同，类型为frm类型。该文件中只存储表的结构。而其数据文件，都是存储在内存中，这样有利于数据的快速处理，提高整个表的效率。值得注意的是，服务器需要有足够的内存来维持MEMORY存储引擎的表的使用。如果不需要了，可以释放内存，甚至删除不需要的表。
+
+MEMORY默认使用哈希索引。速度比使用B型树索引快。当然如果你想用B型树索引，可以在创建索引时指定。
+
+注意，***\*MEMORY用到的很少，因为它是把数据存到内存中，如果内存出现异常就会影响数据。如果重启或者关机，所有数据都会消失\****。因此，基于***\*MEMORY的表的生命周期很短，一般是一次性的\****。
+
+## 4、MySQL的MyISAM与InnoDB两种存储引擎在，事务、锁级别，各自的适用场景?
+
+***\*事务处理上方面\****
+
+**·** ***\*MyISAM\****：***\*强调的是性能\****，每次查询具有原子性,其执行数度比InnoDB类型更快，但是***\*不提供事务支持\****。
+
+**·** ***\*InnoDB\****：***\*提供事务支持事务，外部键等高级数据库功能\****。 具有事务(commit)、回滚(rollback)和崩溃修复能力(crash recovery capabilities)的事务安全(transaction-safe (ACID compliant))型表。
+
+***\*锁级别\****
+
+**·** ***\*MyISAM\****：***\*只支持表级锁\****，用户在操作MyISAM表时，select，update，delete，insert语句都会给表自动加锁，如果加锁以后的表满足insert并发的情况下，可以在表的尾部插入新的数据。
+
+**·** ***\*InnoDB\****：支持事务和行级锁，是innodb的最大特色。行锁大幅度提高了多用户并发操作的新能。但是InnoDB的行锁，只是在WHERE的主键是有效的，非主键的WHERE都会锁全表的。
+
+## 5、查询语句不同元素（where、jion、limit、group by、having等等）执行先后顺序？
+
+（1）查询中用到的关键词主要包含六个，并且他们的顺序依次为 select--from--where--group by--having--order by
+
+其中select和from是必须的，其他关键词是可选的，这六个关键词的执行顺序 与sql语句的书写顺序并不是一样的，而是按照下面的顺序来执行
+
+· from:需要从哪个数据表检索数据
+
+· where:过滤表中数据的条件
+
+· group by:如何将上面过滤出的数据分组
+
+· having:对上面已经分组的数据进行过滤的条件
+
+· select:查看结果集中的哪个列，或列的计算结果
+
+· order by :按照什么样的顺序来查看返回的数据
+
+（2）from后面的表关联，是自右向左解析 而where条件的解析顺序是自下而上的。
+
+也就是说，在写SQL文的时候，尽量把数据量小的表放在最右边来进行关联（用小表去匹配大表），而把能筛选出小量数据的条件放在where语句的最左边 （用小表去匹配大表）
+
+## 6、什么是临时表，临时表什么时候删除？
+
+临时表可以手动删除：DROP TEMPORARY TABLE IF EXISTS temp_tb;
+
+***\*临时表只在当前连接可见，当关闭连接时，MySQL会自动删除表并释放所有空间。因此在不同的连接中可以创建同名的临时表，并且操作属于本连接的临时表\****。
+
+创建临时表的语法与创建表语法类似，不同之处是***\*增加关键字TEMPORARY\****，如：
+
+CREATE TEMPORARY TABLE tmp_table (
+
+​	NAME VARCHAR (10) NOT NULL,
+
+​	time date NOT NULL
+
+);
+
+ 
+
+select * from tmp_table;
+
+
+
+## 7、MySQL B+Tree索引和Hash索引的区别？
+
+· Hash索引结构的特殊性，其检索效率非常高，索引的检索可以一次定位;
+
+· B+树索引需要从根节点到枝节点，最后才能访问到页节点这样多次的IO访问;
+
+那为什么大家不都用Hash索引而还要使用B+树索引呢？
+
+ ***\*7.1\**** ***\*Hash索引\****
+
+（1）Hash索引仅仅能满足"=","IN"和"<=>"查询，不能使用范围查询,因为经过相应的Hash算法处理之后的Hash值的大小关系，并不能保证和Hash运算前完全一样；
+
+（2）Hash索引无法被用来避免数据的排序操作，因为Hash值的大小关系并不一定和Hash运算前的键值完全一样；
+
+（3）Hash索引不能利用部分索引键查询，对于组合索引，Hash索引在计算Hash值的时候是组合索引键合并后再一起计算Hash值，而不是单独计算Hash值，所以通过组合索引的前面一个或几个索引键进行查询的时候，Hash索引也无法被利用；
+
+（4）Hash索引在任何时候都不能避免表扫描，由于不同索引键存在相同Hash值，所以即使取满足某个Hash键值的数据的记录条数，也无法从Hash索引中直接完成查询，还是要回表查询数据；
+
+（5）Hash索引遇到大量Hash值相等的情况后性能并不一定就会比B+树索引高。
+
+ ***\*7.2\**** ***\*B+Tree索引\****
+
+***\*MySQL中，只有HEAP/MEMORY引擎才显示支持Hash索引\****。
+
+***\*常用的InnoDB引擎中默认使用的是B+树索引\****，它会实时监控表上索引的使用情况，如果认为建立哈希索引可以提高查询效率，则自动在内存中的“自适应哈希索引缓冲区”建立哈希索引（***\*在InnoDB中默认开启自适应哈希索引\****），通过观察搜索模式，MySQL会利用index key的前缀建立哈希索引，如果一个表几乎大部分都在缓冲池中，那么建立一个哈希索引能够加快等值查询。
+
+ ***\*7.3\**** ***\*B+树索引和哈希索引的明显区别是：\****
+
+***\*如果是等值查询，那么哈希索引明显有绝对优势\****，***\*因为只需要经过一次算法即可找到相应的键值；当然了，这个前提是，键值都是唯一的。如果键值不是唯一的，就需要先找到该键所在位置，然后再根据链表往后扫描，直到找到相应的数据\****；
+
+***\*如果是范围查询检索，这时候哈希索引就毫无用武之地了\****，因为原先是有序的键值，经过哈希算法后，有可能变成不连续的了，就没办法再利用索引完成范围查询检索；
+
+同理，***\*哈希索引没办法利用索引完成排序\****，以及like ‘xxx%’ 这样的部分模糊查询（这种部分模糊查询，其实本质上也是范围查询）；
+
+***\*哈希索引也不支持多列联合索引的最左匹配规则\****；
+
+B+树索引的关键字检索效率比较平均，不像B树那样波动幅度大，***\*在有大量重复键值情况下，哈希索引的效率也是极低的，因为存在所谓的哈希碰撞问题\****。
+
+***\*在大多数场景下，都会有范围查询、排序、分组等查询特征，用B+树索引就可以了\****。
+
+## 8、sql查询语句确定创建哪种类型的索引?如何优化查询?
+
+**·** ***\*性能优化过程中，选择在哪个列上创建索引是最重要的步骤之一\****，可以考虑使用索引的主要有两种类型的列：在where子句中出现的列，在join子句中出现的列。
+
+· 考虑列中值的分布，索引的列的基数越大，索引的效果越好。
+
+· 使用短索引，如果***\*对字符串列进行索引，应该指定一个前缀长度\****，可节省大量索引空间，提升查询速度。
+
+**·** ***\*利用最左前缀\****,顾名思义，就是最左优先，在多列索引，有体现:(ALTER TABLE people ADD INDEX lname_fname_age (lame,fname,age);)，所谓最左前缀原则就是先要看第一列，在第一列满足的条件下再看左边第二列，以此类推
+
+**·** ***\*不要过度建索引，只保持所需的索引\****。每个额外的索引都要占用额外的磁盘空间，并***\*降低写操作的性能\****。
+
+· 在修改表的内容时，索引必须进行更新，有时可能需要重构，因此，***\*索引越多，所花的时间越长\****。
+
+**·** ***\*MySQL只对一下操作符才使用索引\****：<,<=,=,>,>=,between,in
+
+**·** ***\*以及某些时候的like\****(不以通配符%或_开头的情形)。
+
+## 9、聚集索引和非聚集索引区别？
+
+***\*聚合索引(clustered index) / 非聚合索引(nonclustered index)\****
+
+***\*根本区别\****
+
+聚集索引和非聚集索引的根本区别是***\*表记录的排列顺序和与索引的排列顺序是否一致\****。
+
+***\*9.1\*******\*聚集索引\****
+
+***\*聚集索引表记录的排列顺序和索引的排列顺序一致，所以查询效率快，只要找到第一个索引值记录，其余就连续性的记录在物理也一样连续存放。聚集索引对应的缺点就是修改慢，因为为了保证表中记录的物理和索引顺序一致，在记录插入的时候，会对数据页重新排序\****。
+
+聚集索引类似于新华字典中用拼音去查找汉字，拼音检索表于书记顺序都是按照a~z排列的，就像相同的逻辑顺序于物理顺序一样，当你需要查找a,ai两个读音的字，或是想一次寻找多个傻(sha)的同音字时，也许向后翻几页，或紧接着下一行就得到结果了。
+
+***\*9.2\*******\*非聚集索引\****
+
+***\*非聚集索引制定了表中记录的逻辑顺序，但是记录的物理和索引不一定一致，两种索引都采用B+树结构，非聚集索引的叶子层并不和实际数据页相重叠，而采用叶子层包含一个指向表中的记录在数据页中的指针方式。非聚集索引层次多，不会造成数据重排\****。
+
+非聚集索引类似在新华字典上通过偏旁部首来查询汉字，检索表也许是按照横、竖、撇来排列的，但是由于正文中是a~z的拼音顺序，所以就类似于逻辑地址于物理地址的不对应。同时适用的情况就在于分组，大数目的不同值，频繁更新的列中，这些情况即不适合聚集索引。
+
+## 10、有哪些锁（乐观锁悲观锁），select 时怎么加排它锁？
+
+ ***\*10.1\*******\*悲观锁（Pessimistic Lock）\****
+
+***\*悲观锁的特点是先获取锁，再进行业务操作\****，即“悲观”的认为获取锁是非常有可能失败的，因此要先确保获取锁成功再进行业务操作。***\*通常所说的“一锁二查三更新”即指的是使用悲观锁。通常来讲在数据库上的悲观锁需要数据库本身提供支持，即通过常用的select … for update操作来实现悲观锁\****。当数据库执行select for update时会获取被select中的数据行的行锁，因此其他并发执行的select for update如果试图选中同一行则会发生排斥（需要等待行锁被释放），因此达到锁的效果。select for update获取的行锁会在当前事务结束时自动释放，因此必须在事务中使用。
+
+这里需要注意的一点是不同的数据库对select for update的实现和支持都是有所区别的，例如oracle支持select for update no wait，表示如果拿不到锁立刻报错，而不是等待，MySQL就没有no wait这个选项。另外***\*MySQL还有个问题是select for update语句执行中所有扫描过的行都会被锁上，这一点很容易造成问题。因此如果在MySQL中用悲观锁务必要确定走了索引，而不是全表扫描\****。
+
+ ***\*10.2\*******\*乐观锁（Optimistic Lock）\****
+
+***\*乐观锁，也叫乐观并发控制，它假设多用户并发的事务在处理时不会彼此互相影响，各事务能够在不产生锁的情况下处理各自影响的那部分数据。在提交数据更新之前，每个事务会先检查在该事务读取数据后，有没有其他事务又修改了该数据。如果其他事务有更新的话，那么当前正在提交的事务会进行回滚\****。
+
+乐观锁的特点先进行业务操作，不到万不得已不去拿锁。即“乐观”的认为拿锁多半是会成功的，因此在进行完业务操作需要实际更新数据的最后一步再去拿一下锁就好。
+
+***\*乐观锁在数据库上的实现完全是逻辑的，不需要数据库提供特殊的支持\****。***\*一般的做法是在需要锁的数据上增加一个版本号，或者时间戳\****，然后按照如下方式实现：
+
+***\*乐观锁（给表加一个版本号字段） 这个并不是乐观锁的定义，给表加版本号，是数据库实现乐观锁的一种方式\****。
+
+（1） SELECT data AS old_data, version AS old_version FROM …;
+
+（2）根据获取的数据进行业务操作，得到new_data和new_version
+
+（3）UPDATE SET data = new_data, version = new_version WHERE version = old_version
+
+if (updated row > 0) {
+
+  // 乐观锁获取成功，操作完成
+
+} else {
+
+  // 乐观锁获取失败，回滚并重试
+
+}
+
+***\*乐观锁在不发生取锁失败的情况下开销比悲观锁小\****，但是一旦发生失败回滚开销则比较大，因此适合用在取锁失败概率比较小的场景，可以提升系统并发性能
+
+***\*乐观锁还适用于一些比较特殊的场景，例如在业务操作过程中无法和数据库保持连接等悲观锁无法适用的地方\****。
+
+ ***\*10.3\*******\*总结\****
+
+***\*悲观锁和乐观锁是数据库用来保证数据并发安全防止更新丢失的两种方法\****，例子在select ... for update前加个事务就可以防止更新丢失。悲观锁和乐观锁大部分场景下差异不大，一些独特场景下有一些差别，一般我们可以从如下几个方面来判断。
+
+**·** ***\*响应速度\****：如果需要非常高的响应速度，***\*建议采用乐观锁方案\****，成功就执行，不成功就失败，不需要等待其他并发去释放锁。
+
+**·** ***\*冲突频率\****：如果冲突频率非常高，***\*建议采用悲观锁\****，保证成功率，如果冲突频率大，乐观锁会需要多次重试才能成功，代价比较大。
+
+**·** ***\*重试代价\****：如果重试代价大，建议采用悲观锁。
+
+## 11、非关系型数据库和关系型数据库区别，优势比较？
+
+ ***\*11.1\*******\*非关系型数据库的优势\****
+
+***\*（1）\*******\*性能\****
+
+NOSQL基于键值对，可以想象成表中的主键和值的对应关系，而且不需要经过SQL层的解析，所以性能非常高。
+
+***\*（2）\*******\*可扩展性\****
+
+同样也是因为基于键值对，数据之间没有耦合性，所以非常容易水平扩展。
+
+ ***\*11.2\*******\*关系型数据库的优势\**** 
+
+***\*（1）\*******\*复杂查询\****
+
+可以用SQL语句方便的在一个表以及多个表之间做非常复杂的数据查询。
+
+***\*（2）\*******\*事务支持\****
+
+使得对于安全性能很高的数据访问要求得以实现。
+
+ ***\*11.3\*******\*总结\****
+
+***\*对于这两类数据库，对方的优势就是自己的弱势，反之亦然\****。
+
+NOSQL数据库慢慢开始具备SQL数据库的一些复杂查询功能，比如MongoDB。
+
+对于事务的支持也可以用一些系统级的原子操作来实现例如乐观锁之类的方法来曲线救国，比如Redis set nx。
+
+## 12、数据库三范式，根据某个场景设计数据表？
+
+· 所有字段值都是不可分解的原子值。
+
+· 在一个数据库表中，一个表中只能保存一种数据，不可以把多种数据保存在同一张数据库表中。
+
+· 数据表中的每一列数据都和主键直接相关，而不能间接相关。
+
+***\*12.1\*******\*第一范式(确保每列保持原子性)\****
+
+***\*第一范式是最基本的范式。如果数据库表中的所有字段值都是不可分解的原子值，就说明该数据库表满足了第一范式\****。
+
+第一范式的合理遵循需要根据系统的实际需求来定。比如某些数据库系统中需要用到“地址”这个属性，本来直接将“地址”属性设计成一个数据库表的字段就行。但是如果系统经常会访问“地址”属性中的“城市”部分，那么就非要将“地址”这个属性重新拆分为省份、城市、详细地址等多个部分进行存储，这样在对地址中某一部分操作的时候将非常方便。这样设计才算满足了数据库的第一范式，如下表所示。
+
+上表所示的用户信息遵循了第一范式的要求，这样在对用户使用城市进行分类的时候就非常方便，也提高了数据库的性能。
+
+***\*12.2\*******\*第二范式(确保表中的每列都和主键相关)\****
+
+第二范式在第一范式的基础之上更进一层。第二范式需要确保数据库表中的每一列都和主键相关，而不能只与主键的某一部分相关（主要针对联合主键而言）。***\*也就是说在一个数据库表中，一个表中只能保存一种数据，不可以把多种数据保存在同一张数据库表中\****。
+
+***\*比如要设计一个订单信息表，因为订单中可能会有多种商品，所以要将订单编号和商品编号作为数据库表的联合主键\****。
+
+***\*12.3\*******\*第三范式(确保每列都和主键列直接相关,而不是间接相关)\****
+
+第三范式需要确保数据表中的***\*每一列数据都和主键直接相关，而不能间接相关\****。
+
+比如在设计一个订单数据表的时候，可以将客户编号作为一个外键和订单表建立相应的关系。而不可以在订单表中添加关于客户其它信息（比如姓名、所属公司等）的字段。
+
+## 13、数据库的读写分离、主从复制，主从复制分析的 7 个问题？
+
+ ***\*13.1\*******\*主从复制的几种方式\****
+
+***\*同步复制\****
+
+· 所谓的同步复制，意思是master的变化，必须等待slave-1,slave-2,...,slave-n完成后才能返回。 这样，显然不可取，也不是MySQL复制的默认设置。比如，在WEB前端页面上，用户增加了条记录，需要等待很长时间。
+
+***\*异步复制\****
+
+· 如同AJAX请求一样。master只需要完成自己的数据库操作即可。至于slaves是否收到二进制日志，是否完成操作，不用关心,MySQL的默认设置。
+
+***\*半同步复制\****
+
+· master只保证slaves中的一个操作成功，就返回，其他slave不管。 这个功能，是由google为MySQL引入的。
+
+ ***\*13.2\*******\*主从复制分析的 7 个问题\****
+
+***\*问题1：master的写操作，slaves被动的进行一样的操作，保持数据一致性，那么slave是否可以主动的进行写操作？\****
+
+假设slave可以主动的进行写操作，slave又无法通知master，这样就导致了master和slave数据不一致了。因此***\*slave不应该进行写操作\****，至少是slave上涉及到复制的数据库不可以写。实际上，***\*这里已经揭示了读写分离的概念\****。
+
+***\*问题2：主从复制中，可以有N个slave,可是这些slave又不能进行写操作，要他们干嘛？\****
+
+***\*以实现数据备份\****。
+
+***\*类似于高可用的功能，一旦master挂了，可以让slave顶上去，同时slave提升为master\****。
+
+异地容灾，比如master在北京，地震挂了，那么在上海的slave还可以继续。
+
+主要用于实现scale out,***\*分担负载,可以将读的任务分散到slaves上\****。
+
+【***\*很可能的情况是，一个系统的读操作远远多于写操作，因此写操作发向master，读操作发向slaves进行操作\****】
+
+***\*问题3：主从复制中有master,slave1,slave2,...等等这么多MySQL数据库，那比如一个JAVA WEB应用到底应该连接哪个数据库?\****
+
+当 然，我们在应用程序中可以这样，insert/delete/update这些更新数据库的操作，用connection(for master)进行操作，select用connection(for slaves)进行操作。那我们的应用程序还要完成怎么从slaves选择一个来执行select，例如***\*使用简单的轮循算法\****。
+
+这样的话，相当于应用程序完成了SQL语句的路由，而且与MySQL的主从复制架构非常关联，一旦master挂了，某些slave挂了，那么应用程序就要修改了。能不能让应用程序与MySQL的主从复制架构没有什么太多关系呢？
+
+***\*找一个组件\****，***\*application program只需要与它打交道，用它来完成MySQL的代理，实现SQL语句的路由\****。
+
+MySQL proxy并不负责，怎么从众多的slaves挑一个？可以交给另一个组件(比如haproxy)来完成。
+
+这就是所谓的MySQL READ WRITE SPLITE，MySQL的读写分离。
+
+***\*问题4：如果MySQL proxy , direct , master他们中的某些挂了怎么办？\****
+
+总统一般都会弄个副总统，以防不测。同样的，可以给这些关键的节点来个备份。
+
+***\*问题5：当master的二进制日志每产生一个事件，都需要发往slave，如果我们有N个slave,那是发N次，还是只发一次？\****
+
+如果只发一次，发给了slave-1，那slave-2,slave-3,...它们怎么办？
+
+显 然，应该发N次。实际上，***\*在MySQL master内部，维护N个线程，每一个线程负责将二进制日志文件发往对应的slave\****。master既要负责写操作，还的维护N个线程，负担会很重。***\*可以这样，slave-1是master的从，slave-1又是slave-2,slave-3,...的主\****，同时slave-1不再负责select。 ***\*slave-1将master的复制线程的负担，转移到自己的身上\****。***\*这就是所谓的多级复制的概念\****。
+
+***\*问题6：当一个select发往MySQL proxy，可能这次由slave-2响应，下次由slave-3响应，这样的话，就无法利用查询缓存了。\****
+
+应该找一个共享式的缓存，比如memcache来解决。将slave-2,slave-3,...这些查询的结果都缓存至mamcache中。
+
+***\*问题7：随着应用的日益增长，读操作很多，我们可以扩展slave，但是如果master满足不了写操作了，怎么办呢？\****
+
+scale on ?更好的服务器？ 没有最好的，只有更好的，太贵了。。。
+
+scale out ? 主从复制架构已经满足不了。
+
+可以分库【垂直拆分】，分表【水平拆分】。
+
+## 14、使用explain优化sql和索引
+
+对于复杂、效率低的sql语句，我们通常是使用explain sql 来分析sql语句，这个语句可以打印出，语句的执行。这样方便我们分析，进行优化
+
+**·** ***\*table\****：显示这一行的数据是关于哪张表的
+
+**·** ***\*type\****：这是重要的列，显示连接使用了何种类型。从最好到最差的连接类型为const、eq_reg、ref、range、index和ALL
+
+​	**·** ***\*all\****: full table scan ;MySQL将遍历全表以找到匹配的行；
+
+​	**·** ***\*index\**** ： index scan; index 和 all的区别在于index类型只遍历索引；
+
+​	**·** ***\*range\****：索引范围扫描，对索引的扫描开始于某一点，返回匹配值的行，常见与between ，< ,>等查询；
+
+​	**·** ***\*ref\****：非唯一性索引扫描，返回匹配某个单独值的所有行，常见于使用非唯一索引即唯一索引的非唯一前缀进行查找；
+
+​	**·** ***\*eq_ref\****：唯一性索引扫描，对于每个索引键，表中只有一条记录与之匹配，常用于主键或者唯一索引扫描；
+
+​	**·** ***\*const\****，system：当MySQL对某查询某部分进行优化，并转为一个常量时，使用这些访问类型。如果将主键置于where列表中，MySQL就能将该查询转化为一个常量。
+
+**·** ***\*possible_keys\****：显示可能应用在这张表中的索引。如果为空，没有可能的索引。可以为相关的域从WHERE语句中选择一个合适的语句
+
+**·** ***\*key\****： ***\*实际使用的索引。如果为NULL，则没有使用索引\****。很少的情况下，MySQL会选择优化不足的索引。这种情况下，可以在SELECT语句中使用USE INDEX（indexname）来强制使用一个索引或者用IGNORE INDEX（indexname）来强制MySQL忽略索引
+
+**·** ***\*key_len\****：***\*使用的索引的长度。在不损失精确性的情况下，长度越短越好\****
+
+**·** ***\*ref\****：显示索引的哪一列被使用了，如果可能的话，是一个常数
+
+**·** ***\*rows\****：MySQL认为必须检查的用来返回请求数据的行数
+
+**·** ***\*Extra\****：关于MySQL如何解析查询的额外信息。将在表4.3中讨论，但这里可以看到的坏的例子是Using temporary和Using filesort，意思MySQL根本不能使用索引，结果是检索会很慢。
+
+## 15、MySQL慢查询怎么解决？
+
+**·** ***\*slow_query_log\**** 慢查询开启状态。
+
+**·** ***\*slow_query_log_file\**** 慢查询日志存放的位置（这个目录需要MySQL的运行帐号的可写权限，一般设置为MySQL的数据存放目录）。
+
+**·** ***\*long_query_time\**** 查询超过多少秒才记录。
+
+
+
+## 16、什么是 内连接、外连接、交叉连接、笛卡尔积等？
+
+***\*16.1\*******\*内连接\****
+
+内连接查询操作列出与连接条件匹配的数据行，它使用比较运算符比较被连接列的 列值。
+
+***\*内连接分三种\****：
+
+***\*（1）\*******\*等值连接\****：在连接条件中使用等于号(=)运算符比较被连接列的列值，其查询结 果中列出被连接表中的所有列，包括其中的重复列。
+
+例，下面使用等值连接列出authors和publishers表中位于同一城市的作者和出版社：
+
+SELECT * FROM authors AS a INNER JOIN publishers AS p ON a.city=p.city 
+
+复制代码
+
+***\*（2）\*******\*不等连接\****： 在连接条件使用除等于运算符以外的其它比较运算符比较被连接的 列的列值。这些运算符包括>、>=、<=、<、!>、!<和<>。
+
+***\*（3）\*******\*自然连接\****：在连接条件中使用等于(=)运算符比较被连接列的列值，但它使用选 择列表指出查询结果集合中所包括的列，并删除连接表中的重复列。
+
+例，在选择列表中删除authors 和publishers 表中重复列(city和state)：
+
+SELECT a.*,p.pub_id,p.pub_name,p.country FROM authors AS a INNER JOIN publishers AS p ON a.city=p.city
+
+复制代码
+
+***\*16.2\*******\*外连接\****
+
+外连接，返回到查询结果集合中的不仅包含符合连接条件的行，***\*而且还包括左表\****(***\*左外连接或左连接\****)、右表(***\*右外连接或右连接\****)或两个边接表(全外连接)中的所有数据行。   
+
+**·** ***\*left join\****(左联接) 返回包括左表中的所有记录和右表中联结字段相等的记录。
+
+**·** ***\*right join\****(右联接) 返回包括右表中的所有记录和左表中联结字段相等的记录。
+
+***\*例如1\****：
+
+SELECT a.*,b.* FROM luntan LEFT JOIN usertable as b ON a.username=b.username
+
+复制代码
+
+***\*例如2\****：
+
+SELECT a.*,b.* FROM city as a FULL OUTER JOIN user as b ON a.username=b.username
+
+复制代码
+
+***\*16.3\*******\*交叉连接\****
+
+***\*交叉连接不带\**** ***\*WHERE\**** ***\*子句\****，***\*它返回被连接的两个表所有数据行的“笛卡尔积”\****，返回到结果集合中的数据行数等于第一个表中符合查询条件的数据行数乘以第二个表中符合查询条件的数据行数。
+
+  例，titles表中有6类图书，而publishers表中有8家出版社，则下 列交叉连接检索到的记录数将等于6*8=48行。 
+
+例如：
+
+SELECT type,pub_name FROM titles CROSS JOIN publishers  ORDER BY type
+
+复制代码
+
+***\*16.4\*******\*笛卡尔积\****
+
+笛卡尔积是两个表每一个字段相互匹配，去掉where 或者inner join的等值 得出的结果就是笛卡尔积。***\*笛卡尔积也等同于交叉连接\****。
+
+***\*16.5\*******\*总结\****
+
+· 内连接: 只连接匹配的行。
+
+· 左外连接: 包含左边表的全部行（不管右边的表中是否存在与它们匹配的行），以及右边表中全部匹配的行。
+
+· 右外连接: 包含右边表的全部行（不管左边的表中是否存在与它们匹配的行），以及左边表中全部匹配的行。
+
+· 全外连接: 包含左、右两个表的全部行，不管另外一边的表中是否存在与它们匹配的行。
+
+· 交叉连接 生成笛卡尔积－它不使用任何匹配或者选取条件，而是直接将一个数据源中的每个行与另一个数据源的每个行都一一匹配。
+
+## 17、MySQL都有什么锁，死锁判定原理和具体场景，死锁怎么解决？
+
+***\*17.1\**** ***\*MySQL都有什么锁\****
+
+MySQL有三种锁的级别：***\*页级、表级、行级\****。
+
+**·** ***\*表级锁\****：开销小，加锁快；***\*不会出现死锁\****；锁定粒度大，发生锁冲突的概率最高,并发度最低。
+
+**·** ***\*行级锁\****：开销大，加锁慢；***\*会出现死锁\****；锁定粒度最小，发生锁冲突的概率最低,并发度也最高。
+
+**·** ***\*页面锁\****：开销和加锁时间界于表锁和行锁之间；***\*会出现死锁\****；锁定粒度界于表锁和行锁之间，并发度一般
+
+***\*17.2\*******\*什么情况下会造成死锁\****
+
+· 所谓死锁: 是指两个或两个以上的进程在执行过程中。
+
+· 因争夺资源而造成的一种互相等待的现象,若无外力作用,它们都将无法推进下去。
+
+· 此时称系统处于死锁状态或系统产生了死锁,这些永远在互相等竺的进程称为死锁进程。
+
+· 表级锁不会产生死锁.所以解决死锁主要还是针对于最常用的InnoDB。
+
+死锁的关键在于：两个(或以上)的Session加锁的顺序不一致。
+
+那么对应的***\*解决死锁问题的关键就是\****：让不同的session***\*加锁有次序\****。
+
+***\*17.3\*******\*死锁的解决办法\****
+
+· 查出的线程杀死 kill
+
+SELECT trx_MySQL_thread_id FROM information_schema.INNODB_TRX;
+
+· 设置锁的超时时间
+
+Innodb 行锁的等待时间，单位秒。可在会话级别设置，RDS 实例该参数的默认值为 50（秒）。
+
+生产环境不推荐使用过大的 innodb_lock_wait_timeout参数值
+
+该参数支持在会话级别修改，方便应用在会话级别单独设置某些特殊操作的行锁等待超时时间，如下：
+
+set innodb_lock_wait_timeout=1000; —设置当前会话 Innodb 行锁等待超时时间，单位秒。
+
+
+
+## 18、varchar和char的使用场景？
+
+***\*char的长度是不可变的，而varchar的长度是可变的\****。
+
+定义一个char[10]和varchar[10]。
+
+***\*如果存进去的是‘csdn’,那么char所占的长度依然为10，除了字符‘csdn’外，后面跟六个空格，varchar就立马把长度变为4了，取数据的时候，char类型的要用trim()去掉多余的空格，而varchar是不需要的\****。
+
+char的存取数度还是要比varchar要快得多，因为其长度固定，方便程序的存储与查找。
+
+char也为此付出的是空间的代价，因为其长度固定，所以难免会有多余的空格占位符占据空间，***\*可谓是以空间换取时间效\****率。
+
+varchar是***\*以空间效率为首位\****。
+
+***\*char的存储方式是\****：对英文字符（ASCII）占用1个字节，对一个汉字占用两个字节。
+
+***\*varchar的存储方式是\****：对每个英文字符占用2个字节，汉字也占用2个字节。
+
+两者的存储数据都非unicode的字符数据。
+
+## 19、MySQL 高并发环境解决方案？
+
+MySQL 高并发环境解决方案 分库 分表 分布式 增加二级缓存。。。。。
+
+***\*需求分析\****：互联网单位 每天大量数据读取，写入，并发性高。
+
+**·** ***\*现有解决方式\****：水平分库分表，由单点分布到多点数据库中，从而降低单点数据库压力。
+
+**·** ***\*集群方案\****：解决DB宕机带来的单点DB不能访问问题。
+
+**·** ***\*读写分离策略\****：极大限度提高了应用中Read数据的速度和并发量。无法解决高写入压力。
+
+## 20、数据库崩溃时事务的恢复机制（REDO日志和UNDO日志）？
+
+[转]MySQL REDO日志和UNDO日志
+
+www.cnblogs.com/Bozh/archiv…
+
+***\*20.1\**** ***\*Undo Log\****
+
+***\*Undo Log是为了实现事务的原子性\****，在MySQL数据库InnoDB存储引擎中，还用了Undo Log来实现多版本并发控制(简称：MVCC)。
+
+**·** ***\*事务的原子性\****(Atomicity)事务中的所有操作，要么全部完成，要么不做任何操作，不能只做部分操作。如果在执行的过程中发生了错误，要回滚(Rollback)到事务开始前的状态，就像这个事务从来没有执行过。
+
+**·** ***\*原理\****Undo Log的原理很简单，***\*为了满足事务的原子性，在操作任何数据之前，首先将数据备份到一个地方（这个存储数据备份的地方称为UndoLog）\****。然后进行数据的修改。如果出现了错误或者用户执行了ROLLBACK语句，***\*系统可以利用Undo Log中的备份将数据恢复到事务开始之前的状态\****。
+
+***\*之所以能同时保证原子性和持久化，是因为以下特点\****：
+
+· 更新数据前记录Undo log。
+
+· 为了保证持久性，必须将数据在事务提交前写到磁盘。只要事务成功提交，数据必然已经持久化。
+
+**·** ***\*Undo log必须先于数据持久化到磁盘\****。如果在G,H之间系统崩溃，***\*undo log是完整的， 可以用来回滚事务\****。
+
+· 如果在A-F之间系统崩溃,因为数据没有持久化到磁盘。所以磁盘上的数据还是保持在事务开始前的状态。
+
+***\*缺陷\****：***\*每个事务提交前将数据和Undo Log写入磁盘，这样会导致大量的磁盘IO，因此性能很低\****。
+
+如果能够将数据缓存一段时间，就能减少IO提高性能。但是这样就会丧失事务的持久性。因此引入了另外一种机制来实现持久化，即Redo Log。
+
+  ***\*20.2\**** ***\*Redo Log\****
+
+***\*原理和Undo Log相反，Redo Log记录的是新数据的备份。在事务提交前，只要将Redo Log持久化即可，不需要将数据持久化。当系统崩溃时，虽然数据没有持久化，但是Redo Log已经持久化。系统可以根据Redo Log的内容，将所有数据恢复到最新的状态。\****
+
+
+
+ 
