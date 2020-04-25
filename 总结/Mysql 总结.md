@@ -1,5 +1,7 @@
 # 数据库基础知识
 
+
+
 ### 为什么要使用数据库
 
 **数据保存在内存**
@@ -210,7 +212,7 @@ mysql> SELECT name FROM person_tbl WHERE name REGEXP '^[aeiou]|ok$';
 
 ## MyISAM与InnoDB区别
 
-![image-20200423184617736](/Users/houshaojie/Library/Application Support/typora-user-images/image-20200423184617736.png)
+![image-20200423184617736](images/image-20200423184617736.png)
 
 MyISAM Innodb 存储结构 每张表被存放在三个文件：frm-表格定义、MYD(MYData)-数据文件、MYI(MYIndex)-索引文件 所有的表都保存在同一个数据文件中（也可能是多个文件，或者是独立的表空间文件），InnoDB表的大小只受限于操作系统文件的大小，一般为2GB 存储空间 MyISAM可被压缩，存储空间较小 InnoDB的表需要更多的内存和存储，它会在主内存中建立其专用的缓冲池用于高速缓冲数据和索引 可移植性、备份及恢复 由于MyISAM的数据是以文件的形式存储，所以在跨平台的数据转移中会很方便。在备份和恢复时可单独针对某个表进行操作 免费的方案可以是拷贝数据文件、备份 binlog，或者用 mysqldump，在数据量达到几十G的时候就相对痛苦了 文件格式 数据和索引是分别存储的，数据.MYD，索引.MYI 数据和索引是集中存储的，.ibd 记录存储顺序 按记录插入顺序保存 按主键大小有序插入 外键 不支持 支持 事务 不支持 支持 锁支持（锁是避免资源争用的一个机制，MySQL锁对用户几乎是透明的） 表级锁定 行级锁定、表级锁定，锁定力度小并发能力高 SELECT MyISAM更优 INSERT、UPDATE、DELETE InnoDB更优 select count(*) myisam更快，因为myisam内部维护了一个计数器，可以直接调取。 索引的实现方式 B+树索引，myisam 是堆表 B+树索引，Innodb 是索引组织表 哈希索引 不支持 支持 全文索引 支持 不支持
 
@@ -257,7 +259,7 @@ MyISAM Innodb 存储结构 每张表被存放在三个文件：frm-表格定义�
 
 **where**
 
-<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424152447826.png" alt="image-20200424152447826" style="zoom:50%;" />
+<img src="images/image-20200424152447826.png" alt="image-20200424152447826" style="zoom:50%;" />
 
 上图中，根据id查询记录，因为id字段仅建立了主键索引，因此此SQL执行可选的索引只有主键索引，如果有多个，最终会选一个较优的作为检索的依据。
 
@@ -268,7 +270,7 @@ alter table innodb1 add sex char(1);
 EXPLAIN SELECT * from innodb1 where sex='男';
 ```
 
-<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424152520597.png" alt="image-20200424152520597" style="zoom:50%;" />
+<img src="images/image-20200424152520597.png" alt="image-20200424152520597" style="zoom:50%;" />
 
 > 可以尝试在一个字段未建立索引时，根据该字段查询的效率，然后对该字段建立索引（**alter table 表名 add index(字段名)**），同样的SQL执行的效率，你会发现查询效率会有明显的提升（数据量越大越明显）。
 
@@ -320,7 +322,7 @@ EXPLAIN SELECT * from innodb1 where sex='男';
 
 mysql通过存储引擎取数据，基本上90%的人用的就是InnoDB了，按照实现方式分，InnoDB的索引类型目前只有两种：**BTREE（B树）\**索引和\**HASH**索引。B树索引是Mysql数据库中使用最频繁的索引类型，基本所有存储引擎都支持BTree索引。通常我们说的索引不出意外指的就是（B树）索引（实际是用B+树实现的，因为在查看表索引时，mysql一律打印BTREE，所以简称为B树索引）
 
-![image-20200424152551792](/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424152551792.png)
+![image-20200424152551792](images/image-20200424152551792.png)
 
 **查询方式：**
 
@@ -344,7 +346,7 @@ mysql通过存储引擎取数据，基本上90%的人用的就是InnoDB了，按
 
 简要说下，类似于数据结构中简单实现的HASH表（散列表）一样，当我们在mysql中用哈希索引时，主要就是通过Hash算法（常见的Hash算法有直接定址法、平方取中法、折叠法、除数取余法、随机数法），将数据库字段数据转换成定长的Hash值，与这条数据的行指针一并存入Hash表的对应位置；如果发生Hash碰撞（两个不同关键字的Hash值相同），则在对应Hash键下以链表形式存储。当然这只是简略模拟图。
 
-<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424152606887.png" alt="image-20200424152606887" style="zoom:50%;" />
+<img src="images/image-20200424152606887.png" alt="image-20200424152606887" style="zoom:50%;" />
 
 ## 索引的基本原理
 
@@ -454,7 +456,7 @@ alter table user_index drop KEY information;
 
 **删除主键索引**：alter table 表名 drop primary key（因为主键只有一个）。这里值得注意的是，如果主键自增长，那么不能直接执行此操作（自增长依赖于主键索引）：
 
-<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424152625160.png" alt="image-20200424152625160" style="zoom:50%;" />
+<img src="images/image-20200424152625160.png" alt="image-20200424152625160" style="zoom:50%;" />
 
 需要取消自增长再行删除：
 
@@ -512,7 +514,7 @@ drop PRIMARY KEY
 - 在B树中，你可以将键和值存放在内部节点和叶子节点；但在B+树中，内部节点都是键，没有值，叶子节点同时存放键和值。
 - B+树的叶子节点有一条链相连，而B树的叶子节点各自独立。
 
-![image-20200424152726948](/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424152726948.png)
+![image-20200424152726948](images/image-20200424152726948.png)
 
 ### 使用B树的好处
 
@@ -568,7 +570,7 @@ B+树底层实现是多路平衡查找树。对于每一次的查询都是从根
 
 **何时使用聚簇索引与非聚簇索引**
 
-![image-20200424152745051](/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424152745051.png)
+![image-20200424152745051](images/image-20200424152745051.png)
 
 ## 非聚簇索引一定会回表查询吗？
 
@@ -1615,7 +1617,7 @@ UNDO内部由多个回滚段组成，即 Rollback segment，一共有128个，�
 
 回滚段（rollback segment ）采用 轮询调度的方式来分配使用，如果设置了独立表空间，那么就不会使用系统表空间回滚段中undo segment，而是使用独立表空间的，同时，如果回顾段正在 Truncate操作，则不分配。
 
-![image-20200424231447755](/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424231447755.png)
+![image-20200424231447755](images/image-20200424231447755.png)
 
 
 
@@ -1785,7 +1787,7 @@ pmm server、Navicat、mysqltop（天兔Lepus）、Box Anemometer、explain、**
   缺省情况下数据库相关管理型SQL(比如OPTIMIZE TABLE、ANALYZE TABLE和ALTER TABLE)不会被记录到日志。
   对于管理型SQL可以通过--log-slow-admin-statements开启记录管理型慢SQL。
   mysqld在语句执行完并且所有锁释放后记入慢查询日志。记录顺序可以与执行顺序不相同。获得初使表锁定的时间不算作执行时间。
-  
+
   可以使用mysqldumpslow命令获得日志中显示的查询摘要来处理慢查询日志。
   用查询缓存处理的查询不加到慢查询日志中，表有零行或一行而不能从索引中受益的查询也不写入慢查询日志。
   MySQL服务器按以下顺序记录SQL是否写入到慢查询日志
@@ -2376,8 +2378,6 @@ set global transaction isolation level repeatable read;
 
 测试结果：由于当前读持有S锁，导致update申请X锁处于等待情况，无法更新，同个事务内的多次查询结果一致，无脏读及不可重复读情况。
 
-![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(12).png)
-
 ![img](https://images2017.cnblogs.com/blog/608061/201707/608061-20170730200811724-966427933.png)
 
  
@@ -2466,7 +2466,6 @@ insert into tblock(name) select 'xin';
 
 测试结果：当前读被堵塞，无法正常加X锁
 
-![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(17).png)
 
 ![img](https://images2017.cnblogs.com/blog/608061/201707/608061-20170730201000177-1685388309.png)
 
@@ -3465,7 +3464,7 @@ readview：
 
 对于低性能的SQL语句的定位，最重要也是最有效的方法就是使用执行计划，MySQL提供了explain命令来查看语句的执行计划。 我们知道，不管是哪种数据库，或者是哪种数据库引擎，在对一条SQL语句进行执行的过程中都会做很多相关的优化，对于查询语句，最重要的优化方式就是使用索引。 而执行计划，就是显示数据库引擎对于SQL语句的执行的详细情况，其中包含了是否使用索引，使用什么索引，使用的索引的相关信息等。
 
-<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424152942073.png" alt="image-20200424152942073" style="zoom:50%;" />
+<img src="images/image-20200424152942073.png" alt="image-20200424152942073" style="zoom:50%;" />
 
 执行计划包含的信息 id 有一组数字组成。表示一个查询中各个子查询的执行顺序;
 
@@ -3540,7 +3539,7 @@ partition by key (id) partitions 5;
 5. 通过步骤一的连接，发送结果到客户端
 6. 关掉连接，释放资源
 
-<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424153049086.png" alt="image-20200424153049086" style="zoom:50%;" />
+<img src="images/image-20200424153049086.png" alt="image-20200424153049086" style="zoom:50%;" />
 
 ## 大表数据查询，怎么优化
 
@@ -3783,7 +3782,7 @@ select id from t where name like ‘abc%’
 
    ，每个结果集的取出来后，会做合并操作，这个操作就是 UNION RESULT；
 
-   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119213129702-588374643.png)![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(37).png)
+   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119213129702-588374643.png)![img]
 
 5. DEPENDENT UNION
 
@@ -3819,7 +3818,7 @@ select id from t where name like ‘abc%’
 
     ，结果集无法缓存的子查询，需要逐次查询；
 
-    - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119213225343-2134061661.png)![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(43).png)
+    - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119213225343-2134061661.png)![img]
 
 11. UNCACHEABLE UNION
 
@@ -3837,7 +3836,7 @@ select id from t where name like ‘abc%’
 
    ，不访问任何一个表格
 
-   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220221562-1941538266.png)![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(45).png)
+   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220221562-1941538266.png)![img]
 
 2. system
 
@@ -3848,12 +3847,12 @@ select id from t where name like ‘abc%’
 
    - 主键或者唯一索引的常量查询，表格最多只有1行记录符合查询，通常const使用到主键或者唯一索引进行定值查询。
    - 常量查询非常快。
-   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220349734-69873590.png)![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(46).png)
+   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220349734-69873590.png)![img]
 
 4. eq_ref
 
    - join 查询过程中，关联条件为主键或者唯一索引，出来的行数不止一行
-   - eq_ref是一种性能非常好的 join 操作。![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(47).png)
+   - eq_ref是一种性能非常好的 join 操作。![img]
    - 例子说明：首先从su表格查询所有数据共7行出来，然后每一行跟 xin 的主键id中的1行做匹配。
    - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220433765-1802813303.png)
 
@@ -3861,18 +3860,18 @@ select id from t where name like ‘abc%’
 
    - 非聚集索引的常量查询
    - 性能也是很不错的。
-   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220526796-647910285.png)![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(48).png)
+   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220526796-647910285.png)![img]
 
 6. fulltext
 
    - 查询的过程中，使用到了 fulltext 索引（fulltext index在innodb引擎中，只有5.6版本之后的支持）
    - 例子是innodb引擎下、带fulltext index的表格查询
-   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220540265-1865474177.png)![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(49).png)
+   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220540265-1865474177.png)![img]
 
 7. ref_or_null
 
    - 跟ref查询类似，在ref的查询基础上，不过会加多一个null值的条件查询
-   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220600312-1531705376.png)![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(50).png)
+   - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220600312-1531705376.png)![img]
 
 8. index merg
 
@@ -3899,12 +3898,12 @@ select id from t where name like ‘abc%’
 12. index
 
     - 使用到索引，但是不是索引查找，而是对索引树做一个扫描，即使是索引扫描，大多数情况下也是比全表扫描性能要好的，因为索引树上的键值只有索引列键值+主键，而全表扫描则是在 聚集索引树（主键+所有列）上进行扫描，索引树相比之下要廋得多跟小得多了。
-    - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220647093-1271534948.png)![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(53).png)
+    - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220647093-1271534948.png)![img]
 
 13. all
 
     - 全表扫描，性能比较差。
-    - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220659796-1493381634.png)![img](file:///C:/Users/Administrator/AppData/Local/Temp/enhtmlclip/Image(54).png)
+    - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220659796-1493381634.png)![img]
     - 关于 index跟all，这里再举一个例子说明下
       - 下图中，表格su有3个索引：主键、ix_age、ix_name，这三个索引树的内容分别为：主键id+所有列、age+主键id、name+主键id，依次，当扫描主键id查询的时候，这三个索引都能够提供 主键id列，那么哪个性能比较好呢？索引树最小的，扫描次数最少的则为最优，根据索引数内容可得大小：ix_age < ix_name < pk，故执行计划会选择 ix_age。
       - ![img](https://images2017.cnblogs.com/blog/608061/201711/608061-20171119220714109-349225041.png)
@@ -4012,7 +4011,7 @@ select id from t where name like ‘abc%’
 
 **简单来说垂直拆分是指数据表列的拆分****，把一张列比较多的表拆分为多张表**。 如下图所示，这样来说大家应该就更容易理解了。
 
-![image-20200424153126354](/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424153126354.png)
+![image-20200424153126354](images/image-20200424153126354.png)
 
 **垂直拆分的优点**： 可以使得行数据变小，在查询时减少读取的Block数，减少I/O次数。此外，垂直分区可以简化表的结构，易于维护。
 
@@ -4020,7 +4019,7 @@ select id from t where name like ‘abc%’
 
 **垂直分表** 把主键和一些列放在一个表，然后把主键和另外的列放在另一个表中
 
-<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424153147833.png" alt="image-20200424153147833" style="zoom:50%;" />
+<img src="images/image-20200424153147833.png" alt="image-20200424153147833" style="zoom:50%;" />
 
 **适用场景** 1、如果一个表中某些列常用，另外一些列不常用 2、可以使数据行变小，一个数据页能存储更多数据，查询时减少I/O次数 **缺点**
 
@@ -4034,7 +4033,7 @@ select id from t where name like ‘abc%’
 
 水平拆分是指数据表行的拆分，表的行数超过200万行时，就会变慢，这时可以把一张的表的数据拆成多张表来存放。举个例子：我们可以将用户信息表拆分成多个用户信息表，这样就可以避免单一表数据量过大对性能造成影响。
 
-<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424153206236.png" alt="image-20200424153206236" style="zoom:50%;" />
+<img src="images/image-20200424153206236.png" alt="image-20200424153206236" style="zoom:50%;" />
 
 水平拆分可以支持非常大的数据量。需要注意的一点是:分表仅仅是解决了单一表数据过大的问题，但由于表的数据还是在同一台机器上，其实对于提升MySQL并发能力没有什么意义，所以 **水平拆分最好分库** 。
 
@@ -4044,7 +4043,7 @@ select id from t where name like ‘abc%’
 
 **水平分表：** 表很大，分割后可以降低在查询时需要读的数据和索引的页数，同时也降低了索引的层数，提高查询次数
 
-<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424153221674.png" alt="image-20200424153221674" style="zoom:50%;" />
+<img src="images/image-20200424153221674.png" alt="image-20200424153221674" style="zoom:50%;" />
 
 **适用场景** 1、表中的数据本身就有独立性，例如表中分表记录各个地区的数据或者不同时期的数据，特别是有些数据常用，有些不常用。 2、需要把数据存放在多个介质上。
 
@@ -4083,7 +4082,7 @@ select id from t where name like ‘abc%’
 
 般来讲，分页时需要按照指定字段进行排序。当排序字段就是分片字段的时候，我们通过分片规则可以比较容易定位到指定的分片，而当排序字段非分片字段的时候，情况就会变得比较复杂了。为了最终结果的准确性，我们需要在不同的分片节点中将数据进行排序并返回，并将不同分片返回的结果集进行汇总和再次排序，最后再返回给用户。如下图所示：
 
-<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424153306289.png" alt="image-20200424153306289" style="zoom:50%;" />
+<img src="images/image-20200424153306289.png" alt="image-20200424153306289" style="zoom:50%;" />
 
 ## MySQL的复制原理以及流程
 
@@ -4119,7 +4118,7 @@ select id from t where name like ‘abc%’
 
 复制过程
 
-<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200424153328526.png" alt="image-20200424153328526" style="zoom: 33%;" />
+<img src="images/image-20200424153328526.png" alt="image-20200424153328526" style="zoom: 33%;" />
 
 Binary log：主数据库的二进制日志
 
