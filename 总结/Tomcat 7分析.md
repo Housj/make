@@ -861,7 +861,7 @@ public String getStateName() {
 
 		1. Container的四个子容器有一个共同的父类ContainerBase，定义了Container容器的initInternal和startInternal方法通用处理内容，具体容器还可以添加自己的内容
   		2. 除了最顶层容器的init被Service调用的，子容器的init方法并不是在容器中逐层循环调用的，而是在执行start方法时通过状态判断还没有初始化才会调用
-  		3. start方法除了在父容器的startInternal方法中调用，还会在父容器的添加子容器的addChild方法中调用，主要是因为Context和Wrapper是动态添加的，
+    		3. start方法除了在父容器的startInternal方法中调用，还会在父容器的添加子容器的addChild方法中调用，主要是因为Context和Wrapper是动态添加的，
 
 ###ContainerBase的initInternal
 
@@ -1319,7 +1319,7 @@ public Valve[] getValves() {
 
 ​	Connector的使用方法是通过Connector标签配置在conf/server.xml文件中，所以Connector是在Catalina的load方法中根据conf/server.xml配置文件创建Server对象时创建的。Connector的生命周期方法是在Service中调用的。
 
-###Connector的创建
+### Connector的创建
 
 ​	Connector的创建过程主要是初始化ProtocolHandler。根据server.xml配置的Connector的protocol属性，会设置到Connector构造函数的参数中，用于指定ProtocolHandler的类型。
 
