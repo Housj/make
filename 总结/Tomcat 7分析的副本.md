@@ -861,7 +861,7 @@ public String getStateName() {
 
 		1. Container的四个子容器有一个共同的父类ContainerBase，定义了Container容器的initInternal和startInternal方法通用处理内容，具体容器还可以添加自己的内容
   		2. 除了最顶层容器的init被Service调用的，子容器的init方法并不是在容器中逐层循环调用的，而是在执行start方法时通过状态判断还没有初始化才会调用
-    		3. start方法除了在父容器的startInternal方法中调用，还会在父容器的添加子容器的addChild方法中调用，主要是因为Context和Wrapper是动态添加的，
+  		3. start方法除了在父容器的startInternal方法中调用，还会在父容器的添加子容器的addChild方法中调用，主要是因为Context和Wrapper是动态添加的，
 
 ###ContainerBase的initInternal
 
@@ -1319,7 +1319,7 @@ public Valve[] getValves() {
 
 ​	Connector的使用方法是通过Connector标签配置在conf/server.xml文件中，所以Connector是在Catalina的load方法中根据conf/server.xml配置文件创建Server对象时创建的。Connector的生命周期方法是在Service中调用的。
 
-### Connector的创建
+###Connector的创建
 
 ​	Connector的创建过程主要是初始化ProtocolHandler。根据server.xml配置的Connector的protocol属性，会设置到Connector构造函数的参数中，用于指定ProtocolHandler的类型。
 
@@ -2548,11 +2548,12 @@ public class TomcatdebugApplication {
     }
 
 }
+复制代码
 ```
 
 我们直接点击run方法的源码，跟踪下来，发下最终 的`run`方法是调用`ConfigurableApplicationContext`方法，源码如下：
 
-```java
+```
 public ConfigurableApplicationContext run(String... args) {
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
@@ -2614,6 +2615,7 @@ public ConfigurableApplicationContext run(String... args) {
 		}
 		return context;
 	}
+复制代码
 ```
 
 其实这个方法我们可以简单的总结下步骤为
@@ -2631,7 +2633,7 @@ public ConfigurableApplicationContext run(String... args) {
 
 其实上面这段代码，如果只要分析tomcat内容的话，只需要关注两个内容即可，上下文是如何创建的，上下文是如何刷新的，分别对应的方法就是`createApplicationContext()` 和`refreshContext(context)`，接下来我们来看看这两个方法做了什么。
 
-```java
+```
 protected ConfigurableApplicationContext createApplicationContext() {
 		Class<?> contextClass = this.applicationContextClass;
 		if (contextClass == null) {
@@ -2660,7 +2662,9 @@ protected ConfigurableApplicationContext createApplicationContext() {
 
 这里就是根据我们的`webApplicationType` 来判断创建哪种类型的Servlet,代码中分别对应着Web类型(SERVLET),响应式Web类型（REACTIVE),非Web类型（default),我们建立的是Web类型，所以肯定实例化 `DEFAULT_SERVLET_WEB_CONTEXT_CLASS`指定的类，也就是`AnnotationConfigServletWebServerApplicationContext`类，我们来用图来说明下这个类的关系
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly91c2VyLWdvbGQtY2RuLnhpdHUuaW8vMjAxOS84LzEyLzE2YzgzMWIzOTcyM2EzNzE)
+
+
+![img](data:image/svg+xml;utf8,<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1280" height="632"></svg>)
 
 
 
@@ -2692,7 +2696,7 @@ protected void refresh(ApplicationContext applicationContext) {
 
 这里还是直接传递调用本类的`refresh(context)`方法，最后是强转成父类`AbstractApplicationContext`调用其`refresh()`方法,该代码如下：
 
-```java
+```
 // 类：AbstractApplicationContext	
 public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
@@ -2757,11 +2761,13 @@ public void refresh() throws BeansException, IllegalStateException {
 			}
 		}
 	}
+
+复制代码
 ```
 
 这里我们看到`onRefresh()`方法是调用其子类的实现，根据我们上文的分析，我们这里的子类是`ServletWebServerApplicationContext`。
 
-```java
+```
 //类：ServletWebServerApplicationContext
 protected void onRefresh() {
 		super.onRefresh();
@@ -2791,11 +2797,14 @@ private void createWebServer() {
 		initPropertySources();
 	}
 
+复制代码
 ```
 
 到这里，其实庐山真面目已经出来了，`createWebServer()`就是启动web服务，但是还没有真正启动Tomcat，既然`webServer`是通过`ServletWebServerFactory`来获取的，我们就来看看这个工厂的真面目。
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly91c2VyLWdvbGQtY2RuLnhpdHUuaW8vMjAxOS84LzEyLzE2YzgzMWJiZjUyMjYzYTg)
+
+
+![img](data:image/svg+xml;utf8,<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1280" height="438"></svg>)
 
 
 
@@ -2844,11 +2853,15 @@ private void createWebServer() {
 
 根据上面的源码，我们发现，原来这个Engine是容器，我们继续跟踪源码，找到`Container`接口
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly91c2VyLWdvbGQtY2RuLnhpdHUuaW8vMjAxOS84LzEyLzE2YzgzMWMwNzdlZmU3MmE)
+
+
+![img](data:image/svg+xml;utf8,<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1280" height="494"></svg>)
+
+
 
 上图中，我们看到了4个子接口，分别是Engine,Host,Context,Wrapper。我们从继承关系上可以知道他们都是容器，那么他们到底有啥区别呢？我看看他们的注释是怎么说的。
 
-```java
+```
  /**
  If used, an Engine is always the top level Container in a Catalina
  * hierarchy. Therefore, the implementation's <code>setParent()</code> method
@@ -2902,11 +2915,12 @@ public interface Wrapper extends Container {
     //省略代码
 }
 
+复制代码
 ```
 
 上面的注释翻译过来就是，`Engine`是最高级别的容器，其子容器是`Host`,`Host`的子容器是`Context`,`Wrapper`是`Context`的子容器，所以这4个容器的关系就是父子关系，也就是`Engine`>`Host`>`Context`>`Wrapper`。 我们再看看`Tomcat`类的源码:
 
-```java
+```
 //部分源码，其余部分省略。
 public class Tomcat {
 //设置连接器
@@ -3005,20 +3019,26 @@ public class Tomcat {
     }
     
 }
-
+复制代码
 ```
 
 阅读`Tomcat`的`getServer()`我们可以知道，`Tomcat`的最顶层是`Server`,Server就是`Tomcat`的实例，一个`Tomcat`一个`Server`;通过`getEngine()`我们可以了解到Server下面是Service，而且是多个，一个Service代表我们部署的一个应用，而且我们还可以知道，`Engine`容器，一个`service`只有一个；根据父子关系，我们看`setHost()`源码可以知道，`host`容器有多个；同理，我们发现`addContext()`源码下，`Context`也是多个；`addServlet()`表明`Wrapper`容器也是多个，而且这段代码也暗示了，其实`Wrapper`和`Servlet`是一层意思。另外我们根据`setConnector`源码可以知道，连接器(`Connector`)是设置在`service`下的，而且是可以设置多个连接器(`Connector`)。
 
 根据上面分析，我们可以小结下： Tomcat主要包含了2个核心组件，连接器(Connector)和容器(Container),用图表示如下：
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly91c2VyLWdvbGQtY2RuLnhpdHUuaW8vMjAxOS84LzEyLzE2YzgzMWM3OTQ5MjUwYzk)
+
+
+![img](data:image/svg+xml;utf8,<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="601" height="397"></svg>)
+
+
 
 一个`Tomcat`是一个`Server`,一个`Server`下有多个`service`，也就是我们部署的多个应用，一个应用下有多个连接器(`Connector`)和一个容器（`Container`）,容器下有多个子容器，关系用图表示如下：
 
 
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly91c2VyLWdvbGQtY2RuLnhpdHUuaW8vMjAxOS84LzEyLzE2YzgzMWNkMTVhMzA4ZGQ)
+![img](https://user-gold-cdn.xitu.io/2019/8/12/16c831cd15a308dd?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+
 
 `Engine`下有多个`Host`子容器，`Host`下有多个`Context`子容器，`Context`下有多个`Wrapper`子容器。
 
@@ -3038,3 +3058,9 @@ SpringBoot的启动是通过`new SpringApplication()`实例来启动的，启动
 > 10. 发布应用启动完成事件
 
 而启动Tomcat就是在第7步中“刷新上下文”；Tomcat的启动主要是初始化2个核心组件，连接器(Connector)和容器（Container），一个Tomcat实例就是一个Server，一个Server包含多个Service，也就是多个应用程序，每个Service包含多个连接器（Connetor）和一个容器（Container),而容器下又有多个子容器，按照父子关系分别为：Engine,Host,Context,Wrapper，其中除了Engine外，其余的容器都是可以有多个。
+
+
+作者：木木匠
+链接：https://juejin.im/post/5d3f95ebf265da039e12959e
+来源：掘金
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。

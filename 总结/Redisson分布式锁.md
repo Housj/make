@@ -1,4 +1,4 @@
-# Redis分布式锁（上）- 手写方案
+# Redis分布式锁 —  手写方案
 
 分布式锁的使用场景
 单体架构的应用可以直接使用本地锁（Synchronized）就可以解决多线程资源竞争的问题。如果公司业务发展较快，可以通过部署多个服务节点来提高系统的并行处理能力。由于本地锁的作用范围只限于当前应用的线程。高并发场景下，集群中某个应用的本地锁并不会对其它应用的资源访问产生互斥，就会产生数据不一致的问题，所以分布锁就派上了用场
@@ -157,7 +157,7 @@ public static boolean releaseLock(Jedis jedis, String reqId, String key) {
 
 
 
-# Redis分布式锁（下）- Redisson源码解析
+# Redis分布式锁  —  Redisson源码解析
 
 在之前的文章谈谈基于Redis分布式锁（上）- 手写方案最后我们分析得出手写一个完美的分布式锁方案并不容易（比如可重入性），而且性能也没法得到保证。而Redisson可以解决上述的所有问题，但是还有些小缺陷，文章最后我们再做讨论
 
@@ -520,7 +520,7 @@ void cancelExpirationRenewal(Long threadId) {
 
 
 
-# Redisson实现分布式锁(1)---原理
+# Redisson分布式锁  —  原理
 
 ![img](http://imgconvert.csdnimg.cn/aHR0cHM6Ly9pLmxvbGkubmV0LzIwMjAvMDMvMTMvUHR3UWtINXNBUzEybUxXLnBuZw?x-oss-process=image/format,png)
 
@@ -647,7 +647,7 @@ Redis分布式锁会有个缺陷，就是在Redis哨兵模式下:
 
 
 
-# Redisson实现分布式锁(2)—RedissonLock
+# Redisson分布式锁  —  RedissonLock
 
 有关Redisson实现分布式锁上一篇博客讲了分布式的锁原理：[Redisson实现分布式锁---原理](https://www.cnblogs.com/qdhxhz/p/11046905.html)
 
@@ -931,7 +931,7 @@ RedissonLock实现了RLock接口，所以实现了接口的具体方法。这里
 
 
 
-# Redisson实现分布式锁(3)—项目落地实现
+# Redisson分布式锁 — 落地实现
 
 有关Redisson实现分布式锁前面写了两篇博客作为该项目落地的铺垫。
 

@@ -1,13 +1,4 @@
-[
-大专栏](https://www.dazhuanlan.com/)
-
-
-
-[后端](https://www.dazhuanlan.com/backend/)[前端](https://www.dazhuanlan.com/frontend/)[人工智能](https://www.dazhuanlan.com/ai/)[DevOps](https://www.dazhuanlan.com/devops/)[移动端](https://www.dazhuanlan.com/mobile/)[测试](https://www.dazhuanlan.com/test/)[程序人生](https://www.dazhuanlan.com/life/)
-
- 
-
-​	我们来详细了解下Redis，及其一些命令的具体使用方法，并学会如何使用 Redis 的事务、持久化、复制、Sentinel、集群等功能。
+​	详细了解下Redis及其一些命令的具体使用方法，并学会如何使用 Redis 的事务、持久化、复制、Sentinel、集群等功能。
 
 # 主要命令
 
@@ -9078,8 +9069,9 @@ redis> SYNC
 "REDIS0006xfex00x00x02kkx02vvx00x03msgx05helloxffxc3x96Px12hbKxef"
 ```
 
-# 转载出处
+## 转载出处
 
 [Redis命令参考](http://redisdoc.com/index.html)
 
 [3422.水叮当的舞步](https://www.dazhuanlan.com/2020/03/27/5e7d19a8c2b19/)
+
