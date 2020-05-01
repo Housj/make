@@ -999,7 +999,7 @@ redirectAttributes.addFlashAttribute/addAttribute这个特殊的属性会在该�
 
 
 
-#SpringMVC路由
+# SpringMVC路由
 
 ​	写好了Controller和对应的方法，加上@RequestMapping注解，MVC是如何根据请求路径找到对应的Controller和Controller中具体的Method
 
@@ -1126,7 +1126,7 @@ Controller 代码
 
 开发中大多使用注解【RequestMapping】的方式实现路由的映射，也就是用RequestMappingHandlerMapping来实现的，关于RequestMappingHandlerMapping的具体初始化和查询的功能是如何根据注解来完成路由的映射的，
 
-##RequestMappingHandlerMapping
+## RequestMappingHandlerMapping
 
 **关系梳理**
 
