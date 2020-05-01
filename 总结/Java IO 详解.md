@@ -1,3 +1,13 @@
+
+
+
+
+
+
+
+
+
+
 # File 类
 
 **File 类：文件和目录路径名的抽象表示。**
@@ -1110,3 +1120,818 @@ Void seek(long pos)
 　　
 
 ps：一般多线程下载、断点下载都可以运用此随机流
+
+
+
+# I/O体系从原理到应用
+
+本文介绍操作系统I/O工作原理，Java I/O设计，基本使用，开源项目中实现高性能I/O常见方法和实现，彻底搞懂高性能I/O之道
+
+## 基础概念
+
+在介绍I/O原理之前，先重温几个基础概念：
+
+- **(1) 操作系统与内核**
+
+![img](https:////upload-images.jianshu.io/upload_images/5618238-ee23d455c41b9496.png?imageMogr2/auto-orient/strip|imageView2/2/w/430/format/webp)
+
+**操作系统**：管理计算机硬件与软件资源的系统软件
+ **内核**：操作系统的核心软件，负责管理系统的进程、内存、设备驱动程序、文件和网络系统等等，为应用程序提供对计算机硬件的安全访问服务
+
+- **2 内核空间和用户空间**
+
+为了避免用户进程直接操作内核，保证内核安全，操作系统将内存寻址空间划分为两部分：
+ **内核空间（Kernel-space）**，供内核程序使用
+ **用户空间（User-space）**，供用户进程使用
+ 为了安全，内核空间和用户空间是隔离的，即使用户的程序崩溃了，内核也不受影响
+
+- **3 数据流**
+
+![img](https:////upload-images.jianshu.io/upload_images/5618238-abf5fdf85c9e8889.png?imageMogr2/auto-orient/strip|imageView2/2/w/338/format/webp)
+
+计算机中的数据是基于随着时间变换高低电压信号传输的，这些数据信号连续不断，有着固定的传输方向，类似水管中水的流动，因此抽象数据流(I/O流)的概念：**指一组有顺序的、有起点和终点的字节集合**，
+
+抽象出数据流的作用：**实现程序逻辑与底层硬件解耦**，通过引入数据流作为程序与硬件设备之间的抽象层，面向通用的数据流输入输出接口编程，而不是具体硬件特性，程序和底层硬件可以独立灵活替换和扩展
+
+![img](https:////upload-images.jianshu.io/upload_images/5618238-8c4dd0bb4d7e0a51.png?imageMogr2/auto-orient/strip|imageView2/2/w/362/format/webp)
+
+## I/O 工作原理
+
+### 1 磁盘I/O
+
+典型I/O读写磁盘工作原理如下：
+
+![img](https:////upload-images.jianshu.io/upload_images/5618238-e2f6c7cc9ec3d9e4.png?imageMogr2/auto-orient/strip|imageView2/2/w/484/format/webp)
+
+> **tips**: DMA：全称叫直接内存存取（Direct Memory Access），是一种允许外围设备（硬件子系统）直接访问系统主内存的机制。基于 DMA 访问方式，系统主内存与硬件设备的数据传输可以省去CPU 的全程调度
+
+值得注意的是：
+
+- 读写操作基于系统调用实现
+- 读写操作经过用户缓冲区，内核缓冲区，应用进程并不能直接操作磁盘
+- 应用进程读操作时需阻塞直到读取到数据
+
+### 2 网络I/O
+
+这里先以最经典的阻塞式I/O模型介绍：
+
+![img](https:////upload-images.jianshu.io/upload_images/5618238-dbc0c35b530791a7.png?imageMogr2/auto-orient/strip|imageView2/2/w/484/format/webp)
+
+![img](https:////upload-images.jianshu.io/upload_images/5618238-1da0221dd8a7109a.png?imageMogr2/auto-orient/strip|imageView2/2/w/584/format/webp)
+
+> **tips**:recvfrom，经socket接收数据的函数
+
+值得注意的是：
+
+- 网络I/O读写操作经过用户缓冲区，Sokcet缓冲区
+- 服务端线程在从调用recvfrom开始到它返回有数据报准备好这段时间是阻塞的，recvfrom返回成功后，线程开始处理数据报
+
+## Java I/O设计
+
+### 1 I/O分类
+
+Java中对数据流进行具体化和实现，关于Java数据流一般关注以下几个点：
+
+- **(1) 流的方向**
+   从外部到程序，称为**输入流**；从程序到外部，称为**输出流**
+- **(2) 流的数据单位**
+   程序以字节作为最小读写数据单元，称为**字节流**，以字符作为最小读写数据单元，称为**字符流**
+- **(3) 流的功能角色**
+
+![img](https:////upload-images.jianshu.io/upload_images/5618238-711a259d84778cb2.png?imageMogr2/auto-orient/strip|imageView2/2/w/362/format/webp)
+
+从/向一个特定的IO设备（如磁盘，网络）或者存储对象(如内存数组)读/写数据的流，称为**节点流**；
+ 对一个已有流进行连接和封装，通过封装后的流来实现数据的读/写功能，称为**处理流**(或称为过滤流)；
+
+### 2 I/O操作接口
+
+java.io包下有一堆I/O操作类，初学时看了容易搞不懂，其实仔细观察其中还是有规律：
+ 这些I/O操作类都是在**继承4个基本抽象流的基础上，要么是节点流，要么是处理流**
+
+#### 2.1 四个基本抽象流
+
+java.io包中包含了流式I/O所需要的所有类，java.io包中有四个基本抽象流，分别处理字节流和字符流：
+
+- InputStream
+- OutputStream
+- Reader
+- Writer
+
+![img](https:////upload-images.jianshu.io/upload_images/5618238-5035c8b1b9c3e5d4.png?imageMogr2/auto-orient/strip|imageView2/2/w/457/format/webp)
+
+#### 2.2 节点流
+
+![img](https:////upload-images.jianshu.io/upload_images/5618238-01ee80f008853679.png?imageMogr2/auto-orient/strip|imageView2/2/w/384/format/webp)
+
+节点流I/O类名由节点流类型 + 抽象流类型组成，常见节点类型有：
+
+- File文件
+- Piped 进程内线程通信管道
+- ByteArray / CharArray (字节数组 / 字符数组)
+- StringBuffer / String (字符串缓冲区 / 字符串)
+
+节点流的创建通常是在构造函数传入数据源，例如：
+
+
+
+```cpp
+FileReader reader = new FileReader(new File("file.txt"));
+FileWriter writer = new FileWriter(new File("file.txt"));
+```
+
+#### 2.3 处理流
+
+![img](https:////upload-images.jianshu.io/upload_images/5618238-1f5b0f57c0f06b82.png?imageMogr2/auto-orient/strip|imageView2/2/w/361/format/webp)
+
+处理流I/O类名由对已有流封装的功能 + 抽象流类型组成，常见功能有：
+
+- **缓冲**：对节点流读写的数据提供了缓冲的功能，数据可以基于缓冲批量读写，提高效率。常见有BufferedInputStream、BufferedOutputStream
+- **字节流转换为字符流**：由InputStreamReader、OutputStreamWriter实现
+- **字节流与基本类型数据相互转换**：这里基本数据类型数据如int、long、short，由DataInputStream、DataOutputStream实现
+- **字节流与对象实例相互转换**：用于实现对象序列化，由ObjectInputStream、ObjectOutputStream实现
+
+处理流的应用了适配器/装饰模式，转换/扩展已有流，处理流的创建通常是在构造函数传入已有的节点流或处理流：
+
+```csharp
+FileOutputStream fileOutputStream = new FileOutputStream("file.txt");
+// 扩展提供缓冲写
+BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+ // 扩展提供提供基本数据类型写
+DataOutputStream out = new DataOutputStream(bufferedOutputStream);
+```
+
+### 3 Java NIO
+
+#### 3.1 标准I/O存在问题
+
+Java NIO(New I/O)是一个可以替代标准Java I/O API的IO API(从Java 1.4开始)，Java NIO提供了与标准I/O不同的I/O工作方式，目的是为了解决标准 I/O存在的以下问题：
+
+- **(1) 数据多次拷贝**
+
+标准I/O处理，完成一次完整的数据读写，至少需要从底层硬件读到内核空间，再读到用户文件，又从用户空间写入内核空间，再写入底层硬件
+
+此外，底层通过write、read等函数进行I/O系统调用时，需要传入数据所在缓冲区**起始地址和长度**。由于JVM GC的存在，导致对象在堆中的位置往往会发生移动，移动后传入系统函数的地址参数就不是真正的缓冲区地址了可能导致读写出错，为了解决上面的问题，使用标准I/O进行系统调用时，还会额外导致一次数据拷贝：把数据从JVM的堆内拷贝到堆外的连续空间内存(堆外内存)
+
+所以总共经历6次数据拷贝，执行效率较低
+
+![img](https:////upload-images.jianshu.io/upload_images/5618238-54528ba95009c708.png?imageMogr2/auto-orient/strip|imageView2/2/w/484/format/webp)
+
+- **(2) 操作阻塞**
+
+传统的网络I/O处理中，由于请求建立连接(connect)，读取网络I/O数据(read)，发送数据(send)等操作是线程阻塞的
+
+```java
+// 等待连接
+Socket socket = serverSocket.accept();
+
+// 连接已建立，读取请求消息
+StringBuilder req = new StringBuilder();
+byte[] recvByteBuf = new byte[1024];
+int len;
+while ((len = socket.getInputStream().read(recvByteBuf)) != -1) {
+    req.append(new String(recvByteBuf, 0, len, StandardCharsets.UTF_8));
+}
+
+// 写入返回消息
+socket.getOutputStream().write(("server response msg".getBytes()));
+socket.shutdownOutput();
+```
+
+以上面服务端程序为例，当请求连接已建立，读取请求消息，服务端调用read方法时，客户端数据可能还没就绪(例如客户端数据还在写入中或者传输中)，线程需要在read方法阻塞等待直到数据就绪
+
+为了实现服务端并发响应，每个连接需要独立的线程单独处理，当并发请求量大时为了维护连接，内存、线程切换开销过大
+
+![img](https:////upload-images.jianshu.io/upload_images/5618238-df52af9d6af06e61.png?imageMogr2/auto-orient/strip|imageView2/2/w/311/format/webp)
+
+#### 3.2 Buffer
+
+**Java NIO核心三大核心组件是Buffer(缓冲区)、Channel(通道)、Selector**
+
+Buffer提供了常用于I/O操作的字节缓冲区，常见的缓存区有ByteBuffer, CharBuffer, DoubleBuffer, FloatBuffer, IntBuffer, LongBuffer, ShortBuffer，分别对应基本数据类型: byte, char, double, float, int, long, short，下面介绍主要以最常用的ByteBuffer为例，Buffer底层支持Java堆内(HeapByteBuffer)或堆外内存(DirectByteBuffer)
+
+**堆外内存**是指与堆内存相对应的，把内存对象分配在JVM堆以外的内存，这些内存直接受操作系统管理（而不是虚拟机)，相比堆内内存，I/O操作中使用堆外内存的优势在于：
+
+- 不用被JVM GC线回收，减少GC线程资源占有
+- 在I/O系统调用时，直接操作堆外内存，可以节省堆外内存和堆内内存的复制成本
+
+ByteBuffer底层堆外内存的分配和释放基于malloc和free函数，对外allocateDirect方法可以申请分配堆外内存，并返回继承ByteBuffer类的DirectByteBuffer对象：
+
+```cpp
+public static ByteBuffer allocateDirect(int capacity) {
+    return new DirectByteBuffer(capacity);
+}
+```
+
+堆外内存的回收基于DirectByteBuffer的成员变量Cleaner类，提供clean方法可以用于主动回收，Netty中大部分堆外内存通过记录定位Cleaner的存在，主动调用clean方法来回收；
+ 另外，当DirectByteBuffer对象被GC时，关联的堆外内存也会被回收
+
+> **tips**: JVM参数不建议设置-XX:+DisableExplicitGC，因为部分依赖Java NIO的框架(例如Netty)在内存异常耗尽时，会主动调用System.gc()，触发Full GC，回收DirectByteBuffer对象，作为回收堆外内存的最后保障机制，设置该参数之后会导致在该情况下堆外内存得不到清理
+
+堆外内存基于基础ByteBuffer类的DirectByteBuffer类成员变量：Cleaner对象，这个Cleaner对象会在合适的时候执行unsafe.freeMemory(address)，从而回收这块堆外内存
+
+Buffer可以理解为一组基本数据类型，存储地址连续的的数组，支持读写操作，对应读模式和写模式，通过几个变量来保存这个数据的当前位置状态：capacity、 position、 limit：
+
+- capacity 缓冲区数组的总长度
+- position 下一个要操作的数据元素的位置
+- limit 缓冲区数组中不可操作的下一个元素的位置：limit <= capacity
+
+![img](https:////upload-images.jianshu.io/upload_images/5618238-6b687ff0b2a2ee5d.png?imageMogr2/auto-orient/strip|imageView2/2/w/429/format/webp)
+
+#### 3.3 Channel
+
+Channel(通道)的概念可以类比I/O流对象，NIO中I/O操作主要基于Channel：
+ 从Channel进行数据读取 ：创建一个缓冲区，然后请求Channel读取数据
+ 从Channel进行数据写入 ：创建一个缓冲区，填充数据，请求Channel写入数据
+
+Channel和流非常相似，主要有以下几点区别：
+
+- Channel可以读和写，而标准I/O流是单向的
+- Channel可以异步读写，标准I/O流需要线程阻塞等待直到读写操作完成
+- Channel总是基于缓冲区Buffer读写
+
+Java NIO中最重要的几个Channel的实现：
+
+- FileChannel： 用于文件的数据读写，基于FileChannel提供的方法能减少读写文件数据拷贝次数，后面会介绍
+- DatagramChannel： 用于UDP的数据读写
+- SocketChannel： 用于TCP的数据读写，代表客户端连接
+- ServerSocketChannel: 监听TCP连接请求，每个请求会创建会一个SocketChannel，一般用于服务端
+
+基于标准I/O中，我们第一步可能要像下面这样获取输入流，按字节把磁盘上的数据读取到程序中，再进行下一步操作，而在NIO编程中，需要先获取Channel，再进行读写
+
+
+
+```java
+FileInputStream fileInputStream = new FileInputStream("test.txt");
+FileChannel channel = fileInputStream.channel();
+```
+
+> **tips**: FileChannel仅能运行在阻塞模式下，文件异步处理的 I/O 是在JDK 1.7 才被加入的 java.nio.channels.AsynchronousFileChannel
+
+
+
+```java
+// server socket channel:
+ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+serverSocketChannel.bind(new InetSocketAddress(InetAddress.getLocalHost(), 9091));
+
+while (true) {
+    SocketChannel socketChannel = serverSocketChannel.accept();
+    ByteBuffer buffer = ByteBuffer.allocateDirect(1024);
+    int readBytes = socketChannel.read(buffer);
+    if (readBytes > 0) {
+        // 从写数据到buffer翻转为从buffer读数据
+        buffer.flip();
+        byte[] bytes = new byte[buffer.remaining()];
+        buffer.get(bytes);
+        String body = new String(bytes, StandardCharsets.UTF_8);
+        System.out.println("server 收到：" + body);
+    }
+}
+```
+
+#### 3.4 Selector
+
+Selector(选择器) ，它是Java NIO核心组件中的一个，用于检查一个或多个NIO Channel（通道）的状态是否处于可读、可写。实现单线程管理多个Channel，也就是可以管理多个网络连接
+
+Selector核心在于基于操作系统提供的I/O复用功能，单个线程可以同时监视多个连接描述符，一旦某个连接就绪（一般是读就绪或者写就绪），能够通知程序进行相应的读写操作，常见有select、poll、epoll等不同实现
+
+![img](https:////upload-images.jianshu.io/upload_images/5618238-61dd67cedc78e7e9.png?imageMogr2/auto-orient/strip|imageView2/2/w/628/format/webp)
+
+![img](https:////upload-images.jianshu.io/upload_images/5618238-da53b4240d8ca791.png?imageMogr2/auto-orient/strip|imageView2/2/w/638/format/webp)
+
+Java NIO Selector基本工作原理如下：
+
+- (1) 初始化Selector对象，服务端ServerSocketChannel对象
+- (2) 向Selector注册ServerSocketChannel的socket-accept事件
+- (3) 线程阻塞于selector.select()，当有客户端请求服务端，线程退出阻塞
+- (4) 基于selector获取所有就绪事件，此时先获取到socket-accept事件，向Selector注册客户端SocketChannel的数据就绪可读事件事件
+- (5) 线程再次阻塞于selector.select()，当有客户端连接数据就绪，可读
+- (6) 基于ByteBuffer读取客户端请求数据，然后写入响应数据，关闭channel
+
+示例如下，完整可运行代码已经上传github([https://github.com/caison/caison-blog-demo](https://links.jianshu.com/go?to=https%3A%2F%2Fgithub.com%2Fcaison%2Fcaison-blog-demo))：
+
+
+
+```java
+Selector selector = Selector.open();
+ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+serverSocketChannel.bind(new InetSocketAddress(9091));
+// 配置通道为非阻塞模式
+serverSocketChannel.configureBlocking(false);
+// 注册服务端的socket-accept事件
+serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+
+while (true) {
+    // selector.select()会一直阻塞，直到有channel相关操作就绪
+    selector.select();
+    // SelectionKey关联的channel都有就绪事件
+    Iterator<SelectionKey> keyIterator = selector.selectedKeys().iterator();
+
+    while (keyIterator.hasNext()) {
+        SelectionKey key = keyIterator.next();
+        // 服务端socket-accept
+        if (key.isAcceptable()) {
+            // 获取客户端连接的channel
+            SocketChannel clientSocketChannel = serverSocketChannel.accept();
+            // 设置为非阻塞模式
+            clientSocketChannel.configureBlocking(false);
+            // 注册监听该客户端channel可读事件，并为channel关联新分配的buffer
+            clientSocketChannel.register(selector, SelectionKey.OP_READ, ByteBuffer.allocateDirect(1024));
+        }
+
+        // channel可读
+        if (key.isReadable()) {
+            SocketChannel socketChannel = (SocketChannel) key.channel();
+            ByteBuffer buf = (ByteBuffer) key.attachment();
+
+            int bytesRead;
+            StringBuilder reqMsg = new StringBuilder();
+            while ((bytesRead = socketChannel.read(buf)) > 0) {
+                // 从buf写模式切换为读模式
+                buf.flip();
+                int bufRemain = buf.remaining();
+                byte[] bytes = new byte[bufRemain];
+                buf.get(bytes, 0, bytesRead);
+                // 这里当数据包大于byteBuffer长度，有可能有粘包/拆包问题
+                reqMsg.append(new String(bytes, StandardCharsets.UTF_8));
+                buf.clear();
+            }
+            System.out.println("服务端收到报文：" + reqMsg.toString());
+            if (bytesRead == -1) {
+                byte[] bytes = "[这是服务回的报文的报文]".getBytes(StandardCharsets.UTF_8);
+
+                int length;
+                for (int offset = 0; offset < bytes.length; offset += length) {
+                    length = Math.min(buf.capacity(), bytes.length - offset);
+                    buf.clear();
+                    buf.put(bytes, offset, length);
+                    buf.flip();
+                    socketChannel.write(buf);
+                }
+                socketChannel.close();
+            }
+        }
+        // Selector不会自己从已selectedKeys中移除SelectionKey实例
+        // 必须在处理完通道时自己移除 下次该channel变成就绪时，Selector会再次将其放入selectedKeys中
+        keyIterator.remove();
+    }
+}
+```
+
+> **tips**: Java NIO基于Selector实现高性能网络I/O这块使用起来比较繁琐，使用不友好，一般业界使用基于Java NIO进行封装优化，扩展丰富功能的Netty框架来优雅实现
+
+# 高性能I/O优化
+
+下面结合业界热门开源项目介绍高性能I/O的优化
+
+## 1 零拷贝
+
+零拷贝(zero copy)技术，用于在数据读写中减少甚至完全避免不必要的CPU拷贝，减少内存带宽的占用，提高执行效率，零拷贝有几种不同的实现原理，下面介绍常见开源项目中零拷贝实现
+
+### 1.1 Kafka零拷贝
+
+Kafka基于Linux 2.1内核提供，并在2.4 内核改进的的sendfile函数 + 硬件提供的DMA Gather Copy实现零拷贝，将文件通过socket传送
+
+函数通过一次系统调用完成了文件的传送，减少了原来read/write方式的模式切换。同时减少了数据的copy, sendfile的详细过程如下：
+
+![img](https:////upload-images.jianshu.io/upload_images/5618238-4a47e3d4d662bc51.png?imageMogr2/auto-orient/strip|imageView2/2/w/488/format/webp)
+
+基本流程如下：
+
+- (1) 用户进程发起sendfile系统调用
+- (2) 内核基于DMA Copy将文件数据从磁盘拷贝到内核缓冲区
+- (3) 内核将内核缓冲区中的文件描述信息(文件描述符，数据长度)拷贝到Socket缓冲区
+- (4) 内核基于Socket缓冲区中的文件描述信息和DMA硬件提供的Gather Copy功能将内核缓冲区数据复制到网卡
+- (5) 用户进程sendfile系统调用完成并返回
+
+相比传统的I/O方式，sendfile + DMA Gather Copy方式实现的零拷贝，数据拷贝次数从4次降为2次，系统调用从2次降为1次，用户进程上下文切换次数从4次变成2次DMA Copy，大大提高处理效率
+
+Kafka底层基于java.nio包下的FileChannel的transferTo：
+
+
+
+```csharp
+public abstract long transferTo(long position, long count, WritableByteChannel target)
+```
+
+transferTo将FileChannel关联的文件发送到指定channel，当Comsumer消费数据，Kafka Server基于FileChannel将文件中的消息数据发送到SocketChannel
+
+### 1.2 RocketMQ零拷贝
+
+RocketMQ基于mmap + write的方式实现零拷贝：
+ mmap() 可以将内核中缓冲区的地址与用户空间的缓冲区进行映射，实现数据共享，省去了将数据从内核缓冲区拷贝到用户缓冲区
+
+
+
+```c
+tmp_buf = mmap(file, len); 
+write(socket, tmp_buf, len);
+```
+
+![img](https:////upload-images.jianshu.io/upload_images/5618238-c7f3a5a7e581c14b.png?imageMogr2/auto-orient/strip|imageView2/2/w/448/format/webp)
+
+mmap + write 实现零拷贝的基本流程如下：
+
+- (1) 用户进程向内核发起系统mmap调用
+- (2) 将用户进程的内核空间的读缓冲区与用户空间的缓存区进行内存地址映射
+- (3) 内核基于DMA Copy将文件数据从磁盘复制到内核缓冲区
+- (4) 用户进程mmap系统调用完成并返回
+- (5) 用户进程向内核发起write系统调用
+- (6) 内核基于CPU Copy将数据从内核缓冲区拷贝到Socket缓冲区
+- (7) 内核基于DMA Copy将数据从Socket缓冲区拷贝到网卡
+- (8) 用户进程write系统调用完成并返回
+
+RocketMQ中消息基于mmap实现存储和加载的逻辑写在org.apache.rocketmq.store.MappedFile中，内部实现基于nio提供的java.nio.MappedByteBuffer，基于FileChannel的map方法得到mmap的缓冲区：
+
+
+
+```java
+// 初始化
+this.fileChannel = new RandomAccessFile(this.file, "rw").getChannel();
+this.mappedByteBuffer = this.fileChannel.map(MapMode.READ_WRITE, 0, fileSize);
+```
+
+查询CommitLog的消息时，基于mappedByteBuffer偏移量pos，数据大小size查询：
+
+
+
+```cpp
+public SelectMappedBufferResult selectMappedBuffer(int pos, int size) {
+    int readPosition = getReadPosition();
+    // ...各种安全校验
+    
+    // 返回mappedByteBuffer视图
+    ByteBuffer byteBuffer = this.mappedByteBuffer.slice();
+    byteBuffer.position(pos);
+    ByteBuffer byteBufferNew = byteBuffer.slice();
+    byteBufferNew.limit(size);
+    return new SelectMappedBufferResult(this.fileFromOffset + pos, byteBufferNew, size, this);
+}
+```
+
+> **tips: transientStorePoolEnable机制**
+>  Java NIO mmap的部分内存并不是常驻内存，可以被置换到交换内存(虚拟内存)，RocketMQ为了提高消息发送的性能，引入了内存锁定机制，即将最近需要操作的CommitLog文件映射到内存，并提供内存锁定功能，确保这些文件始终存在内存中，该机制的控制参数就是transientStorePoolEnable
+
+因此，MappedFile数据保存CommitLog刷盘有2种方式：
+
+- 1 开启transientStorePoolEnable：写入内存字节缓冲区(writeBuffer)  -> 从内存字节缓冲区(writeBuffer)提交(commit)到文件通道(fileChannel)  -> 文件通道(fileChannel) -> flush到磁盘
+- 2 未开启transientStorePoolEnable：写入映射文件字节缓冲区(mappedByteBuffer) -> 映射文件字节缓冲区(mappedByteBuffer) -> flush到磁盘
+
+RocketMQ 基于 mmap+write 实现零拷贝，适用于业务级消息这种小块文件的数据持久化和传输
+ Kafka 基于 sendfile 这种零拷贝方式，适用于系统日志消息这种高吞吐量的大块文件的数据持久化和传输
+
+> **tips:** Kafka 的索引文件使用的是 mmap+write 方式，数据文件发送网络使用的是 sendfile 方式
+
+### 1.3 Netty零拷贝
+
+Netty 的零拷贝分为两种：
+
+- 1 基于操作系统实现的零拷贝，底层基于FileChannel的transferTo方法
+- 2 基于Java 层操作优化，对数组缓存对象(ByteBuf )进行封装优化，通过对ByteBuf数据建立数据视图，支持ByteBuf 对象合并，切分，当底层仅保留一份数据存储，减少不必要拷贝
+
+## 2 多路复用
+
+Netty中对Java NIO功能封装优化之后，实现I/O多路复用代码优雅了很多：
+
+
+
+```java
+// 创建mainReactor
+NioEventLoopGroup boosGroup = new NioEventLoopGroup();
+// 创建工作线程组
+NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+
+final ServerBootstrap serverBootstrap = new ServerBootstrap();
+serverBootstrap 
+     // 组装NioEventLoopGroup 
+    .group(boosGroup, workerGroup)
+     // 设置channel类型为NIO类型
+    .channel(NioServerSocketChannel.class)
+    // 设置连接配置参数
+    .option(ChannelOption.SO_BACKLOG, 1024)
+    .childOption(ChannelOption.SO_KEEPALIVE, true)
+    .childOption(ChannelOption.TCP_NODELAY, true)
+    // 配置入站、出站事件handler
+    .childHandler(new ChannelInitializer<NioSocketChannel>() {
+        @Override
+        protected void initChannel(NioSocketChannel ch) {
+            // 配置入站、出站事件channel
+            ch.pipeline().addLast(...);
+            ch.pipeline().addLast(...);
+        }
+    });
+
+// 绑定端口
+int port = 8080;
+serverBootstrap.bind(port).addListener(future -> {
+    if (future.isSuccess()) {
+        System.out.println(new Date() + ": 端口[" + port + "]绑定成功!");
+    } else {
+        System.err.println("端口[" + port + "]绑定失败!");
+    }
+});
+```
+
+## 3 页缓存(PageCache)
+
+页缓存（PageCache)是操作系统对文件的缓存，用来减少对磁盘的 I/O 操作，以页为单位的，内容就是磁盘上的物理块，页缓存能帮助**程序对文件进行顺序读写的速度几乎接近于内存的读写速度**，主要原因就是由于OS使用PageCache机制对读写访问操作进行了性能优化：
+
+**页缓存读取策略**：当进程发起一个读操作 （比如，进程发起一个 read() 系统调用），它首先会检查需要的数据是否在页缓存中：
+
+- 如果在，则放弃访问磁盘，而直接从页缓存中读取
+- 如果不在，则内核调度块 I/O 操作从磁盘去读取数据，并读入紧随其后的少数几个页面（不少于一个页面，通常是三个页面），然后将数据放入页缓存中
+
+![img](https:////upload-images.jianshu.io/upload_images/5618238-80de90f22a9b782f.png?imageMogr2/auto-orient/strip|imageView2/2/w/251/format/webp)
+
+**页缓存写策略**：当进程发起write系统调用写数据到文件中，先写到页缓存，然后方法返回。此时数据还没有真正的保存到文件中去，Linux 仅仅将页缓存中的这一页数据标记为“脏”，并且被加入到脏页链表中
+
+然后，由flusher 回写线程周期性将脏页链表中的页写到磁盘，让磁盘中的数据和内存中保持一致，最后清理“脏”标识。在以下三种情况下，脏页会被写回磁盘:
+
+- 空闲内存低于一个特定阈值
+- 脏页在内存中驻留超过一个特定的阈值时
+- 当用户进程调用 sync() 和 fsync() 系统调用时
+
+RocketMQ中，ConsumeQueue逻辑消费队列存储的数据较少，并且是顺序读取，在page cache机制的预读取作用下，Consume Queue文件的读性能几乎接近读内存，即使在有消息堆积情况下也不会影响性能，提供了2种消息刷盘策略：
+
+- 同步刷盘：在消息真正持久化至磁盘后RocketMQ的Broker端才会真正返回给Producer端一个成功的ACK响应
+- 异步刷盘，能充分利用操作系统的PageCache的优势，只要消息写入PageCache即可将成功的ACK返回给Producer端。消息刷盘采用后台异步线程提交的方式进行，降低了读写延迟，提高了MQ的性能和吞吐量
+
+Kafka实现消息高性能读写也利用了页缓存，这里不再展开
+
+
+
+《深入理解Linux内核 —— Daniel P.Bovet》
+
+[Netty之Java堆外内存扫盲贴 ——江南白衣](https://links.jianshu.com/go?to=http%3A%2F%2Fcalvin1978.blogcn.com%2Farticles%2Fdirectbytebuffer.html)
+
+[Java NIO？看这一篇就够了！ ——朱小厮 ](https://links.jianshu.com/go?to=https%3A%2F%2Fmp.weixin.qq.com%2Fs%2Fc9tkrokcDQR375kiwCeV9w)
+
+[RocketMQ 消息存储流程 ——  Zhao Kun(赵坤)](https://links.jianshu.com/go?to=https%3A%2F%2Fwww.kunzhao.org%2Fblog%2F2018%2F03%2F12%2Frocketmq-message-store-flow)
+
+[一文理解Netty模型架构 ——caison](https://www.jianshu.com/p/6681bfa36c4f)
+
+
+
+# Netty
+
+## Netty到底是什么
+
+### 从HTTP说起
+
+ 有了Netty，你可以实现自己的HTTP服务器，FTP服务器，UDP服务器，RPC服务器，WebSocket服务器，Redis的Proxy服务器，MySQL的Proxy服务器等等。 
+
+我们回顾一下传统的HTTP服务器的原理 
+
+ 1、创建一个ServerSocket，监听并绑定一个端口
+
+ 2、一系列客户端来请求这个端口
+
+ 3、服务器使用Accept，获得一个来自客户端的Socket连接对象 
+
+4、启动一个新线程处理连接 
+
+  4.1、读Socket，得到字节流
+
+  4.2、解码协议，得到Http请求对象 
+
+  4.3、处理Http请求，得到一个结果，封装成一个HttpResponse对象 
+
+  4.4、编码协议，将结果序列化字节流 写Socket，将字节流发给客户端 
+
+5、继续循环步骤3
+
+HTTP服务器之所以称为HTTP服务器，是因为编码解码协议是HTTP协议，如果协议是Redis协议，那它就成了Redis服务器，如果协议是WebSocket，那它就成了WebSocket服务器，等等。 使用Netty你就可以定制编解码协议，实现自己的特定协议的服务器。
+
+### NIO
+
+上面是一个传统处理http的服务器，但是在高并发的环境下，线程数量会比较多，System load也会比较高，于是就有了NIO。
+
+他并不是Java独有的概念，NIO代表的一个词汇叫着IO多路复用。它是由操作系统提供的系统调用，早期这个操作系统调用的名字是select，但是性能低下，后来渐渐演化成了Linux下的epoll和Mac里的kqueue。我们一般就说是epoll，因为没有人拿苹果电脑作为服务器使用对外提供服务。而Netty就是基于Java NIO技术封装的一套框架。为什么要封装，因为原生的Java NIO使用起来没那么方便，而且还有臭名昭著的bug，Netty把它封装之后，提供了一个易于操作的使用模式和接口，用户使用起来也就便捷多了。
+
+说NIO之前先说一下BIO（Blocking IO）,如何理解这个Blocking呢？
+
+1. 客户端监听（Listen）时，Accept是阻塞的，只有新连接来了，Accept才会返回，主线程才能继
+2. 读写socket时，Read是阻塞的，只有请求消息来了，Read才能返回，子线程才能继续处理
+3. 读写socket时，Write是阻塞的，只有客户端把消息收了，Write才能返回，子线程才能继续读取下一个请求
+
+传统的BIO模式下，从头到尾的所有线程都是阻塞的，这些线程就干等着，占用系统的资源，什么事也不干。
+
+那么NIO是怎么做到非阻塞的呢。它用的是事件机制。它可以用一个线程把Accept，读写操作，请求处理的逻辑全干了。如果什么事都没得做，它也不会死循环，它会将线程休眠起来，直到下一个事件来了再继续干活，这样的一个线程称之为NIO线程。用伪代码表示：
+
+
+
+
+
+
+
+```
+while true {
+    events = takeEvents(fds)  // 获取事件，如果没有事件，线程就休眠
+    for event in events {
+        if event.isAcceptable {
+            doAccept() // 新链接来了
+        } elif event.isReadable {
+            request = doRead() // 读消息
+            if request.isComplete() {
+                doProcess()
+            }
+        } elif event.isWriteable {
+            doWrite()  // 写消息
+        }
+    }
+}复制代码
+```
+
+
+
+### Reactor线程模型
+
+**Reactor单线程模型**
+
+一个NIO线程+一个accept线程：
+
+![img](https://user-gold-cdn.xitu.io/2018/11/1/166cf694962300a8?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+**Reactor多线程模型**
+
+![img](https://user-gold-cdn.xitu.io/2018/11/1/166cf69cdf959355?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+**Reactor主从模型**
+
+
+
+主从Reactor多线程：多个acceptor的NIO线程池用于接受客户端的连接
+
+![img](https://user-gold-cdn.xitu.io/2018/11/1/166cf6b2c711bc0f?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+Netty可以基于如上三种模型进行灵活的配置。
+
+### 总结
+
+Netty是建立在NIO基础之上，Netty在NIO之上又提供了更高层次的抽象。
+
+在Netty里面，Accept连接可以使用单独的线程池去处理，读写操作又是另外的线程池来处理。
+
+Accept连接和读写操作也可以使用同一个线程池来进行处理。而请求处理逻辑既可以使用单独的线程池进行处理，也可以跟放在读写线程一块处理。线程池中的每一个线程都是NIO线程。用户可以根据实际情况进行组装，构造出满足系统需求的高性能并发模型。
+
+
+
+##  为什么选择Netty 
+
+如果不用netty，使用原生JDK的话，有如下问题：
+
+1、API复杂
+
+2、对多线程很熟悉：因为NIO涉及到Reactor模式
+
+3、高可用的话：需要出路断连重连、半包读写、失败缓存等问题
+
+4、JDK NIO的bug
+
+而Netty来说，他的api简单、性能高而且社区活跃（dubbo、rocketmq等都使用了它）
+
+## 什么是TCP 粘包/拆包 
+
+### 现象
+
+先看如下代码，这个代码是使用netty在client端重复写100次数据给server端，ByteBuf是netty的一个字节容器，里面存放是的需要发送的数据
+
+```
+public class FirstClientHandler extends ChannelInboundHandlerAdapter {    
+    @Override    
+    public void channelActive(ChannelHandlerContext ctx) {       
+        for (int i = 0; i < 1000; i++) {            
+            ByteBuf buffer = getByteBuf(ctx);            
+            ctx.channel().writeAndFlush(buffer);        
+        }    
+    }    
+    private ByteBuf getByteBuf(ChannelHandlerContext ctx) {        
+        byte[] bytes = "你好，我的名字是1234567!".getBytes(Charset.forName("utf-8"));        
+        ByteBuf buffer = ctx.alloc().buffer();        
+        buffer.writeBytes(bytes);        
+        return buffer;    
+    }
+}复制代码
+```
+
+从client端读取到的数据为：
+
+![img](https://user-gold-cdn.xitu.io/2018/11/1/166cf7ca469a221e?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+从服务端的控制台输出可以看出，存在三种类型的输出
+
+1. 一种是正常的字符串输出。
+2. 一种是多个字符串“粘”在了一起，我们定义这种 ByteBuf 为粘包。
+3. 一种是一个字符串被“拆”开，形成一个破碎的包，我们定义这种 ByteBuf 为半包。
+
+### 透过现象分析原因
+
+应用层面使用了Netty，但是对于操作系统来说，只认TCP协议，尽管我们的应用层是按照 ByteBuf 为 单位来发送数据，server按照Bytebuf读取，但是到了底层操作系统仍然是按照字节流发送数据，因此，数据到了服务端，也是按照字节流的方式读入，然后到了 Netty 应用层面，重新拼装成 ByteBuf，而这里的 ByteBuf 与客户端按顺序发送的 ByteBuf 可能是不对等的。因此，我们需要在客户端根据自定义协议来组装我们应用层的数据包，然后在服务端根据我们的应用层的协议来组装数据包，这个过程通常在服务端称为拆包，而在客户端称为粘包。
+
+拆包和粘包是相对的，一端粘了包，另外一端就需要将粘过的包拆开，发送端将三个数据包粘成两个 TCP 数据包发送到接收端，接收端就需要根据应用协议将两个数据包重新组装成三个数据包。
+
+### 如何解决
+
+在没有 Netty 的情况下，用户如果自己需要拆包，基本原理就是不断从 TCP 缓冲区中读取数据，每次读取完都需要判断是否是一个完整的数据包 如果当前读取的数据不足以拼接成一个完整的业务数据包，那就保留该数据，继续从 TCP 缓冲区中读取，直到得到一个完整的数据包。 如果当前读到的数据加上已经读取的数据足够拼接成一个数据包，那就将已经读取的数据拼接上本次读取的数据，构成一个完整的业务数据包传递到业务逻辑，多余的数据仍然保留，以便和下次读到的数据尝试拼接。 
+
+而在Netty中，已经造好了许多类型的拆包器，我们直接用就好：
+
+![img](data:image/svg+xml;utf8,<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1280" height="926"></svg>)
+
+选好拆包器后，在代码中client段和server端将拆包器加入到chanelPipeline之中就好了:
+
+如上实例中：
+
+客户端：
+
+```
+ch.pipeline().addLast(new FixedLengthFrameDecoder(31));复制代码
+```
+
+服务端：
+
+```
+ch.pipeline().addLast(new FixedLengthFrameDecoder(31));复制代码
+```
+
+![img](data:image/svg+xml;utf8,<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1280" height="882"></svg>)
+
+## Netty 的零拷贝
+
+### 传统意义的拷贝
+
+是在发送数据的时候，传统的实现方式是：
+
+\1. `File.read(bytes)`
+\2. `Socket.send(bytes)`
+这种方式需要四次数据拷贝和四次上下文切换：
+
+\1. 数据从磁盘读取到内核的read buffer
+
+\2. 数据从内核缓冲区拷贝到用户缓冲区
+\3. 数据从用户缓冲区拷贝到内核的socket buffer
+\4. 数据从内核的socket buffer拷贝到网卡接口（硬件）的缓冲区
+
+
+
+### 零拷贝的概念
+
+明显上面的第二步和第三步是没有必要的，通过java的FileChannel.transferTo方法，可以避免上面两次多余的拷贝（当然这需要底层操作系统支持）
+
+\1. 调用transferTo,数据从文件由DMA引擎拷贝到内核read buffer
+
+\2. 接着DMA从内核read buffer将数据拷贝到网卡接口buffer
+
+上面的两次操作都不需要CPU参与，所以就达到了零拷贝。
+
+### Netty中的零拷贝
+
+主要体现在三个方面：
+
+**1、bytebuffer**
+
+Netty发送和接收消息主要使用bytebuffer，bytebuffer使用对外内存（DirectMemory）直接进行Socket读写。
+
+原因：如果使用传统的堆内存进行Socket读写，JVM会将堆内存buffer拷贝一份到直接内存中然后再写入socket，多了一次缓冲区的内存拷贝。DirectMemory中可以直接通过DMA发送到网卡接口
+
+**2、Composite Buffers**
+
+传统的ByteBuffer，如果需要将两个ByteBuffer中的数据组合到一起，我们需要首先创建一个size=size1+size2大小的新的数组，然后将两个数组中的数据拷贝到新的数组中。但是使用Netty提供的组合ByteBuf，就可以避免这样的操作，因为CompositeByteBuf并没有真正将多个Buffer组合起来，而是保存了它们的引用，从而避免了数据的拷贝，实现了零拷贝。
+
+**3、对于FileChannel.transferTo的使用**
+
+Netty中使用了FileChannel的transferTo方法，该方法依赖于操作系统实现零拷贝。
+
+## Netty 内部执行流程
+
+### 服务端：
+
+![img](data:image/svg+xml;utf8,<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1280" height="794"></svg>)
+
+![img](data:image/svg+xml;utf8,<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1280" height="653"></svg>)
+
+1、创建ServerBootStrap实例
+
+2、设置并绑定Reactor线程池：EventLoopGroup，EventLoop就是处理所有注册到本线程的Selector上面的Channel
+
+3、设置并绑定服务端的channel
+
+4、5、创建处理网络事件的ChannelPipeline和handler，网络时间以流的形式在其中流转，handler完成多数的功能定制：比如编解码 SSl安全认证
+
+6、绑定并启动监听端口
+
+7、当轮训到准备就绪的channel后，由Reactor线程：NioEventLoop执行pipline中的方法，最终调度并执行channelHandler 
+
+### 客户端
+
+![img](https://user-gold-cdn.xitu.io/2018/11/1/166cf951ce743191?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+
+
+![img](https://user-gold-cdn.xitu.io/2018/11/1/166cf957e59b5066?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+
+作者：lyowish
+链接：https://juejin.im/post/5bdaf8ea6fb9a0227b02275a
+来源：掘金
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
