@@ -96,9 +96,9 @@ Spring配置由容器必须管理的至少一个（通常是一个以上）bean�
 
 提供给`ApplicationContext`构造函数的位置路径是资源字符串，这些资源字符串使容器可以从各种外部资源（例如本地文件系统，Java等）加载配置元数据`CLASSPATH`。
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ApplicationContext context = new ClassPathXmlApplicationContext("services.xml", "daos.xml");
@@ -212,9 +212,9 @@ beans {
 
 将`ApplicationContext`让你读bean定义和访问它们，如下例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 // create and configure beans
@@ -229,9 +229,9 @@ List<String> userList = service.getUsernameList();
 
 使用Groovy配置，引导看起来非常相似。它有一个不同的上下文实现类，该类可识别Groovy（但也了解XML Bean定义）。以下示例显示了Groovy配置：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ApplicationContext context = new GenericGroovyApplicationContext("services.groovy", "daos.groovy");
@@ -239,9 +239,9 @@ ApplicationContext context = new GenericGroovyApplicationContext("services.groov
 
 最灵活的变体是`GenericApplicationContext`与读取器委托结合使用，例如，与`XmlBeanDefinitionReader`XML文件结合使用，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 GenericApplicationContext context = new GenericApplicationContext();
@@ -251,9 +251,9 @@ context.refresh();
 
 您也可以将`GroovyBeanDefinitionReader`Groovy文件用于，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 GenericApplicationContext context = new GenericApplicationContext();
@@ -386,9 +386,9 @@ Spring IoC容器几乎可以管理您要管理的任何类。它不仅限于管�
 
 以下示例显示了一个可与前面的bean定义一起使用的类：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class ClientService {
@@ -421,9 +421,9 @@ public class ClientService {
 
 以下示例显示了相应的类：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class DefaultServiceLocator {
@@ -454,9 +454,9 @@ public class DefaultServiceLocator {
 
 以下示例显示了相应的类：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class DefaultServiceLocator {
@@ -503,9 +503,9 @@ DI存在两个主要变体：[基于构造函数的依赖注入](https://docs.sp
 
 基于构造函数的DI是通过容器调用具有多个参数（每个参数代表一个依赖项）的构造函数来完成的。调用`static`带有特定参数的工厂方法来构造Bean几乎是等效的，并且本次讨论将构造函数和`static`工厂方法的参数视为类似。以下示例显示了只能通过构造函数注入进行依赖项注入的类：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class SimpleMovieLister {
@@ -528,9 +528,9 @@ public class SimpleMovieLister {
 
 构造函数参数解析匹配通过使用参数的类型进行。如果Bean定义的构造函数参数中不存在潜在的歧义，则在实例化Bean时，在Bean定义中定义构造函数参数的顺序就是将这些参数提供给适当的构造函数的顺序。考虑以下类别：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package x.y;
@@ -560,9 +560,9 @@ public class ThingOne {
 
 当引用另一个bean时，类型是已知的，并且可以发生匹配（与前面的示例一样）。当使用诸如的简单类型时 `true`，Spring无法确定值的类型，因此在没有帮助的情况下无法按类型进行匹配。考虑以下类别：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package examples;
@@ -623,9 +623,9 @@ public class ExampleBean {
 
 请记住，要立即使用该功能，必须在启用调试标志的情况下编译代码，以便Spring可以从构造函数中查找参数名称。如果您不能或不希望使用debug标志编译代码，则可以使用 [@ConstructorProperties](https://download.oracle.com/javase/8/docs/api/java/beans/ConstructorProperties.html) JDK注释显式命名构造函数参数。然后，样本类必须如下所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package examples;
@@ -648,9 +648,9 @@ public class ExampleBean {
 
 下面的示例显示只能通过使用纯setter注入来依赖注入的类。此类是常规的Java。它是一个POJO，不依赖于容器特定的接口，基类或注释。
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class SimpleMovieLister {
@@ -726,9 +726,9 @@ Setter注入主要应仅用于可以在类中分配合理的默认值的可选�
 
 以下示例显示了相应的`ExampleBean`类：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class ExampleBean {
@@ -774,9 +774,9 @@ public class ExampleBean {
 
 以下示例显示了相应的`ExampleBean`类：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class ExampleBean {
@@ -813,9 +813,9 @@ Bean定义中指定的构造函数参数用作的构造函数的参数`ExampleBe
 
 以下示例显示了相应的`ExampleBean`类：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class ExampleBean {
@@ -1074,9 +1074,9 @@ sales=sales@example.com support=support@example.co.uk
 
 随着Java 5中通用类型的引入，您可以使用强类型集合。也就是说，可以声明一个`Collection`类型，使其仅包含（例如）`String`元素。如果使用Spring将强类型依赖注入`Collection`到Bean中，则可以利用Spring的类型转换支持，以便在将强类型`Collection` 实例的元素添加到之前将其转换为适当的类型`Collection`。以下Java类和bean定义显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class SomeClass {
@@ -1117,9 +1117,9 @@ Spring将属性等的空参数视为empty `Strings`。以下基于XML的配置�
 
 前面的示例等效于以下Java代码：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 exampleBean.setEmail("");
@@ -1137,9 +1137,9 @@ exampleBean.setEmail("");
 
 前面的配置等效于下面的Java代码：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 exampleBean.setEmail(null);
@@ -1361,9 +1361,9 @@ Spring容器可以自动装配协作bean之间的关系。您可以通过检查�
 
 一个解决方案是放弃某些控制反转。您可以通过实现接口，并通过每次[容器](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-factory-client) A都需要[容器](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-factory-client) B [的](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-factory-client)[调用来](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-factory-client)请求（通常是新的）bean B实例，来[使bean A知道容器](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-factory-aware)。以下示例显示了此方法：`ApplicationContextAware`[`getBean("B")`](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-factory-client)
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 // a class that uses a stateful Command-style class to perform some processing
@@ -1412,9 +1412,9 @@ public class CommandManager implements ApplicationContextAware {
 
 对于`CommandManager`前面的代码片段中的类，Spring容器动态地覆盖该`createCommand()` 方法的实现。该`CommandManager`班没有任何Spring的依赖，因为返工例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package fiona.apple;
@@ -1460,9 +1460,9 @@ public abstract class CommandManager {
 
 另外，在基于注释的组件模型中，您可以通过`@Lookup`注释声明一个查找方法，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public abstract class CommandManager {
@@ -1480,9 +1480,9 @@ public abstract class CommandManager {
 
 或者，更习惯地说，您可以依赖于针对查找方法的声明返回类型解析的目标bean：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public abstract class CommandManager {
@@ -1510,9 +1510,9 @@ public abstract class CommandManager {
 
 借助基于XML的配置元数据，您可以使用`replaced-method`元素将现有方法实现替换为已部署bean的另一个实现。考虑以下类，该类具有一个`computeValue`我们要重写的方法：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class MyValueCalculator {
@@ -1527,9 +1527,9 @@ public class MyValueCalculator {
 
 实现该`org.springframework.beans.factory.support.MethodReplacer` 接口的类提供了新的方法定义，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 /**
@@ -1691,9 +1691,9 @@ Spring容器`LoginAction`通过`loginAction`为每个HTTP请求使用bean定义�
 
 使用注释驱动的组件或Java配置时，`@RequestScope`可以使用注释将组件分配给`request`作用域。以下示例显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @RequestScope
@@ -1715,9 +1715,9 @@ Spring容器`UserPreferences`通过在`userPreferences`单个HTTP的生存期内
 
 使用注释驱动的组件或Java配置时，可以使用 `@SessionScope`注释将组件分配给`session`作用域。
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @SessionScope
@@ -1739,9 +1739,9 @@ Spring容器`AppPreferences`通过`appPreferences`对整个Web应用程序使用
 
 使用注释驱动的组件或Java配置时，可以使用 `@ApplicationScope`注释将组件分配给`application`作用域。以下示例显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @ApplicationScope
@@ -1850,9 +1850,9 @@ Bean作用域机制是可扩展的。您可以定义自己的作用域，甚至�
 
 例如，会话范围实现返回会话范围的Bean（如果不存在，则该方法将其绑定到会话上以供将来参考之后，将返回该Bean的新实例）。以下方法从基础范围返回对象：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 Object get(String name, ObjectFactory<?> objectFactory)
@@ -1860,9 +1860,9 @@ Object get(String name, ObjectFactory<?> objectFactory)
 
 会话范围的实现，例如，从基础会话中删除了会话范围的bean。应该返回该对象，但是如果找不到具有指定名称的对象，则可以返回null。以下方法将对象从基础范围中删除：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 Object remove(String name)
@@ -1870,9 +1870,9 @@ Object remove(String name)
 
 以下方法注册在销毁作用域或销毁作用域中的指定对象时作用域应执行的回调：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 void registerDestructionCallback(String name, Runnable destructionCallback)
@@ -1882,9 +1882,9 @@ void registerDestructionCallback(String name, Runnable destructionCallback)
 
 以下方法获取基础范围的会话标识符：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 String getConversationId()
@@ -1896,9 +1896,9 @@ String getConversationId()
 
 在编写和测试一个或多个自定义`Scope`实现之后，您需要使Spring容器意识到您的新作用域。以下方法是`Scope`在Spring容器中注册新方法的主要方法：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 void registerScope(String scopeName, Scope scope);
@@ -1914,9 +1914,9 @@ void registerScope(String scopeName, Scope scope);
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 Scope threadScope = new SimpleThreadScope();
@@ -1993,9 +1993,9 @@ Spring框架提供了许多接口，可用于自定义Bean的性质。本节将�
 
 `org.springframework.beans.factory.InitializingBean`容器在bean上设置了所有必需的属性后，该接口使bean可以执行初始化工作。该`InitializingBean`接口指定一个方法：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 void afterPropertiesSet() throws Exception;
@@ -2007,9 +2007,7 @@ void afterPropertiesSet() throws Exception;
 <bean id="exampleInitBean" class="examples.ExampleBean" init-method="init"/>
 ```
 
-爪哇
-
-科特林
+  
 
 ```java
 public class ExampleBean {
@@ -2026,9 +2024,7 @@ public class ExampleBean {
 <bean id="exampleInitBean" class="examples.AnotherExampleBean"/>
 ```
 
-爪哇
-
-科特林
+  
 
 ```java
 public class AnotherExampleBean implements InitializingBean {
@@ -2046,9 +2042,9 @@ public class AnotherExampleBean implements InitializingBean {
 
 `org.springframework.beans.factory.DisposableBean`当包含该接口的容器被销毁时，实现该接口可使Bean获得回调。该 `DisposableBean`接口指定一个方法：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 void destroy() throws Exception;
@@ -2060,9 +2056,9 @@ void destroy() throws Exception;
 <bean id="exampleInitBean" class="examples.ExampleBean" destroy-method="cleanup"/>
 ```
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class ExampleBean {
@@ -2079,9 +2075,9 @@ public class ExampleBean {
 <bean id="exampleInitBean" class="examples.AnotherExampleBean"/>
 ```
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class AnotherExampleBean implements DisposableBean {
@@ -2107,9 +2103,7 @@ public class AnotherExampleBean implements DisposableBean {
 
 假设您的初始化回调方法已命名，`init()`而destroy回调方法已命名`destroy()`。然后，您的课程类似于以下示例中的课程：
 
-爪哇
-
-科特林
+  
 
 ```java
 public class DefaultBlogService implements BlogService {
@@ -2177,9 +2171,9 @@ Spring容器保证在为bean提供所有依赖项后立即调用已配置的初�
 
 该`Lifecycle`接口为具有自己生命周期要求（例如启动和停止某些后台进程）的任何对象定义了基本方法：
 
-爪哇
+  
 
-科特林
+
 
 ```java
 public interface Lifecycle {
@@ -2194,9 +2188,9 @@ public interface Lifecycle {
 
 任何Spring管理的对象都可以实现该`Lifecycle`接口。然后，当 `ApplicationContext`自身接收到启动和停止信号时（例如，对于运行时的停止/重新启动场景），它将这些调用级联到`Lifecycle`在该上下文中定义的所有实现。它通过委派给来完成此操作`LifecycleProcessor`，如以下清单所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public interface LifecycleProcessor extends Lifecycle {
@@ -2215,9 +2209,9 @@ public interface LifecycleProcessor extends Lifecycle {
 
 启动和关闭调用的顺序可能很重要。如果任何两个对象之间存在“依赖”关系，则依赖方在其依赖之后开始，而在依赖之前停止。但是，有时直接依赖项是未知的。您可能只知道某种类型的对象应该先于另一种类型的对象开始。在这些情况下，`SmartLifecycle`接口定义另一个选项，即`getPhase()`在其超级接口上定义的方法 `Phased`。以下清单显示了`Phased`接口的定义：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public interface Phased {
@@ -2228,9 +2222,9 @@ public interface Phased {
 
 以下清单显示了`SmartLifecycle`接口的定义：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public interface SmartLifecycle extends Lifecycle, Phased {
@@ -2264,9 +2258,9 @@ public interface SmartLifecycle extends Lifecycle, Phased {
 
 要注册关闭钩子，请调用接口`registerShutdownHook()`上声明的方法`ConfigurableApplicationContext`，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 import org.springframework.context.ConfigurableApplicationContext;
@@ -2291,9 +2285,9 @@ public final class Boot {
 
 当`ApplicationContext`创建创建实现该`org.springframework.context.ApplicationContextAware`接口的对象实例时，该实例将获得对该 接口的引用`ApplicationContext`。以下清单显示了`ApplicationContextAware`接口的定义：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public interface ApplicationContextAware {
@@ -2308,9 +2302,9 @@ public interface ApplicationContextAware {
 
 当`ApplicationContext`创建一个实现该 `org.springframework.beans.factory.BeanNameAware`接口的类时，该类将获得对其关联对象定义中定义的名称的引用。以下清单显示了BeanNameAware接口的定义：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public interface BeanNameAware {
@@ -2430,9 +2424,9 @@ A `ApplicationContext`自动检测实现该`BeanPostProcessor`接口的配置元
 
 以下清单显示了定制`BeanPostProcessor`实现类定义：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package scripting;
@@ -2483,9 +2477,9 @@ public class InstantiationTracingBeanPostProcessor implements BeanPostProcessor 
 
 以下Java应用程序运行上述代码和配置：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 import org.springframework.context.ApplicationContext;
@@ -2671,9 +2665,9 @@ tom.fred.bob.sammy = 123
 
 该`@Required`注释适用于bean属性setter方法，如下面的例子：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class SimpleMovieLister {
@@ -2703,9 +2697,9 @@ public class SimpleMovieLister {
 
 您可以将`@Autowired`注释应用于构造函数，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class MovieRecommender {
@@ -2727,9 +2721,9 @@ public class MovieRecommender {
 
 您还可以将`@Autowired`注释应用于*传统的* setter方法，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class SimpleMovieLister {
@@ -2747,9 +2741,9 @@ public class SimpleMovieLister {
 
 您还可以将注释应用于具有任意名称和多个参数的方法，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class MovieRecommender {
@@ -2771,9 +2765,9 @@ public class MovieRecommender {
 
 您还可以将其应用于`@Autowired`字段，甚至将其与构造函数混合使用，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class MovieRecommender {
@@ -2798,9 +2792,9 @@ public class MovieRecommender {
 
 您还可以`ApplicationContext`通过将`@Autowired`注释添加到需要该类型数组的字段或方法中，指示Spring提供特定类型的所有bean ，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class MovieRecommender {
@@ -2814,9 +2808,9 @@ public class MovieRecommender {
 
 如下例所示，这同样适用于类型化集合：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class MovieRecommender {
@@ -2838,9 +2832,9 @@ public class MovieRecommender {
 
 `Map`只要预期的密钥类型为，即使是键入的实例也可以自动装配`String`。映射值包含所有预期类型的bean，并且键包含相应的bean名称，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class MovieRecommender {
@@ -2860,9 +2854,9 @@ public class MovieRecommender {
 
 默认行为是将带注释的方法和字段视为指示所需的依赖项。您可以更改此行为，如以下示例所示，使框架可以通过将其标记为不需要来跳过不满意的注入点（即，将`required`属性设置`@Autowired`为`false`）：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class SimpleMovieLister {
@@ -2900,9 +2894,9 @@ public class SimpleMovieLister {
 
 从Spring Framework 5.0开始，您还可以使用`@Nullable`注释（任何包中的任何注释，例如，`javax.annotation.Nullable`来自JSR-305 的注释），或仅利用Kotlin内置的null安全支持：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class SimpleMovieLister {
@@ -2916,9 +2910,9 @@ public class SimpleMovieLister {
 
 您还可以使用`@Autowired`对于那些众所周知的解析依赖接口：`BeanFactory`，`ApplicationContext`，`Environment`，`ResourceLoader`， `ApplicationEventPublisher`，和`MessageSource`。这些接口及其扩展接口（例如`ConfigurableApplicationContext`或`ResourcePatternResolver`）将自动解析，而无需进行特殊设置。以下示例自动装配`ApplicationContext`对象：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class MovieRecommender {
@@ -2943,9 +2937,9 @@ public class MovieRecommender {
 
 考虑以下定义`firstMovieCatalog`为主要配置的配置`MovieCatalog`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -2964,9 +2958,9 @@ public class MovieConfiguration {
 
 使用前面的配置，以下内容`MovieRecommender`将自动连接到 `firstMovieCatalog`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class MovieRecommender {
@@ -3009,9 +3003,9 @@ public class MovieRecommender {
 
 `@Primary`当可以确定一个主要候选对象时，它是在几种情况下按类型使用自动装配的有效方法。当您需要更好地控制选择过程时，可以使用Spring的`@Qualifier`注释。您可以将限定符值与特定的参数相关联，从而缩小类型匹配的范围，以便为每个参数选择特定的bean。在最简单的情况下，这可以是简单的描述性值，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class MovieRecommender {
@@ -3026,9 +3020,9 @@ public class MovieRecommender {
 
 您还可以`@Qualifier`在各个构造函数参数或方法参数上指定注释，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class MovieRecommender {
@@ -3105,9 +3099,9 @@ public class MovieRecommender {
 
 您可以创建自己的自定义限定符注释。为此，请定义一个注释并`@Qualifier`在您的定义中提供该注释，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Target({ElementType.FIELD, ElementType.PARAMETER})
@@ -3121,9 +3115,9 @@ public @interface Genre {
 
 然后，您可以在自动连接的字段和参数上提供自定义限定符，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class MovieRecommender {
@@ -3176,9 +3170,9 @@ public class MovieRecommender {
 
 在某些情况下，使用没有值的注释就足够了。当注释具有更一般的用途并且可以应用于几种不同类型的依赖项时，这将很有用。例如，您可以提供一个脱机目录，当没有Internet连接可用时，可以对其进行搜索。首先，定义简单注释，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Target({ElementType.FIELD, ElementType.PARAMETER})
@@ -3191,9 +3185,9 @@ public @interface Offline {
 
 然后将注释添加到要自动装配的字段或属性，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class MovieRecommender {
@@ -3225,9 +3219,9 @@ public class MovieRecommender {
 
 您还可以定义自定义限定符批注，该批注除了简单`value`属性之外或代替简单属性，还接受命名属性。如果随后在要自动装配的字段或参数上指定了多个属性值，则Bean定义必须与所有此类属性值匹配才能被视为自动装配候选。例如，请考虑以下注释定义：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Target({ElementType.FIELD, ElementType.PARAMETER})
@@ -3243,9 +3237,9 @@ public @interface MovieQualifier {
 
 在这种情况下`Format`是一个枚举，定义如下：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public enum Format {
@@ -3255,9 +3249,9 @@ public enum Format {
 
 要自动装配的字段将用定制限定符进行注释，并包括这两个属性的值：`genre`和`format`，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class MovieRecommender {
@@ -3331,9 +3325,9 @@ public class MovieRecommender {
 
 除了`@Qualifier`注释之外，您还可以将Java泛型类型用作资格的隐式形式。例如，假设您具有以下配置：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -3353,9 +3347,9 @@ public class MyConfiguration {
 
 假设前面的bean实现了一个通用接口（即`Store`和 `Store`），则可以`@Autowire`将该`Store`接口和通用用作限定符，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Autowired
@@ -3367,9 +3361,9 @@ private Store<Integer> s2; // <Integer> qualifier, injects the integerStore bean
 
 当自动装配列表，`Map`实例和数组时，通用限定符也适用。下面的示例自动连接泛型`List`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 // Inject all Store beans as long as they have an <Integer> generic
@@ -3407,9 +3401,9 @@ Spring还通过在字段或bean属性设置器方法上使用JSR-250 `@Resource`
 
 `@Resource`具有名称属性。默认情况下，Spring将该值解释为要注入的Bean名称。换句话说，它遵循名称语义，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class SimpleMovieLister {
@@ -3429,9 +3423,9 @@ public class SimpleMovieLister {
 
 如果未明确指定名称，则默认名称是从字段名称或setter方法派生的。如果是字段，则采用字段名称。在使用setter方法的情况下，它采用bean属性名称。以下示例将名为bean `movieFinder`的setter方法注入：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class SimpleMovieLister {
@@ -3453,9 +3447,9 @@ public class SimpleMovieLister {
 
 因此，在以下示例中，该`customerPreferenceDao`字段首先查找名为“ customerPreferenceDao”的bean，然后回退到该类型的主类型匹配项 `CustomerPreferenceDao`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class MovieRecommender {
@@ -3481,9 +3475,9 @@ public class MovieRecommender {
 
 `@Value` 通常用于注入外部属性：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Component
@@ -3499,9 +3493,9 @@ public class MovieRecommender {
 
 使用以下配置：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -3519,9 +3513,9 @@ catalog.name=MovieCatalog
 
 Spring提供了一个默认的宽松内嵌值解析器。它将尝试解析属性值，如果无法解析，`${catalog.name}`则将注入属性名称（例如）作为值。如果要严格控制不存在的值，则应声明一个`PropertySourcesPlaceholderConfigurer`bean，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -3548,9 +3542,9 @@ Spring提供的内置转换器支持允许自动处理简单的类型转换（�
 
 可以提供如下默认值：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Component
@@ -3566,9 +3560,9 @@ public class MovieRecommender {
 
 Spring `BeanPostProcessor`使用`ConversionService`幕后处理将String值转换`@Value`为目标类型的过程。如果要为自己的自定义类型提供转换支持，则可以提供自己的 `ConversionService`bean实例，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -3585,9 +3579,9 @@ public class AppConfig {
 
 当`@Value`包含[`SpEL`表达式时，](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#expressions)该值将在运行时动态计算，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Component
@@ -3603,9 +3597,9 @@ public class MovieRecommender {
 
 SpEL还支持使用更复杂的数据结构：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Component
@@ -3624,9 +3618,9 @@ public class MovieRecommender {
 
 将`CommonAnnotationBeanPostProcessor`不仅承认了`@Resource`注解也是JSR-250的生命周期注解：`javax.annotation.PostConstruct`和 `javax.annotation.PreDestroy`。在Spring 2.5中引入了对这些注释的支持，为[初始化回调](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-factory-lifecycle-initializingbean)和 [销毁回调中](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-factory-lifecycle-disposablebean)描述的生命周期回调机制提供了一种替代 [方法](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-factory-lifecycle-disposablebean)。假设 `CommonAnnotationBeanPostProcessor`在Spring内注册`ApplicationContext`，则在生命周期的同一点将调用带有这些注释之一的方法作为相应的Spring生命周期接口方法或显式声明的回调方法。在以下示例中，缓存在初始化时预先填充，并在销毁时清除：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class CachingMovieLister {
@@ -3667,9 +3661,9 @@ Spring提供进一步典型化注解：`@Component`，`@Service`，和 `@Control
 
 Spring提供的许多注释都可以在您自己的代码中用作元注释。元注释是可以应用于另一个注释的注释。例如，`@Service`注释提及[早期](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-stereotype-annotations) 为间注释有`@Component`，如下面的示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Target(ElementType.TYPE)
@@ -3690,9 +3684,9 @@ public @interface Service {
 
 此外，组合注释可以选择从元注释中重新声明属性，以允许自定义。当您只希望公开元注释属性的子集时，这特别有用。例如，Spring的 `@SessionScope`注释将作用域名称硬编码为，`session`但仍允许自定义`proxyMode`。以下清单显示了`SessionScope`注释的定义 ：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Target({ElementType.TYPE, ElementType.METHOD})
@@ -3713,9 +3707,9 @@ public @interface SessionScope {
 
 然后，您`@SessionScope`无需声明`proxyMode`以下即可使用：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Service
@@ -3727,9 +3721,9 @@ public class SessionScopedService {
 
 您还可以覆盖的值`proxyMode`，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Service
@@ -3745,9 +3739,9 @@ public class SessionScopedUserService implements UserService {
 
 Spring可以自动检测构造型类，并使用来注册相应的 `BeanDefinition`实例`ApplicationContext`。例如，以下两个类别可进行这种自动检测：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Service
@@ -3761,9 +3755,9 @@ public class SimpleMovieLister {
 }
 ```
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Repository
@@ -3774,9 +3768,9 @@ public class JpaMovieFinder implements MovieFinder {
 
 要自动检测这些类并注册相应的bean，您需要添加 `@ComponentScan`到`@Configuration`类中，其中`basePackages`属性是两个类的公共父包。（或者，您可以指定用逗号，分号或空格分隔的列表，其中包括每个类的父包。）
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -3835,9 +3829,9 @@ public class AppConfig  {
 
 以下示例显示了忽略所有`@Repository`注释并改为使用“存根”存储库的配置：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -3870,9 +3864,9 @@ public class AppConfig {
 
 Spring组件还可以将bean定义元数据贡献给容器。您可以`@Bean`使用与在带`@Configuration` 注释的类中定义Bean元数据相同的注释来执行此操作。以下示例显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Component
@@ -3898,9 +3892,9 @@ public class FactoryMethodComponent {
 
 如前所述，支持自动连线的字段和方法，并自动支持`@Bean`方法的附加支持。以下示例显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Component
@@ -3942,9 +3936,9 @@ public class FactoryMethodComponent {
 
 从Spring Framework 4.3开始，您还可以声明类型`InjectionPoint`（或其更具体的子类：）的工厂方法参数， `DependencyDescriptor`以访问触发当前bean创建的请求注入点。注意，这仅适用于实际创建bean实例，而不适用于注入现有实例。因此，此功能对原型范围的bean最有意义。对于其他作用域，factory方法仅在给定作用域中看到触发创建新bean实例的注入点（例如，触发创建惰性单例bean的依赖项）。在这种情况下，可以将提供的注入点元数据与语义一起使用。以下示例显示如何使用`InjectionPoint`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Component
@@ -3969,9 +3963,9 @@ public class FactoryMethodComponent {
 
 如果这样的注释不包含名称，`value`或者不包含任何其他检测到的组件（例如，由自定义过滤器发现的组件），则缺省bean名称生成器将返回不使用大写字母的非限定类名称。例如，如果检测到以下组件类，则名称为`myMovieLister`和`movieFinderImpl`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Service("myMovieLister")
@@ -3980,9 +3974,9 @@ public class SimpleMovieLister {
 }
 ```
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Repository
@@ -3997,9 +3991,9 @@ public class MovieFinderImpl implements MovieFinder {
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -4022,9 +4016,9 @@ public class AppConfig {
 
 一般而言，与Spring管理的组件一样，自动检测到的组件的默认范围也是最常见的范围是`singleton`。但是，有时您需要`@Scope`注释可以指定的其他范围。您可以在批注中提供范围的名称，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Scope("prototype")
@@ -4044,9 +4038,9 @@ public class MovieFinderImpl implements MovieFinder {
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -4064,9 +4058,9 @@ public class AppConfig {
 
 使用某些非单作用域时，可能有必要为作用域对象生成代理。在[范围Bean中将](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-factory-scopes-other-injection)推理描述[为依赖项](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-factory-scopes-other-injection)。为此，在component-scan元素上可以使用scoped-proxy属性。三个可能的值是：`no`，`interfaces`，和`targetClass`。例如，以下配置生成标准的JDK动态代理：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -4086,9 +4080,9 @@ public class AppConfig {
 
 在`@Qualifier`注释中讨论[，基于注解微调自动装配与预选赛](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-autowired-annotation-qualifiers)。该部分中的示例演示了如何使用`@Qualifier`注释和自定义限定符注释在解析自动装配候选时提供细粒度的控制。由于这些示例基于XML Bean定义，因此通过使用XML 中的元素的`qualifier`或`meta`子元素，在候选Bean定义上提供了限定符元数据`bean`。当依靠类路径扫描来自动检测组件时，可以在候选类上为限定符元数据提供类型级别的注释。下面的三个示例演示了此技术：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Component
@@ -4098,9 +4092,9 @@ public class ActionMovieCatalog implements MovieCatalog {
 }
 ```
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Component
@@ -4110,9 +4104,9 @@ public class ActionMovieCatalog implements MovieCatalog {
 }
 ```
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Component
@@ -4185,9 +4179,9 @@ dependencies {
 
 除了`@Autowired`，您可以使用`@javax.inject.Inject`以下方法：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 import javax.inject.Inject;
@@ -4210,9 +4204,9 @@ public class SimpleMovieLister {
 
 与一样`@Autowired`，您可以`@Inject`在字段级别，方法级别和构造函数参数级别使用。此外，您可以将注入点声明为 `Provider`，以允许按需访问范围更短的bean，或者通过`Provider.get()`调用延迟访问其他bean 。以下示例提供了前面示例的变体：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 import javax.inject.Inject;
@@ -4236,9 +4230,9 @@ public class SimpleMovieLister {
 
 如果要为应注入的依赖项使用限定名称，则应使用`@Named`批注，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 import javax.inject.Inject;
@@ -4269,9 +4263,9 @@ public class SimpleMovieLister {
 }
 ```
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class SimpleMovieLister {
@@ -4287,9 +4281,9 @@ public class SimpleMovieLister {
 
 代替`@Component`，您可以使用`@javax.inject.Named`或`javax.annotation.ManagedBean`，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 import javax.inject.Inject;
@@ -4311,9 +4305,9 @@ public class SimpleMovieLister {
 
 在`@Component`不指定组件名称的情况下使用非常常见。 `@Named`可以类似的方式使用，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 import javax.inject.Inject;
@@ -4335,9 +4329,9 @@ public class SimpleMovieLister {
 
 使用`@Named`或时`@ManagedBean`，可以使用与使用Spring注释完全相同的方式来使用组件扫描，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -4388,9 +4382,9 @@ Spring的新Java配置支持中的主要工件是-带 `@Configuration`注释的�
 
 用注释类`@Configuration`表示其主要目的是作为Bean定义的来源。此外，`@Configuration`类允许通过调用`@Bean`同一类中的其他方法来定义Bean之间的依赖关系。最简单的`@Configuration`类如下：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -4433,9 +4427,9 @@ public class AppConfig {
 
 与实例化a时将Spring XML文件用作输入的方式几乎相同，实例化a时 `ClassPathXmlApplicationContext`可以将`@Configuration`类用作输入`AnnotationConfigApplicationContext`。如下面的示例所示，这允许Spring容器的使用完全不依赖XML：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public static void main(String[] args) {
@@ -4447,9 +4441,9 @@ public static void main(String[] args) {
 
 如前所述，`AnnotationConfigApplicationContext`不仅限于仅使用`@Configuration`类。`@Component`可以将任何或带有JSR-330注释的类作为输入提供给构造函数，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public static void main(String[] args) {
@@ -4465,9 +4459,9 @@ public static void main(String[] args) {
 
 您可以`AnnotationConfigApplicationContext`使用no-arg构造函数实例化一个，然后使用`register()`方法进行配置。以编程方式构建.NET时，此方法特别有用`AnnotationConfigApplicationContext`。以下示例显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public static void main(String[] args) {
@@ -4484,9 +4478,9 @@ public static void main(String[] args) {
 
 要启用组件扫描，您可以`@Configuration`按如下方式注释您的类：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -4506,9 +4500,9 @@ public class AppConfig  {
 
 在前面的示例中，将`com.acme`扫描软件包以查找任何带 `@Component`注释的类，并将这些类注册为容器内的Spring bean定义。`AnnotationConfigApplicationContext`公开此 `scan(String…)`方法以允许相同的组件扫描功能，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public static void main(String[] args) {
@@ -4589,9 +4583,9 @@ public static void main(String[] args) {
 
 要声明一个bean，可以用注解对方法进行`@Bean`注解。您可以使用此方法在`ApplicationContext`指定为该方法的返回值的类型内注册Bean定义。缺省情况下，bean名称与方法名称相同。以下示例显示了`@Bean`方法声明：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -4620,9 +4614,9 @@ transferService-> com.acme.TransferServiceImpl
 
 您还可以`@Bean`使用接口（或基类）返回类型声明您的方法，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -4645,9 +4639,9 @@ public class AppConfig {
 
 带`@Bean`注释的方法可以具有任意数量的参数，这些参数描述构建该bean所需的依赖关系。例如，如果我们`TransferService` 需要一个`AccountRepository`，我们可以使用方法参数来实现该依赖关系，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -4672,9 +4666,9 @@ public class AppConfig {
 
 该`@Bean`注释支持指定任意初始化和销毁回调方法，就像Spring XML中的`init-method`和`destroy-method`属性的`bean`元素，如下面的示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class BeanOne {
@@ -4706,15 +4700,15 @@ public class AppConfig {
 }
 ```
 
-|      | 默认情况下，用Java配置定义的具有公共`close`或`shutdown` 方法的bean 会自动通过销毁回调进行登记。如果您有公共 `close`或`shutdown`方法，并且不希望在容器关闭时调用它，则可以添加`@Bean(destroyMethod="")`到bean定义中以禁用默认`(inferred)`模式。默认情况下，您可能要对通过JNDI获取的资源执行此操作，因为其生命周期是在应用程序外部进行管理的。特别是，请确保始终对进行操作`DataSource`，因为这在Java EE应用程序服务器上是有问题的。以下示例显示了如何防止对的自动销毁回调 `DataSource`：爪哇科特林`@Bean(destroyMethod="") public DataSource dataSource() throws NamingException {    return (DataSource) jndiTemplate.lookup("MyDS"); }`此外，对于`@Bean`方法，通常使用程序化JNDI查找，方法是使用Spring `JndiTemplate`或`JndiLocatorDelegate`辅助方法，或者直接`InitialContext`使用JNDI 用法，但不使用`JndiObjectFactoryBean`变体（这会迫使您将返回类型声明为`FactoryBean`类型，而不是实际的目标类型，这使得它很难实现。在`@Bean`打算引用此处提供的资源的其他方法中用于交叉引用调用）。 |
+|      | 默认情况下，用Java配置定义的具有公共`close`或`shutdown` 方法的bean 会自动通过销毁回调进行登记。如果您有公共 `close`或`shutdown`方法，并且不希望在容器关闭时调用它，则可以添加`@Bean(destroyMethod="")`到bean定义中以禁用默认`(inferred)`模式。默认情况下，您可能要对通过JNDI获取的资源执行此操作，因为其生命周期是在应用程序外部进行管理的。特别是，请确保始终对进行操作`DataSource`，因为这在Java EE应用程序服务器上是有问题的。以下示例显示了如何防止对的自动销毁回调 `DataSource`：   `@Bean(destroyMethod="") public DataSource dataSource() throws NamingException {    return (DataSource) jndiTemplate.lookup("MyDS"); }`此外，对于`@Bean`方法，通常使用程序化JNDI查找，方法是使用Spring `JndiTemplate`或`JndiLocatorDelegate`辅助方法，或者直接`InitialContext`使用JNDI 用法，但不使用`JndiObjectFactoryBean`变体（这会迫使您将返回类型声明为`FactoryBean`类型，而不是实际的目标类型，这使得它很难实现。在`@Bean`打算引用此处提供的资源的其他方法中用于交叉引用调用）。 |
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
 对于`BeanOne`前面注释中的示例，`init()` 在构造期间直接调用该方法同样有效，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -4745,9 +4739,9 @@ Spring包含`@Scope`注释，以便您可以指定bean的范围。
 
 默认范围是`singleton`，但是您可以使用`@Scope`注释覆盖它，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -4767,9 +4761,9 @@ Spring提供了一种通过[作用域代理](https://docs.spring.io/spring-frame
 
 如果将XML参考文档（请参阅[作用域代理](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-factory-scopes-other-injection)）中的作用域代理示例移植到我们`@Bean`使用Java的示例中 ，则它类似于以下内容：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 // an HTTP Session-scoped bean exposed as a proxy
@@ -4792,9 +4786,9 @@ public Service userService() {
 
 默认情况下，配置类使用`@Bean`方法的名称作为结果bean的名称。但是，可以使用`name`属性覆盖此功能，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -4811,9 +4805,9 @@ public class AppConfig {
 
 如[Naming Beans中](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-beanname)所讨论的，有时希望为单个Bean提供多个名称，否则称为Bean别名。 为此`name`，`@Bean`注释的属性接受String数组。以下示例显示了如何为bean设置多个别名：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -4832,9 +4826,9 @@ public class AppConfig {
 
 要将说明添加到`@Bean`，可以使用 [`@Description`](https://docs.spring.io/spring-framework/docs/5.2.6.RELEASE/javadoc-api/org/springframework/context/annotation/Description.html) 批注，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -4856,9 +4850,9 @@ public class AppConfig {
 
 当bean彼此依赖时，表达这种依赖就像让一个bean方法调用另一个依赖一样简单，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -4886,9 +4880,9 @@ public class AppConfig {
 
 如前所述，[查找方法注入](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-factory-method-injection)是一项高级功能，您应该很少使用。在单例作用域的bean依赖于原型作用域的bean的情况下，这很有用。将Java用于这种类型的配置为实现这种模式提供了自然的方法。以下示例显示如何使用查找方法注入：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public abstract class CommandManager {
@@ -4907,9 +4901,9 @@ public abstract class CommandManager {
 
 通过使用Java配置，可以创建一个覆盖`CommandManager`抽象`createCommand()`方法的子类，该方法将以某种方式查找新的（原型）命令对象。以下示例显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Bean
@@ -4936,9 +4930,9 @@ public CommandManager commandManager() {
 
 考虑以下示例，该示例显示了一个带`@Bean`注释的方法被调用两次：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -4987,9 +4981,9 @@ Spring的基于Java的配置功能使您可以编写批注，从而可以降低�
 
 就像``在Spring XML文件中使用元素来帮助模块化配置一样，`@Import`注释允许`@Bean`从另一个配置类加载定义，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -5014,9 +5008,9 @@ public class ConfigB {
 
 现在，无需同时指定两者`ConfigA.class`和`ConfigB.class`实例化上下文，只需`ConfigB`显式提供，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public static void main(String[] args) {
@@ -5040,9 +5034,9 @@ public static void main(String[] args) {
 
 幸运的是，解决这个问题很简单。正如[我们已经讨论的那样](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-java-dependencies)，一种`@Bean`方法可以具有任意数量的描述Bean依赖关系的参数。考虑以下具有多个`@Configuration` 类的更真实的场景，每个类都取决于其他类中声明的bean：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -5089,9 +5083,9 @@ public static void main(String[] args) {
 
 以下示例显示如何将一个bean自动连接到另一个bean：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -5149,9 +5143,9 @@ public static void main(String[] args) {
 
 如果这种歧义是不可接受的，并且您希望从IDE内部直接从一个`@Configuration`类导航到另一个类，请考虑自动装配配置类本身。以下示例显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -5170,9 +5164,9 @@ public class ServiceConfig {
 
 在前面的情况中，哪里`AccountRepository`定义是完全明确的。但是，`ServiceConfig`现在与紧密耦合`RepositoryConfig`。那是权衡。通过使用基于接口的类或基于抽象类的`@Configuration`类，可以在某种程度上缓解这种紧密耦合。考虑以下示例：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -5235,9 +5229,9 @@ public static void main(String[] args) {
 
 `Condition`接口的实现提供了`matches(…)` 返回`true`或的方法`false`。例如，以下清单显示了`Condition`用于的实际 实现`@Profile`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Override
@@ -5272,9 +5266,9 @@ Spring的`@Configuration`类支持并非旨在100％完全替代Spring XML。某
 
 以下示例显示了Java中的普通配置类：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -5321,9 +5315,9 @@ jdbc.username = sa
 jdbc.password =
 ```
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public static void main(String[] args) {
@@ -5361,9 +5355,9 @@ public static void main(String[] args) {
 
 在`@Configuration`类是配置容器的主要机制的应用程序中，仍然有必要至少使用一些XML。在这些情况下，您可以`@ImportResource`根据需要使用和定义尽可能多的XML。这样做实现了一种“以Java为中心”的方法来配置容器，并将XML保持在最低限度。以下示例（包括配置类，定义Bean的XML文件，属性文件和`main`该类）显示了如何使用`@ImportResource`注释来实现按需使用XML的“以Java为中心”的配置：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -5400,9 +5394,9 @@ jdbc.username = sa
 jdbc.password =
 ```
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public static void main(String[] args) {
@@ -5430,9 +5424,9 @@ Bean定义配置文件在核心容器中提供了一种机制，该机制允许�
 
 考虑实际应用中第一个用例的需求 `DataSource`。在测试环境中，配置可能类似于以下内容：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Bean
@@ -5447,9 +5441,9 @@ public DataSource dataSource() {
 
 现在，假设该应用程序的数据源已在生产应用程序服务器的JNDI目录中注册，请考虑如何将该应用程序部署到QA或生产环境中。`dataSource`现在，我们的bean看起来像下面的清单：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Bean(destroyMethod="")
@@ -5467,9 +5461,9 @@ public DataSource dataSource() throws Exception {
 
 该[`@Profile`](https://docs.spring.io/spring-framework/docs/5.2.6.RELEASE/javadoc-api/org/springframework/context/annotation/Profile.html) 注解让你指示组件有资格登记在一个或多个指定的配置文件是活动的。使用前面的示例，我们可以`dataSource`如下重写配置：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -5487,9 +5481,9 @@ public class StandaloneDataConfig {
 }
 ```
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -5520,9 +5514,9 @@ public class JndiDataConfig {
 
 您可以将其`@Profile`用作[元注释](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-meta-annotations)，以创建自定义的组合注释。以下示例定义了一个自定义 `@Production`批注，您可以将其用作替代品 `@Profile("production")`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Target(ElementType.TYPE)
@@ -5538,9 +5532,9 @@ public @interface Production {
 
 `@Profile` 也可以在方法级别声明为仅包含配置类的一个特定bean（例如，特定bean的替代变体），如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -5638,9 +5632,9 @@ XML对应项是元素的`profile`属性``。我们前面的示例配置可以重
 
 可以通过多种方式来激活配置文件，但是最直接的方法是针对`Environment`通过可以使用的API以 编程方式进行配置`ApplicationContext`。以下示例显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
@@ -5653,9 +5647,9 @@ ctx.refresh();
 
 请注意，配置文件不是“非此即彼”的命题。您可以一次激活多个配置文件。通过编程，您可以为该`setActiveProfiles()`方法提供多个配置文件名称，该名称 接受`String…`varargs。以下示例激活多个配置文件：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ctx.getEnvironment().setActiveProfiles("profile1", "profile2");
@@ -5671,9 +5665,9 @@ ctx.getEnvironment().setActiveProfiles("profile1", "profile2");
 
 默认配置文件表示默认情况下启用的配置文件。考虑以下示例：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -5698,9 +5692,9 @@ public class DefaultDataConfig {
 
 Spring的`Environment`抽象提供了可配置属性源层次结构上的搜索操作。考虑以下清单：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ApplicationContext ctx = new GenericApplicationContext();
@@ -5723,9 +5717,9 @@ System.out.println("Does my environment contain the 'my-property' property? " + 
 
 最重要的是，整个机制是可配置的。也许您具有要集成到此搜索中的自定义属性源。为此，请实现并实例化自己的实例`PropertySource`并将其添加到`PropertySources`current 的集合中`Environment`。以下示例显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ConfigurableApplicationContext ctx = new GenericApplicationContext();
@@ -5741,9 +5735,9 @@ sources.addFirst(new MyPropertySource());
 
 给定一个`app.properties`包含键-值对的名为的文件`testbean.name=myTestBean`，以下`@Configuration`类以`@PropertySource`一种调用`testBean.getName()`return 的方式使用`myTestBean`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -5764,9 +5758,9 @@ public class AppConfig {
 
 资源位置中`${…}`存在的所有占位符`@PropertySource`都是根据已经针对环境注册的一组属性源来解析的，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -5809,9 +5803,9 @@ public class AppConfig {
 
 要启用加载时编织，可以将`@EnableLoadTimeWeaving`_ 添加到您的一个 `@Configuration`类，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -5882,9 +5876,9 @@ Spring提供了两种`MessageSource`实现，`ResourceBundleMessageSource`和 `S
 
 下一个示例显示了执行该`MessageSource`功能的程序。请记住，所有`ApplicationContext`实现也是`MessageSource` 实现，因此可以强制转换为`MessageSource`接口。
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public static void main(String[] args) {
@@ -5920,9 +5914,9 @@ public static void main(String[] args) {
 </beans>
 ```
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class Example {
@@ -5956,9 +5950,9 @@ userDao参数是必需的。
 arguments.required = Ebagum lad，我说“ {0}”参数是必需的。
 ```
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public static void main(final String[] args) {
@@ -6002,9 +5996,9 @@ Ebagum伙计，“ userDao”参数是必需的，我说是必需的。
 
 您还可以创建和发布自己的自定义事件。以下示例显示了一个简单的类，该类扩展了Spring的`ApplicationEvent`基类：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class BlackListEvent extends ApplicationEvent {
@@ -6024,9 +6018,9 @@ public class BlackListEvent extends ApplicationEvent {
 
 要发布自定义`ApplicationEvent`，请在`publishEvent()`上调用方法 `ApplicationEventPublisher`。通常，这是通过创建一个实现`ApplicationEventPublisherAware`并注册为Spring bean 的类来完成的 。以下示例显示了此类：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class EmailService implements ApplicationEventPublisherAware {
@@ -6056,9 +6050,9 @@ public class EmailService implements ApplicationEventPublisherAware {
 
 要接收该定制`ApplicationEvent`，您可以创建一个实现 `ApplicationListener`并注册为Spring bean的类。以下示例显示了此类：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class BlackListNotifier implements ApplicationListener<BlackListEvent> {
@@ -6105,9 +6099,9 @@ public class BlackListNotifier implements ApplicationListener<BlackListEvent> {
 
 从Spring 4.2开始，您可以使用`@EventListener`注释在托管Bean的任何公共方法上注册事件侦听器。该`BlackListNotifier`可改写如下：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class BlackListNotifier {
@@ -6129,9 +6123,9 @@ public class BlackListNotifier {
 
 如果您的方法应该侦听多个事件，或者您要完全不使用任何参数来定义它，则事件类型也可以在注释本身上指定。以下示例显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @EventListener({ContextStartedEvent.class, ContextRefreshedEvent.class})
@@ -6144,9 +6138,9 @@ public void handleContextStart() {
 
 以下示例说明了仅当`content`事件的属性等于时，才可以重写我们的通知程序以进行调用 `my-event`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @EventListener(condition = "#blEvent.content == 'my-event'")
@@ -6167,9 +6161,9 @@ public void processBlackListEvent(BlackListEvent blEvent) {
 
 如果由于处理另一个事件而需要发布一个事件，则可以更改方法签名以返回应发布的事件，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @EventListener
@@ -6189,9 +6183,9 @@ public ListUpdateEvent handleBlackListEvent(BlackListEvent event) {
 
 如果您希望特定的侦听器异步处理事件，则可以重用 [常规`@Async`支持](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/integration.html#scheduling-annotation-support-async)。以下示例显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @EventListener
@@ -6210,9 +6204,9 @@ public void processBlackListEvent(BlackListEvent event) {
 
 如果需要先调用一个侦听器，则可以将`@Order` 注释添加到方法声明中，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @EventListener
@@ -6226,9 +6220,9 @@ public void processBlackListEvent(BlackListEvent event) {
 
 您还可以使用泛型来进一步定义事件的结构。考虑使用 `EntityCreatedEvent`where `T`是创建的实际实体的类型。例如，您可以创建以下侦听器定义只接收`EntityCreatedEvent`了 `Person`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @EventListener
@@ -6241,9 +6235,9 @@ public void onPersonCreated(EntityCreatedEvent<Person> event) {
 
 在某些情况下，如果所有事件都遵循相同的结构，这可能会变得很乏味（就像前面示例中的事件一样）。在这种情况下，您可以实现`ResolvableTypeProvider`超出运行时环境提供的范围之外的框架指导。以下事件显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class EntityCreatedEvent<T> extends ApplicationEvent implements ResolvableTypeProvider {
@@ -6340,9 +6334,9 @@ public class EntityCreatedEvent<T> extends ApplicationEvent implements Resolvabl
 
 要使用显式注册Bean后处理器`DefaultListableBeanFactory`，您需要以编程方式调用`addBeanPostProcessor`，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
@@ -6357,9 +6351,9 @@ factory.addBeanPostProcessor(new MyBeanPostProcessor());
 
 要将a `BeanFactoryPostProcessor`应用于平原`DefaultListableBeanFactory`，您需要调用其`postProcessBeanFactory`方法，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
@@ -6400,9 +6394,9 @@ cfg.postProcessBeanFactory(factory);
 
 Spring的`Resource`接口旨在成为一种功能更强大的接口，用于抽象化对低级资源的访问。以下清单显示了`Resource`接口定义：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public interface Resource extends InputStreamSource {
@@ -6425,9 +6419,9 @@ public interface Resource extends InputStreamSource {
 
 如`Resource`接口的定义所示，它扩展了`InputStreamSource` 接口。以下清单显示了`InputStreamSource` 接口的定义：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public interface InputStreamSource {
@@ -6504,9 +6498,9 @@ A `ClassPathResource`是由Java代码通过显式使用`ClassPathResource` 构�
 
 该`ResourceLoader`接口旨在由可以返回（即加载）`Resource`实例的对象实现。以下清单显示了`ResourceLoader` 接口定义：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public interface ResourceLoader {
@@ -6519,9 +6513,9 @@ public interface ResourceLoader {
 
 当您调用`getResource()`特定的应用程序上下文时，并且指定的位置路径没有特定的前缀时，您将获得`Resource`适合该特定应用程序上下文的类型。例如，假设针对`ClassPathXmlApplicationContext`实例执行了以下代码片段：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 Resource template = ctx.getResource("some/resource/path/myTemplate.txt");
@@ -6533,9 +6527,9 @@ Resource template = ctx.getResource("some/resource/path/myTemplate.txt");
 
 另一方面，`ClassPathResource`无论应用程序上下文类型如何，您都可以通过指定特殊`classpath:`前缀来强制使用，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 Resource template = ctx.getResource("classpath:some/resource/path/myTemplate.txt");
@@ -6543,17 +6537,17 @@ Resource template = ctx.getResource("classpath:some/resource/path/myTemplate.txt
 
 同样，您可以`UrlResource`通过指定任何标准 `java.net.URL`前缀来强制使用a 。以下两个示例使用`file`和`http` 前缀：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 Resource template = ctx.getResource("file:///some/resource/path/myTemplate.txt");
 ```
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 Resource template = ctx.getResource("https://myhost.com/resource/path/myTemplate.txt");
@@ -6572,9 +6566,9 @@ Resource template = ctx.getResource("https://myhost.com/resource/path/myTemplate
 
 该`ResourceLoaderAware`接口是一个特殊的回调接口，用于标识期望提供`ResourceLoader`引用的组件。以下清单显示了`ResourceLoaderAware`接口的定义：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public interface ResourceLoaderAware {
@@ -6623,9 +6617,9 @@ public interface ResourceLoaderAware {
 
 当这样的位置路径没有前缀时，`Resource`从该路径构建并用于加载Bean定义的特定类型取决于特定应用程序上下文，并且适合于该特定应用程序上下文。例如，请考虑以下示例，该示例创建一个 `ClassPathXmlApplicationContext`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ApplicationContext ctx = new ClassPathXmlApplicationContext("conf/appContext.xml");
@@ -6633,9 +6627,9 @@ ApplicationContext ctx = new ClassPathXmlApplicationContext("conf/appContext.xml
 
 Bean定义是从类路径加载的，因为使用了a `ClassPathResource`。但是，请考虑以下示例，该示例创建一个`FileSystemXmlApplicationContext`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ApplicationContext ctx =
@@ -6646,9 +6640,9 @@ ApplicationContext ctx =
 
 请注意，在位置路径上使用特殊的classpath前缀或标准URL前缀会覆盖`Resource`为加载定义而创建的默认类型。考虑以下示例：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ApplicationContext ctx =
@@ -6673,9 +6667,9 @@ com /
 
 以下示例显示了如何`ClassPathXmlApplicationContext`实例化一个由实例化的实例，该实例由在文件named `services.xml`和`daos.xml`（在类路径中）定义的bean组成：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ApplicationContext ctx = new ClassPathXmlApplicationContext(
@@ -6717,9 +6711,9 @@ classpath：com / mycompany / ** / applicationContext.xml
 
 构造基于XML的应用程序上下文时，位置字符串可以使用特殊`classpath*:`前缀，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ApplicationContext ctx =
@@ -6764,18 +6758,18 @@ classpath：com / mycompany / ** / service-context.xml
 
 但是，出于向后兼容性（历史）的原因，当`FileSystemApplicationContext`是时，情况会发生变化 `ResourceLoader`。该 `FileSystemApplicationContext`部队所有连接的`FileSystemResource`情况下，把所有的位置路径为相对的，他们是否具有领先的斜线或无法启动。实际上，这意味着以下示例是等效的：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ApplicationContext ctx =
     new FileSystemXmlApplicationContext("conf/context.xml");
 ```
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ApplicationContext ctx =
@@ -6784,18 +6778,18 @@ ApplicationContext ctx =
 
 以下示例也是等效的（即使它们有所不同也有意义，因为一种情况是相对的，另一种情况是绝对的）：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 FileSystemXmlApplicationContext ctx = ...;
 ctx.getResource("some/resource/path/myTemplate.txt");
 ```
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 FileSystemXmlApplicationContext ctx = ...;
@@ -6804,18 +6798,18 @@ ctx.getResource("/some/resource/path/myTemplate.txt");
 
 实际上，如果需要真正的绝对文件系统路径，则应避免将绝对路径与`FileSystemResource`或一起`FileSystemXmlApplicationContext`使用，而应`UrlResource`通过使用`file:`URL前缀来强制使用a 。以下示例显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 // actual context type doesn't matter, the Resource will always be UrlResource
 ctx.getResource("file:///some/resource/path/myTemplate.txt");
 ```
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 // force this FileSystemXmlApplicationContext to load its definition via a UrlResource
@@ -6841,9 +6835,9 @@ Spring具有一个`Validator`可用于验证对象的界面。该 `Validator`接
 
 考虑以下小数据对象的示例：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class Person {
@@ -6862,9 +6856,9 @@ public class Person {
 
 实现a `Validator`非常简单，尤其是当您知道`ValidationUtils`Spring Framework也提供的 helper类时。以下示例`Validator`为`Person`实例实现：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class PersonValidator implements Validator {
@@ -6892,9 +6886,9 @@ public class PersonValidator implements Validator {
 
 虽然可以实现单个`Validator`类来验证丰富对象中的每个嵌套对象，但最好将对象的每个嵌套类的验证逻辑封装在自己的`Validator`实现中。一个“丰富”对象的简单示例是一个`Customer`由两个`String` 属性（第一个和第二个名称）和一个复杂`Address`对象组成的对象。`Address`对象可以独立于`Customer`对象使用，因此`AddressValidator` 已实现了不同的对象。如果您想`CustomerValidator`重用`AddressValidator`该类中包含的逻辑而不求助于复制和粘贴，则可以`AddressValidator`在您的中依赖注入或实例化一个`CustomerValidator`，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class CustomerValidator implements Validator {
@@ -6965,9 +6959,9 @@ bean软件包中一个非常重要的类是`BeanWrapper`接口及其相应的实
 
 以下两个示例类使用的`BeanWrapper`get和set属性：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class Company {
@@ -6993,9 +6987,9 @@ public class Company {
 }
 ```
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class Employee {
@@ -7024,9 +7018,9 @@ public class Employee {
 
 下面的代码片断展示了如何检索和操作的一些实例属性的一些例子`Companies`和`Employees`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 BeanWrapper company = new BeanWrapperImpl(new Company());
@@ -7094,9 +7088,9 @@ com
 
 所引用`SomethingBeanInfo`类的以下Java源代码将a `CustomNumberEditor`与该类的`age`属性相关联`Something`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class SomethingBeanInfo extends SimpleBeanInfo {
@@ -7130,9 +7124,9 @@ public class SomethingBeanInfo extends SimpleBeanInfo {
 
 考虑以下示例，该示例定义了一个名为的用户类`ExoticType`和另一个名为的类`DependsOnExoticType`，需要`ExoticType`将其设置为属性：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package example;
@@ -7166,9 +7160,9 @@ public class DependsOnExoticType {
 
 该`PropertyEditor`实现可能类似于以下内容：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 // converts string representation to ExoticType object
@@ -7200,9 +7194,9 @@ public class ExoticTypeEditor extends PropertyEditorSupport {
 
 以下示例显示了如何创建自己的`PropertyEditorRegistrar`实现：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package com.foo.editors.spring;
@@ -7238,9 +7232,9 @@ public final class CustomPropertyEditorRegistrar implements PropertyEditorRegist
 
 最后（对于使用[Spring的MVC Web框架的人来说](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/web.html#mvc)，`PropertyEditorRegistrars`与本章的重点有所偏离），结合使用数据绑定`Controllers`（例如`SimpleFormController`）可以非常方便。以下示例`PropertyEditorRegistrar`在`initBinder(..)`方法的实现中使用：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public final class RegisterUserController extends SimpleFormController {
@@ -7270,9 +7264,9 @@ Spring 3引入了一个`core.convert`提供通用类型转换系统的软件包�
 
 如以下接口定义所示，用于实现类型转换逻辑的SPI非常简单且类型严格。
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package org.springframework.core.convert.converter;
@@ -7289,9 +7283,9 @@ public interface Converter<S, T> {
 
 `core.convert.support`为方便起见，包装中提供了几种转换器实现。这些包括从字符串到数字和其他常见类型的转换器。下面的清单显示了`StringToInteger`该类，这是一个典型的`Converter`实现：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package org.springframework.core.convert.support;
@@ -7308,9 +7302,9 @@ final class StringToInteger implements Converter<String, Integer> {
 
 当需要集中整个类层次结构的转换逻辑时（例如，从转换`String`为`Enum`对象时），可以实现 `ConverterFactory`，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package org.springframework.core.convert.converter;
@@ -7325,7 +7319,7 @@ public interface ConverterFactory<S, R> {
 
 考虑以下`StringToEnumConverterFactory`示例：
 
-爪哇
+  
 
 ```java
 package org.springframework.core.convert.support;
@@ -7355,9 +7349,9 @@ final class StringToEnumConverterFactory implements ConverterFactory<String, Enu
 
 当您需要复杂的`Converter`实现时，请考虑使用 `GenericConverter`接口。与相比，它具有更灵活但类型不那么严格的签名`Converter`，`GenericConverter`支持在多种源和目标类型之间进行转换。另外，`GenericConverter`在实现转换逻辑时可以使用可用的源字段和目标字段上下文。这种上下文允许类型转换由字段注释或在字段签名上声明的通用信息驱动。以下清单显示了的接口定义`GenericConverter`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package org.springframework.core.convert.converter;
@@ -7382,9 +7376,9 @@ public interface GenericConverter {
 
 有时，您只希望在`Converter`满足特定条件的情况下运行。例如，您可能只想`Converter`在目标字段上存在特定注释时才运行，或者`Converter`只`static valueOf`在目标类上定义了特定方法（如方法）时才运行。 `ConditionalGenericConverter`是`GenericConverter`和`ConditionalConverter`接口的并集 ，可让您定义此类自定义匹配条件：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public interface ConditionalConverter {
@@ -7402,9 +7396,9 @@ a的一个很好的例子`ConditionalGenericConverter`是`EntityConverter`在持
 
 `ConversionService`定义用于在运行时执行类型转换逻辑的统一API。转换器通常在以下外观界面后面执行：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package org.springframework.core.convert;
@@ -7462,9 +7456,9 @@ A `ConversionService`是无状态对象，旨在在应用程序启动时实例�
 
 要以`ConversionService`编程方式使用实例，可以像对待其他任何bean一样注入对该实例的引用。以下示例显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Service
@@ -7484,9 +7478,9 @@ public class MyService {
 
 幸运的是，`TypeDescriptor`提供了各种选项来使操作变得简单明了，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 DefaultConversionService cs = new DefaultConversionService();
@@ -7513,7 +7507,7 @@ cs.convert(input,
 
 `Formatter`用于实现字段格式逻辑的SPI非常简单且类型严格。以下清单显示了`Formatter`接口定义：
 
-爪哇
+  
 
 ```java
 package org.springframework.format;
@@ -7524,9 +7518,9 @@ public interface Formatter<T> extends Printer<T>, Parser<T> {
 
 `Formatter`从`Printer`和`Parser`构件接口扩展。以下清单显示了这两个接口的定义：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public interface Printer<T> {
@@ -7535,9 +7529,9 @@ public interface Printer<T> {
 }
 ```
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 import java.text.ParseException;
@@ -7554,9 +7548,9 @@ public interface Parser<T> {
 
 以下`DateFormatter`是示例`Formatter`实现：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package org.springframework.format.datetime;
@@ -7597,9 +7591,9 @@ Spring团队欢迎社区推动的`Formatter`贡献。请参阅 [GitHub问题](ht
 
 可以通过字段类型或注释配置字段格式。要将注释绑定到`Formatter`，请实施`AnnotationFormatterFactory`。以下清单显示了`AnnotationFormatterFactory`接口的定义：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package org.springframework.format;
@@ -7618,9 +7612,9 @@ public interface AnnotationFormatterFactory<A extends Annotation> {
 
 以下示例`AnnotationFormatterFactory`实现将`@NumberFormat` 注释绑定到格式化程序，以指定数字样式或模式：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public final class NumberFormatAnnotationFormatterFactory
@@ -7659,9 +7653,9 @@ public final class NumberFormatAnnotationFormatterFactory
 
 要触发格式，可以使用@NumberFormat注释字段，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class MyModel {
@@ -7677,9 +7671,9 @@ public class MyModel {
 
 以下示例用于`@DateTimeFormat`将a格式化`java.util.Date`为ISO日期（yyyy-MM-dd）：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class MyModel {
@@ -7695,9 +7689,9 @@ public class MyModel {
 
 以下清单显示了`FormatterRegistry`SPI：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package org.springframework.format;
@@ -7722,9 +7716,9 @@ public interface FormatterRegistry extends ConverterRegistry {
 
 `FormatterRegistrar`是用于通过FormatterRegistry注册格式器和转换器的SPI。以下清单显示了其接口定义：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package org.springframework.format;
@@ -7752,9 +7746,9 @@ public interface FormatterRegistrar {
 
 例如，以下Java配置注册了全局`yyyyMMdd`格式：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -7828,9 +7822,9 @@ Bean验证为Java应用程序提供了通过约束声明和元数据进行验证
 
 考虑以下示例，该示例显示了`PersonForm`具有两个属性的简单模型：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class PersonForm {
@@ -7841,9 +7835,9 @@ public class PersonForm {
 
 Bean验证使您可以声明约束，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class PersonForm {
@@ -7865,7 +7859,7 @@ Spring提供了对Bean验证API的全面支持，包括将Bean验证提供程序
 
 您可以使用`LocalValidatorFactoryBean`来将默认的Validator配置为Spring Bean，如以下示例所示：
 
-爪哇
+  
 
 XML格式
 
@@ -7891,9 +7885,9 @@ public class AppConfig {
 
 `javax.validation.Validator`如果希望直接使用Bean Validation API，则可以注入一个引用，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 import javax.validation.Validator;
@@ -7908,9 +7902,9 @@ public class MyService {
 
 您可以注入一个引用，以了解`org.springframework.validation.Validator`您的bean是否需要Spring Validation API，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 import org.springframework.validation.Validator;
@@ -7936,9 +7930,9 @@ public class MyService {
 
 以下示例显示了一个自定义`@Constraint`声明，其后是一个`ConstraintValidator`使用Spring进行依赖项注入的关联 实现：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Target({ElementType.METHOD, ElementType.FIELD})
@@ -7948,9 +7942,9 @@ public @interface MyConstraint {
 }
 ```
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 import javax.validation.ConstraintValidator;
@@ -7970,7 +7964,7 @@ public class MyConstraintValidator implements ConstraintValidator {
 
 您可以通过Bean定义将Bean验证1.1（以及作为自定义扩展，还包括Hibernate Validator 4.3）支持的方法验证功能集成到Spring上下文中 `MethodValidationPostProcessor`：
 
-爪哇
+  
 
 XML格式
 
@@ -8004,9 +7998,9 @@ public class AppConfig {
 
 以下示例显示了`DataBinder`绑定到目标对象后如何以编程方式使用来调用验证逻辑：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 Foo target = new Foo();
@@ -8067,9 +8061,9 @@ Spring表达式语言（简称“ SpEL”）是一种功能强大的表达式语
 
 以下代码介绍了SpEL API来评估文字字符串表达式 `Hello World`。
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ExpressionParser parser = new SpelExpressionParser();
@@ -8089,9 +8083,9 @@ SpEL支持多种功能，例如调用方法，访问属性和调用构造函数�
 
 在以下方法调用示例中，我们`concat`在字符串文字上调用该方法：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ExpressionParser parser = new SpelExpressionParser();
@@ -8105,9 +8099,9 @@ String message = (String) exp.getValue();
 
 以下调用JavaBean属性的示例将调用该`String`属性`Bytes`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ExpressionParser parser = new SpelExpressionParser();
@@ -8125,9 +8119,9 @@ SpEL还通过使用标准的点符号（例如`prop1.prop2.prop3`）以及相应
 
 下面的示例演示如何使用点表示法获取文字的长度：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ExpressionParser parser = new SpelExpressionParser();
@@ -8143,9 +8137,9 @@ int length = (Integer) exp.getValue();
 
 可以调用String的构造函数，而不是使用字符串文字，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ExpressionParser parser = new SpelExpressionParser();
@@ -8161,9 +8155,9 @@ String message = exp.getValue(String.class);
 
 SpEL的更常见用法是提供一个表达式字符串，该字符串针对特定的对象实例（称为根对象）进行评估。下面的示例演示如何`name`从`Inventor`类的实例中检索属性或创建布尔条件：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 // Create and set a calendar
@@ -8203,9 +8197,9 @@ boolean result = exp.getValue(tesla, Boolean.class);
 
 在实践中这意味着什么？假设使用分配`setValue()`来设置`List`属性。该属性的类型实际上是`List`。SpEL认识到列表中的元素`Boolean`在放入列表之前需要先进行转换。以下示例显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 class Simple {
@@ -8229,9 +8223,9 @@ Boolean b = simple.booleanList.get(0);
 
 可以使用解析器配置对象（`org.springframework.expression.spel.SpelParserConfiguration`）配置SpEL表达式解析器。配置对象控制某些表达式组件的行为。例如，如果您索引到数组或集合中，并且指定索引处的元素为`null`，则可以自动创建该元素。当使用由属性引用链组成的表达式时，这很有用。如果您在数组或列表中建立索引并指定了超出数组或列表当前大小末尾的索引，则可以自动增长数组或列表以容纳该索引。下面的示例演示如何自动增加列表：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 class Demo {
@@ -8283,9 +8277,9 @@ someArray [0] .someProperty.someOtherProperty <0.1
 
 选择模式后，使用`SpelParserConfiguration`来配置解析器。以下示例显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 SpelParserConfiguration config = new SpelParserConfiguration(SpelCompilerMode.IMMEDIATE,
@@ -8365,9 +8359,9 @@ Object payload = expr.getValue(message);
 
 以下示例设置字段变量的默认值：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class FieldValueTestBean {
@@ -8387,9 +8381,9 @@ public class FieldValueTestBean {
 
 下面的示例显示等效的但使用属性设置器方法的示例：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class PropertyValueTestBean {
@@ -8409,9 +8403,9 @@ public class PropertyValueTestBean {
 
 自动装配的方法和构造函数也可以使用`@Value`注释，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class SimpleMovieLister {
@@ -8430,9 +8424,9 @@ public class SimpleMovieLister {
 }
 ```
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class MovieRecommender {
@@ -8477,9 +8471,9 @@ public class MovieRecommender {
 
 以下清单显示了文字的简单用法。通常，它们不是像这样孤立地使用，而是作为更复杂的表达式的一部分使用-例如，在逻辑比较运算符的一侧使用文字。
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ExpressionParser parser = new SpelExpressionParser();
@@ -8503,9 +8497,9 @@ Object nullValue = parser.parseExpression("null").getValue();
 
 使用属性引用进行导航很容易。为此，请使用句点来指示嵌套的属性值。`Inventor`类`pupin`和的实例`tesla`被[示例](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#expressions-example-classes)部分[使用](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#expressions-example-classes)的[类中](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#expressions-example-classes)列出的数据填充。要向下导航并获取特斯拉的出生年份和普平的出生城市，我们使用以下表达式：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 // evals to 1856
@@ -8516,9 +8510,9 @@ String city = (String) parser.parseExpression("placeOfBirth.City").getValue(cont
 
 属性名称的首字母允许不区分大小写。数组和列表的内容通过使用方括号表示法获得，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ExpressionParser parser = new SpelExpressionParser();
@@ -8544,9 +8538,9 @@ String invention = parser.parseExpression("Members[0].Inventions[6]").getValue(
 
 通过在方括号内指定文字键值可以获取映射的内容。在以下示例中，由于`Officers`映射的键是字符串，因此我们可以指定字符串文字：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 // Officer's Dictionary
@@ -8567,9 +8561,9 @@ parser.parseExpression("Officers['advisors'][0].PlaceOfBirth.Country").setValue(
 
 您可以使用`{}`符号直接在表达式中表达列表。
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 // evaluates to a Java list containing the four numbers
@@ -8584,9 +8578,9 @@ List listOfLists = (List) parser.parseExpression("{{'a','b'},{'x','y'}}").getVal
 
 您也可以使用`{key:value}`符号直接在表达式中表达地图。以下示例显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 // evaluates to a Java map containing the two entries
@@ -8601,9 +8595,9 @@ Map mapOfMaps = (Map) parser.parseExpression("{name:{first:'Nikola',last:'Tesla'
 
 您可以使用熟悉的Java语法来构建数组，可以选择提供一个初始化程序以在构造时填充该数组。以下示例显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 int[] numbers1 = (int[]) parser.parseExpression("new int[4]").getValue(context);
@@ -8621,9 +8615,9 @@ int[][] numbers3 = (int[][]) parser.parseExpression("new int[4][5]").getValue(co
 
 您可以使用典型的Java编程语法来调用方法。您还可以在文字上调用方法。还支持变量参数。下面的示例演示如何调用方法：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 // string literal, evaluates to "bc"
@@ -8647,9 +8641,9 @@ Spring表达式语言支持以下几种运算符：
 
 使用标准运算符表示法支持关系运算符（等于，不等于，小于，小于或等于，大于和大于或等于）。以下清单显示了一些运算符示例：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 // evaluates to true
@@ -8668,9 +8662,9 @@ boolean trueValue = parser.parseExpression("'black' < 'block'").getValue(Boolean
 
 除了标准的关系运算符外，SpEL还支持`instanceof`和基于正则表达式的`matches`运算符。以下清单显示了两个示例：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 // evaluates to false
@@ -8714,9 +8708,9 @@ SpEL支持以下逻辑运算符：
 
 下面的示例演示如何使用逻辑运算符
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 // -- AND --
@@ -8751,9 +8745,9 @@ boolean falseValue = parser.parseExpression(expression).getValue(societyContext,
 
 您可以在数字和字符串上使用加法运算符。您只能对数字使用减法，乘法和除法运算符。您还可以使用模数（％）和指数幂（^）运算符。强制执行标准运算符优先级。以下示例显示了正在使用的数学运算符：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 // Addition
@@ -8790,9 +8784,9 @@ int minusTwentyOne = parser.parseExpression("1+2-3*8").getValue(Integer.class); 
 
 要设置属性，请使用赋值运算符（`=`）。这通常在的调用中完成，`setValue`但也可以在的调用中完成`getValue`。下面的清单显示了使用赋值运算符的两种方法：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 Inventor inventor = new Inventor();
@@ -8809,9 +8803,9 @@ String aleks = parser.parseExpression(
 
 您可以使用特殊`T`运算符来指定`java.lang.Class`（类型）的实例。静态方法也可以通过使用此运算符来调用。在 `StandardEvaluationContext`使用`TypeLocator`查找类型以及 `StandardTypeLocator`（可替换）是建立与所述的理解 `java.lang`包。这意味着`T()`对其中的类型的引用`java.lang`不需要完全限定，但是所有其他类型的引用都必须是完全限定的。以下示例显示如何使用`T`运算符：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 Class dateClass = parser.parseExpression("T(java.util.Date)").getValue(Class.class);
@@ -8827,9 +8821,9 @@ boolean trueValue = parser.parseExpression(
 
 您可以使用`new`运算符来调用构造函数。除了基本类型（`int`，`float`等）和String之外，您都应使用完全限定的类名。下面的示例演示如何使用`new`运算符来调用构造函数：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 Inventor einstein = p.parseExpression(
@@ -8852,9 +8846,9 @@ p.parseExpression(
 
 以下示例显示了如何使用变量。
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 Inventor tesla = new Inventor("Nikola Tesla", "Serbian");
@@ -8870,9 +8864,9 @@ System.out.println(tesla.getName())  // "Mike Tesla"
 
 `#this`始终定义该变量，并引用当前的评估对象（针对不合格的引用，将对其进行解析）。`#root`始终定义该变量，并引用根上下文对象。尽管`#this`随着表达式的组成部分的求值可能会有所不同，但`#root`始终指的是根。以下示例显示了如何使用`#this`和`#root`变量：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 // create an array of integers
@@ -8894,9 +8888,9 @@ List<Integer> primesGreaterThanTen = (List<Integer>) parser.parseExpression(
 
 您可以通过注册可以在表达式字符串中调用的用户定义函数来扩展SpEL。该功能通过进行注册`EvaluationContext`。下面的示例显示如何注册用户定义的函数：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 Method method = ...;
@@ -8907,9 +8901,9 @@ context.setVariable("myFunction", method);
 
 例如，考虑以下用于反转字符串的实用程序方法：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public abstract class StringUtils {
@@ -8926,9 +8920,9 @@ public abstract class StringUtils {
 
 然后，您可以注册并使用前面的方法，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ExpressionParser parser = new SpelExpressionParser();
@@ -8945,9 +8939,9 @@ String helloWorldReversed = parser.parseExpression(
 
 如果评估上下文已使用bean解析器配置，则可以使用`@`符号从表达式中查找bean 。以下示例显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ExpressionParser parser = new SpelExpressionParser();
@@ -8960,9 +8954,9 @@ Object bean = parser.parseExpression("@something").getValue(context);
 
 要访问工厂bean本身，应改为在bean名称前添加一个`&`符号。以下示例显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ExpressionParser parser = new SpelExpressionParser();
@@ -8977,9 +8971,9 @@ Object bean = parser.parseExpression("&foo").getValue(context);
 
 您可以使用三元运算符在表达式内部执行if-then-else条件逻辑。以下清单显示了一个最小的示例：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 String falseString = parser.parseExpression(
@@ -8988,9 +8982,9 @@ String falseString = parser.parseExpression(
 
 在这种情况下，布尔值`false`导致返回字符串value `'falseExp'`。一个更现实的示例如下：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 parser.parseExpression("Name").setValue(societyContext, "IEEE");
@@ -9017,9 +9011,9 @@ String displayName = (name != null ? name : "Unknown");
 
 相反，您可以使用Elvis运算符（其命名类似于Elvis的发型）。以下示例显示了如何使用Elvis运算符：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ExpressionParser parser = new SpelExpressionParser();
@@ -9030,9 +9024,9 @@ System.out.println(name);  // 'Unknown'
 
 以下清单显示了一个更复杂的示例：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ExpressionParser parser = new SpelExpressionParser();
@@ -9055,9 +9049,9 @@ System.out.println(name);  // Elvis Presley
 
 安全导航运算符用于避免a，`NullPointerException`并且来自[Groovy](http://www.groovy-lang.org/operators.html#_safe_navigation_operator) 语言。通常，当您引用一个对象时，可能需要在访问该对象的方法或属性之前验证其是否为null。为了避免这种情况，安全导航运算符返回null而不是引发异常。下面的示例演示如何使用安全导航操作符：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ExpressionParser parser = new SpelExpressionParser();
@@ -9080,9 +9074,9 @@ System.out.println(city);  // null - does not throw NullPointerException!!!
 
 选择使用的语法`.?[selectionExpression]`。它过滤集合并返回一个包含原始元素子集的新集合。例如，通过选择，我们可以轻松地获得塞尔维亚发明者的列表，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 List<Inventor> list = (List<Inventor>) parser.parseExpression(
@@ -9093,9 +9087,9 @@ List<Inventor> list = (List<Inventor>) parser.parseExpression(
 
 以下表达式返回一个新地图，该地图由原始地图中条目值小于27的那些元素组成：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 Map newMap = parser.parseExpression("map.?[value<27]").getValue();
@@ -9107,9 +9101,9 @@ Map newMap = parser.parseExpression("map.?[value<27]").getValue();
 
 投影使集合可以驱动子表达式的求值，结果是一个新的集合。投影的语法为`.![projectionExpression]`。例如，假设我们有一个发明人列表，但想要他们出生的城市的列表。实际上，我们希望为发明人列表中的每个条目评估“ placeOfBirth.city”。下面的示例使用投影来做到这一点：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 // returns ['Smiljan', 'Idvor' ]
@@ -9122,9 +9116,9 @@ List placesOfBirth = (List)parser.parseExpression("Members.![placeOfBirth.city]"
 
 表达式模板允许将文字文本与一个或多个评估块混合。每个评估块都由您可以定义的前缀和后缀字符定界。常见的选择是`#{ }`用作定界符，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 String randomPhrase = parser.parseExpression(
@@ -9136,9 +9130,9 @@ String randomPhrase = parser.parseExpression(
 
 通过将文字文本`'random number is '`与对`#{ }`定界符内的表达式进行求值的结果（在本例中为调用该`random()`方法的结果）来对字符串进行求值。该`parseExpression()`方法的第二个参数是类型`ParserContext`。该`ParserContext`接口用于影响表达式的解析方式，以支持表达式模板功能。定义`TemplateParserContext`如下：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class TemplateParserContext implements ParserContext {
@@ -9412,9 +9406,9 @@ Spring AOP也可以使用CGLIB代理。这对于代理类而不是接口是必�
 
 要使用Java启用@AspectJ支持`@Configuration`，请添加`@EnableAspectJAutoProxy` 注释，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -9448,9 +9442,9 @@ public class AppConfig {
 
 这两个示例中的第二个示例显示了`NotVeryUsefulAspect`类定义，该类定义带有`org.aspectj.lang.annotation.Aspect`批注；
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package org.xyz;
@@ -9478,9 +9472,9 @@ public class NotVeryUsefulAspect {
 
 一个示例可能有助于使切入点签名和切入点表达式之间的区别变得清晰。以下示例定义了一个名为的切入点`anyOldTransfer`，该切入点匹配任何名为的方法的执行`transfer`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Pointcut("execution(* transfer(..))") // the pointcut expression
@@ -9517,9 +9511,9 @@ Spring AOP支持的切入点指示符集合可能会在将来的版本中扩展�
 
 Spring AOP还支持一个名为的附加PCD `bean`。使用此PCD，可以将连接点的匹配限制为特定的命名Spring Bean或一组命名Spring Bean（使用通配符时）。该`bean`PCD形式如下：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 bean(idOrNameOfBean)
@@ -9535,9 +9529,9 @@ bean(idOrNameOfBean)
 
 您可以使用`&&,` `||`和组合切入点表达式`!`。您也可以按名称引用切入点表达式。以下示例显示了三个切入点表达式：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Pointcut("execution(public * *(..))")
@@ -9561,9 +9555,9 @@ private void tradingOperation() {}
 
 在使用企业应用程序时，开发人员通常希望从多个方面引用应用程序的模块和特定的操作集。我们建议为此定义一个“ SystemArchitecture”方面，以捕获常见的切入点表达式。这样的方面通常类似于以下示例：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package com.xyz.someapp;
@@ -9803,9 +9797,9 @@ Spring AOP用户可能`execution`最经常使用切入点指示符。执行表�
 
 您可以使用`@Before`注释在方面中在建议之前声明：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 import org.aspectj.lang.annotation.Aspect;
@@ -9824,9 +9818,9 @@ public class BeforeExample {
 
 如果使用就地切入点表达式，则可以将前面的示例重写为以下示例：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 import org.aspectj.lang.annotation.Aspect;
@@ -9847,9 +9841,9 @@ public class BeforeExample {
 
 返回建议后，当匹配的方法执行正常返回时，运行建议。您可以使用`@AfterReturning`批注进行声明：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 import org.aspectj.lang.annotation.Aspect;
@@ -9872,9 +9866,9 @@ public class AfterReturningExample {
 
 有时，您需要在建议正文中访问返回的实际值。您可以使用`@AfterReturning`绑定返回值的形式来获取该访问权限，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 import org.aspectj.lang.annotation.Aspect;
@@ -9901,9 +9895,9 @@ public class AfterReturningExample {
 
 抛出建议后，当匹配的方法执行通过抛出异常退出时运行建议。您可以使用`@AfterThrowing`批注进行声明，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 import org.aspectj.lang.annotation.Aspect;
@@ -9922,9 +9916,9 @@ public class AfterThrowingExample {
 
 通常，您希望通知仅在引发给定类型的异常时才运行，并且您通常还需要访问通知正文中的引发异常。您可以使用该 `throwing`属性来限制匹配（如果需要，请使用- `Throwable`否则用作异常类型），并将抛出的异常绑定到advice参数。以下示例显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 import org.aspectj.lang.annotation.Aspect;
@@ -9949,9 +9943,9 @@ public class AfterThrowingExample {
 
 当匹配的方法执行退出时，通知（最终）运行。通过使用`@After`批注进行声明。之后必须准备处理正常和异常返回条件的建议。它通常用于释放资源和类似目的。以下示例显示了最终建议后的用法：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 import org.aspectj.lang.annotation.Aspect;
@@ -9980,9 +9974,9 @@ public class AfterFinallyExample {
 
 以下示例显示了如何使用周围建议：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 import org.aspectj.lang.annotation.Aspect;
@@ -10025,9 +10019,9 @@ Spring提供了完全类型化的建议，这意味着您可以在建议签名�
 
 我们已经看到了如何绑定返回的值或异常值（在返回和引发建议之后使用）。要使参数值可用于建议正文，可以使用的绑定形式`args`。如果在args表达式中使用参数名称代替类型名称，则在调用建议时会将相应参数的值作为参数值传递。一个例子应该使这一点更清楚。假设您想建议以`Account` 对象为第一个参数的DAO操作的执行，并且您需要访问建议正文中的帐户。您可以编写以下内容：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Before("com.xyz.myapp.SystemArchitecture.dataAccessOperation() && args(account,..)")
@@ -10040,9 +10034,9 @@ public void validateAccount(Account account) {
 
 编写此代码的另一种方法是声明一个切入点，`Account` 当切入点与连接点匹配时“提供” 对象值，然后从通知中引用命名的切入点。如下所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Pointcut("com.xyz.myapp.SystemArchitecture.dataAccessOperation() && args(account,..)")
@@ -10060,9 +10054,9 @@ public void validateAccount(Account account) {
 
 这两个示例中的第一个示例显示了`@Auditable`注释的定义：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Retention(RetentionPolicy.RUNTIME)
@@ -10074,9 +10068,9 @@ public @interface Auditable {
 
 这两个示例中的第二个示例显示了与`@Auditable`方法执行相匹配的建议：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Before("com.xyz.lib.Pointcuts.anyPublicMethod() && @annotation(auditable)")
@@ -10090,9 +10084,9 @@ public void audit(Auditable auditable) {
 
 Spring AOP可以处理类声明和方法参数中使用的泛型。假设您具有如下通用类型：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public interface Sample<T> {
@@ -10103,9 +10097,9 @@ public interface Sample<T> {
 
 您可以通过在要拦截方法的参数类型中键入advice参数，将方法类型的拦截限制为某些参数类型：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Before("execution(* ..Sample+.sampleGenericMethod(*)) && args(param)")
@@ -10116,9 +10110,9 @@ public void beforeSampleMethod(MyType param) {
 
 这种方法不适用于通用集合。因此，您不能按以下方式定义切入点：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Before("execution(* ..Sample+.sampleGenericCollectionMethod(*)) && args(param)")
@@ -10135,9 +10129,9 @@ public void beforeSampleMethod(Collection<MyType> param) {
 
 - 如果用户已明确指定参数名称，则使用指定的参数名称。建议和切入点注释均具有可选`argNames`属性，您可以使用该属性指定带注释方法的参数名称。这些参数名称在运行时可用。以下示例显示如何使用`argNames`属性：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Before(value="com.xyz.lib.Pointcuts.anyPublicMethod() && target(bean) && @annotation(auditable)",
@@ -10150,9 +10144,9 @@ public void audit(Object bean, Auditable auditable) {
 
 如果第一个参数是的`JoinPoint`，`ProceedingJoinPoint`或 `JoinPoint.StaticPart`类型，你可以从价值离开了参数的名称`argNames`属性。例如，如果您修改前面的建议以接收连接点对象，则该`argNames`属性不必包含它：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Before(value="com.xyz.lib.Pointcuts.anyPublicMethod() && target(bean) && @annotation(auditable)",
@@ -10165,9 +10159,9 @@ public void audit(JoinPoint jp, Object bean, Auditable auditable) {
 
 给出的第一个参数的特殊待遇`JoinPoint`， `ProceedingJoinPoint`和`JoinPoint.StaticPart`类型是不收取任何其它连接上下文的通知情况下，特别方便。在这种情况下，您可以忽略该`argNames`属性。例如，以下建议无需声明`argNames`属性：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Before("com.xyz.lib.Pointcuts.anyPublicMethod()")
@@ -10190,9 +10184,9 @@ public void audit(JoinPoint jp) {
 
 前面我们提到，我们将描述如何编写一个`proceed`在Spring AOP和AspectJ中始终有效的参数调用。解决方案是确保建议签名按顺序绑定每个方法参数。以下示例显示了如何执行此操作：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Around("execution(List<Account> find*(..)) && " +
@@ -10221,9 +10215,9 @@ public Object preProcessQueryPattern(ProceedingJoinPoint pjp,
 
 您可以使用`@DeclareParents`注释进行介绍。此批注用于声明匹配类型具有新的父代（因此而得名）。例如，给定名为的接口`UsageTracked`和名为的接口的实现`DefaultUsageTracked`，以下方面声明服务接口的所有实现者也都实现该`UsageTracked`接口（例如，通过JMX公开统计信息）：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Aspect
@@ -10242,9 +10236,9 @@ public class UsageTracking {
 
 要实现的接口由带注释的字段的类型确定。注释的 `value`属性`@DeclareParents`是AspectJ类型的模式。任何匹配类型的bean都会实现该`UsageTracked`接口。注意，在前面示例的建议中，服务Bean可以直接用作`UsageTracked`接口的实现。如果以编程方式访问bean，则应编写以下内容：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 UsageTracked usageTracked = (UsageTracked) context.getBean("myService");
@@ -10260,9 +10254,9 @@ UsageTracked usageTracked = (UsageTracked) context.getBean("myService");
 
 您可以`perthis`通过`perthis`在`@Aspect` 注释中指定子句来声明方面。考虑以下示例：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Aspect("perthis(com.xyz.myapp.SystemArchitecture.businessService())")
@@ -10290,9 +10284,9 @@ public class MyAspect {
 
 因为我们想重试该操作，所以我们需要使用“周围”建议，以便我们可以`proceed`多次调用。以下清单显示了基本方面的实现：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Aspect
@@ -10349,9 +10343,9 @@ public class ConcurrentOperationExecutor implements Ordered {
 
 为了完善方面，使其仅重试幂等操作，我们可以定义以下 `Idempotent`注释：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Retention(RetentionPolicy.RUNTIME)
@@ -10362,9 +10356,9 @@ public @interface Idempotent {
 
 然后，我们可以使用注释来注释服务操作的实现。更改为仅重试幂等操作的方面涉及改进切入点表达式，以便仅`@Idempotent`操作匹配，如下所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Around("com.xyz.myapp.SystemArchitecture.businessService() && " +
@@ -10472,9 +10466,9 @@ public Object doConcurrentOperation(ProceedingJoinPoint pjp) throws Throwable {
 
 必须声明通知，以通过包含匹配名称的参数来接收收集的连接点上下文，如下所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public void monitor(Object service) {
@@ -10572,9 +10566,9 @@ public void monitor(Object service) {
 
 该`doAccessCheck`方法必须声明一个名为的参数`retVal`。该参数的类型以与所述相同的方式约束匹配`@AfterReturning`。例如，您可以声明方法签名，如下所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public void doAccessCheck(Object retVal) {...
@@ -10613,9 +10607,9 @@ public void doAccessCheck(Object retVal) {...
 
 该`doRecoveryActions`方法必须声明一个名为的参数`dataAccessEx`。该参数的类型以与所述相同的方式约束匹配`@AfterThrowing`。例如，方法签名可以声明如下：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public void doRecoveryActions(DataAccessException dataAccessEx) {...
@@ -10657,9 +10651,9 @@ public void doRecoveryActions(DataAccessException dataAccessEx) {...
 
 该`doBasicProfiling`建议的实现可以与@AspectJ示例完全相同（当然要减去注释），如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public Object doBasicProfiling(ProceedingJoinPoint pjp) throws Throwable {
@@ -10685,9 +10679,9 @@ public Object doBasicProfiling(ProceedingJoinPoint pjp) throws Throwable {
 
 以下基于XSD的方法中涉及程度稍高的示例显示了一些与一些强类型参数结合使用的建议：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package x.y.service;
@@ -10707,9 +10701,9 @@ public class DefaultFooService implements FooService {
 
 接下来是方面。请注意，该`profile(..)`方法接受许多强类型参数，这一事实恰好是用于进行方法调用的连接点。此参数的存在指示 `profile(..)`将使用用作`around`建议，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package x.y;
@@ -10766,9 +10760,9 @@ public class SimpleProfiler {
 
 考虑以下驱动程序脚本：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 import org.springframework.beans.factory.BeanFactory;
@@ -10823,9 +10817,9 @@ ms％任务名称
 
 支持`usageTracking`bean 的类将包含以下方法：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public void recordUsage(UsageTracked usageTracked) {
@@ -10835,9 +10829,9 @@ public void recordUsage(UsageTracked usageTracked) {
 
 要实现的接口由`implement-interface`属性确定。该`types-matching`属性的值是AspectJ类型的模式。任何匹配类型的bean都会实现该`UsageTracked`接口。注意，在前面示例的建议中，服务Bean可以直接用作`UsageTracked`接口的实现。要以编程方式访问bean，可以编写以下代码：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 UsageTracked usageTracked = (UsageTracked) context.getBean("myService");
@@ -10884,9 +10878,9 @@ Spring支持带有``元素的顾问程序概念。您最常看到它与事务建
 
 因为我们想重试该操作，所以我们需要使用“周围”建议，以便我们可以`proceed`多次调用。以下清单显示了基本方面的实现（这是使用模式支持的常规Java类）：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class ConcurrentOperationExecutor implements Ordered {
@@ -10959,9 +10953,9 @@ public class ConcurrentOperationExecutor implements Ordered {
 
 请注意，目前，我们假设所有业务服务都是幂等的。如果不是这种情况，我们可以通过引入一个`Idempotent`注释并使用该注释来注释服务操作的实现来完善方面，使其仅重试真正的幂等操作，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Retention(RetentionPolicy.RUNTIME)
@@ -10996,9 +10990,9 @@ XML样式可能是现有Spring用户最熟悉的，并且得到了真正的POJO�
 
 XML样式有两个缺点。首先，它没有完全将它所解决的需求的实现封装在一个地方。DRY原则说，系统中的任何知识都应该有单一，明确，权威的表示。当使用XML样式时，关于如何实现需求的知识会在配置文件中的后备bean类的声明和XML中分散。当您使用@AspectJ样式时，此信息将封装在一个模块中：方面。其次，与@AspectJ样式相比，XML样式在表达能力上有更多限制：仅支持“单例”方面实例化模型，并且无法组合以XML声明的命名切入点。例如，使用@AspectJ样式，您可以编写如下内容：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Pointcut("execution(* get*())")
@@ -11064,9 +11058,9 @@ Spring AOP是基于代理的。在编写自己的方面或使用Spring框架随�
 
 首先考虑您有一个普通的，未经代理的，无特殊要求的，直接的对象引用的场景，如以下代码片段所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class SimplePojo implements Pojo {
@@ -11086,9 +11080,9 @@ public class SimplePojo implements Pojo {
 
 ![aop代理普通pojo电话](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/images/aop-proxy-plain-pojo-call.png)
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class Main {
@@ -11105,9 +11099,9 @@ public class Main {
 
 ![aop代理呼叫](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/images/aop-proxy-call.png)
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class Main {
@@ -11128,9 +11122,9 @@ public class Main {
 
 好吧，那该怎么办？最佳方法（在这里宽松地使用术语“最佳”）是重构代码，以免发生自调用。这确实需要您做一些工作，但这是最好的，侵入性最小的方法。下一种方法绝对可怕，我们正要指出这一点，恰恰是因为它是如此可怕。您可以（对我们来说是痛苦的）完全将类中的逻辑与Spring AOP绑定在一起，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class SimplePojo implements Pojo {
@@ -11148,9 +11142,9 @@ public class SimplePojo implements Pojo {
 
 这将您的代码完全耦合到Spring AOP，并且使类本身意识到在AOP上下文中使用它的事实，而AOP上下文却是如此。创建代理时，它还需要一些其他配置，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class Main {
@@ -11176,9 +11170,9 @@ public class Main {
 
 您可以使用`org.springframework.aop.aspectj.annotation.AspectJProxyFactory`该类为一个或多个@AspectJ方面建议的目标对象创建代理。此类的基本用法非常简单，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 // create a factory that can generate a proxy for the given target object
@@ -11209,9 +11203,9 @@ Spring容器实例化并配置在您的应用程序上下文中定义的bean。�
 
 该`@Configurable`注释标记一个类为通过Spring驱动的配置。在最简单的情况下，您可以将其纯粹用作标记注释，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package com.xyz.myapp.domain;
@@ -11234,9 +11228,9 @@ public class Account {
 
 如果要显式指定要使用的原型bean定义的名称，则可以直接在批注中这样做，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package com.xyz.myapp.domain;
@@ -11257,15 +11251,15 @@ Spring现在查找名为的bean定义`account`，并将其用作配置新`Accoun
 
 请注意，单独使用注释不会执行任何操作。注释的存在是通过 `AnnotationBeanConfigurerAspect`in `spring-aspects.jar`起作用的。从本质上讲，方面说：“从带有注释类型的新对象的初始化返回之后`@Configurable`，根据注释的属性使用Spring配置新创建的对象”。在这种情况下，“初始化”是指新实例化的对象（例如，用`new`运算符实例化的对象）以及`Serializable`正在进行反序列化的对象（例如，通过 [readResolve（）](https://docs.oracle.com/javase/8/docs/api/java/io/Serializable.html)）。
 
-|      | 上段中的关键短语之一是“本质上”。在大多数情况下，“从新对象的初始化返回后”的确切语义是可以的。在这种情况下，“初始化之后”是指在构造对象之后注入依赖项。这意味着该依赖项不可在类的构造函数体中使用。如果要在构造函数主体执行之前注入依赖项，从而可以在构造函数主体中使用依赖项，则需要在`@Configurable`声明中定义此代码 ，如下所示：爪哇科特林`@Configurable(preConstruction = true)`您可以[在](https://www.eclipse.org/aspectj/doc/next/progguide/semantics-joinPoints.html)《[AspectJ编程指南》的](https://www.eclipse.org/aspectj/doc/next/progguide/index.html)[附录](https://www.eclipse.org/aspectj/doc/next/progguide/semantics-joinPoints.html)中找到有关AspectJ [中](https://www.eclipse.org/aspectj/doc/next/progguide/semantics-joinPoints.html)各种切入点类型的语言语义的更多信息 。 |
+|      | 上段中的关键短语之一是“本质上”。在大多数情况下，“从新对象的初始化返回后”的确切语义是可以的。在这种情况下，“初始化之后”是指在构造对象之后注入依赖项。这意味着该依赖项不可在类的构造函数体中使用。如果要在构造函数主体执行之前注入依赖项，从而可以在构造函数主体中使用依赖项，则需要在`@Configurable`声明中定义此代码 ，如下所示：   `@Configurable(preConstruction = true)`您可以[在](https://www.eclipse.org/aspectj/doc/next/progguide/semantics-joinPoints.html)《[AspectJ编程指南》的](https://www.eclipse.org/aspectj/doc/next/progguide/index.html)[附录](https://www.eclipse.org/aspectj/doc/next/progguide/semantics-joinPoints.html)中找到有关AspectJ [中](https://www.eclipse.org/aspectj/doc/next/progguide/semantics-joinPoints.html)各种切入点类型的语言语义的更多信息 。 |
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
 为此，必须将带注释的类型与AspectJ编织器编织在一起。您可以使用构建时的Ant或Maven任务来执行此操作（例如，请参见 [AspectJ开发环境指南](https://www.eclipse.org/aspectj/doc/released/devguide/antTasks.html)），也可以使用加载时编织（请参见[Spring Framework中的使用AspectJ进行加载时编织](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#aop-aj-ltw)）。的 `AnnotationBeanConfigurerAspect`本身需要由弹簧（为了获得对bean工厂要被用于配置新的对象的引用）构成。如果使用基于Java的配置，则可以将其添加`@EnableSpringConfigured`到任何 `@Configuration`类，如下所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -11392,9 +11386,9 @@ Spring框架为AspectJ LTW带来的价值在于能够对编织过程进行更精
 
 以下示例显示了配置方面的信息，这并不理想。这是一个基于时间的探查器，它使用@AspectJ样式的方面声明：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package foo;
@@ -11469,9 +11463,9 @@ public class ProfilingAspect {
 
 现在所有必需的构件（方面，`META-INF/aop.xml` 文件和Spring配置）都就位了，我们可以创建以下驱动程序类，并使用一种`main(..)`方法来演示LTW的作用：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package foo;
@@ -11514,9 +11508,9 @@ ms％任务名称
 
 由于此LTW是通过使用成熟的AspectJ来实现的，因此我们不仅限于建议Spring Bean。在`Main`程序上进行以下细微改动会产生相同的结果：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package foo;
@@ -11578,9 +11572,9 @@ Spring的LTW支持中的关键组件是`LoadTimeWeaver`接口（在 `org.springf
 
 要启用Spring Framework的LTW支持，您需要配置`LoadTimeWeaver`，通常通过使用`@EnableLoadTimeWeaving`批注来完成，如下所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -11623,9 +11617,9 @@ public class AppConfig {
 
 要指定特定`LoadTimeWeaver`的Java配置，请实现该 `LoadTimeWeavingConfigurer`接口并覆盖该`getLoadTimeWeaver()`方法。以下示例指定一个`ReflectiveLoadTimeWeaver`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 @Configuration
@@ -11716,9 +11710,9 @@ Spring的切入点模型使切入点重用不受建议类型的影响。您可�
 
 该`org.springframework.aop.Pointcut`接口是中央接口，用于将建议定向到特定的类和方法。完整的界面如下：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public interface Pointcut {
@@ -11734,9 +11728,9 @@ public interface Pointcut {
 
 该`ClassFilter`接口用于将切入点限制为给定的一组目标类。如果该`matches()`方法始终返回true，则匹配所有目标类。以下清单显示了`ClassFilter`接口定义：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public interface ClassFilter {
@@ -11747,9 +11741,9 @@ public interface ClassFilter {
 
 该`MethodMatcher`接口通常更重要。完整的界面如下：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public interface MethodMatcher {
@@ -11855,9 +11849,9 @@ Spring提供了有用的切入点超类，以帮助您实现自己的切入点�
 
 因为静态切入点最有用，所以您可能应该subclass `StaticMethodMatcherPointcut`。这仅需要实现一个抽象方法（尽管您可以覆盖其他方法以自定义行为）。以下示例显示了如何进行子类化`StaticMethodMatcherPointcut`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 class TestStaticPointcut extends StaticMethodMatcherPointcut {
@@ -11902,9 +11896,9 @@ Spring中最基本的建议类型是围绕建议的拦截。
 
 `Alliance`对于使用方法拦截的建议，Spring符合AOP 接口。实现`MethodInterceptor`和围绕建议实施的类还应该实现以下接口：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public interface MethodInterceptor extends Interceptor {
@@ -11917,9 +11911,9 @@ public interface MethodInterceptor extends Interceptor {
 
 以下示例显示了一个简单的`MethodInterceptor`实现：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class DebugInterceptor implements MethodInterceptor {
@@ -11947,9 +11941,9 @@ public class DebugInterceptor implements MethodInterceptor {
 
 以下清单显示了该`MethodBeforeAdvice`接口：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public interface MethodBeforeAdvice extends BeforeAdvice {
@@ -11964,9 +11958,9 @@ public interface MethodBeforeAdvice extends BeforeAdvice {
 
 下面的示例显示了Spring中的before建议，该建议对所有方法调用进行计数：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class CountingBeforeAdvice implements MethodBeforeAdvice {
@@ -11999,9 +11993,9 @@ afterThrowing([Method, args, target], subclassOfThrowable)
 
 如果`RemoteException`抛出a（包括从子类），则调用以下建议：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class RemoteThrowsAdvice implements ThrowsAdvice {
@@ -12014,9 +12008,9 @@ public class RemoteThrowsAdvice implements ThrowsAdvice {
 
 与前面的建议不同，下一个示例声明四个参数，以便可以访问被调用的方法，方法参数和目标对象。如果`ServletException`抛出a，则调用以下建议：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class ServletThrowsAdviceWithArguments implements ThrowsAdvice {
@@ -12029,9 +12023,9 @@ public class ServletThrowsAdviceWithArguments implements ThrowsAdvice {
 
 最后一个示例说明了如何在处理`RemoteException`和的单个类中使用这两种方法`ServletException`。可以在单个类中组合任意数量的引发建议方法。以下清单显示了最后一个示例：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public static class CombinedThrowsAdvice implements ThrowsAdvice {
@@ -12058,9 +12052,9 @@ public static class CombinedThrowsAdvice implements ThrowsAdvice {
 
 在Spring中，返回通知后必须实现`org.springframework.aop.AfterReturningAdvice`接口，以下清单显示了该 接口：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public interface AfterReturningAdvice extends Advice {
@@ -12074,9 +12068,9 @@ After After Returning建议可以访问返回值（它不能修改），调用�
 
 返回建议后的以下内容将计数所有未引发异常的成功方法调用：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class CountingAfterReturningAdvice implements AfterReturningAdvice {
@@ -12106,9 +12100,9 @@ Spring将介绍建议视为一种特殊的拦截建议。
 
 简介需要`IntroductionAdvisor`and `IntroductionInterceptor`来实现以下接口：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public interface IntroductionInterceptor extends MethodInterceptor {
@@ -12121,9 +12115,9 @@ public interface IntroductionInterceptor extends MethodInterceptor {
 
 简介建议不能与任何切入点一起使用，因为它仅适用于类而不是方法级别。您只能将引入建议与一起使用`IntroductionAdvisor`，该建议具有 以下方法：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public interface IntroductionAdvisor extends Advisor, IntroductionInfo {
@@ -12147,9 +12141,9 @@ public interface IntroductionInfo {
 
 考虑一下Spring测试套件中的一个示例，并假设我们想为一个或多个对象引入以下接口：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public interface Lockable {
@@ -12171,9 +12165,9 @@ public interface Lockable {
 
 以下示例显示了示例`LockMixin`类：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class LockMixin extends DelegatingIntroductionInterceptor implements Lockable {
@@ -12206,9 +12200,9 @@ public class LockMixin extends DelegatingIntroductionInterceptor implements Lock
 
 所需的简介仅需要保存一个不同的 `LockMixin`实例并指定所引入的接口（在这种情况下，仅 `Lockable`）。一个更复杂的示例可能引用了引入拦截器（将被定义为原型）。在这种情况下，没有与a相关的配置`LockMixin`，因此我们使用来创建它`new`。以下示例显示了我们的`LockMixinAdvisor`课程：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 public class LockMixinAdvisor extends DefaultIntroductionAdvisor {
@@ -12336,9 +12330,9 @@ public class LockMixinAdvisor extends DefaultIntroductionAdvisor {
 
 `person`可以使用前面显示的bean定义代替`Person`实现，如下所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 Person person = (Person) factory.getBean("person");
@@ -12474,9 +12468,9 @@ CGLIB代理和动态代理之间几乎没有性能差异。在这种情况下，
 
 由目标对象实现的接口将被自动代理。以下清单显示了使用一个拦截器和一个顾问程序为目标对象创建代理的过程：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 ProxyFactory factory = new ProxyFactory(myBusinessInterfaceImpl);
@@ -12499,9 +12493,9 @@ MyBusinessInterface tb = (MyBusinessInterface) factory.getProxy();
 
 但是，无论创建AOP代理，都可以通过使用`org.springframework.aop.framework.Advised`界面来操作它们 。任何AOP代理都可以强制转换为该接口，无论它实现了哪个其他接口。该界面包括以下方法：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 Advisor[] getAdvisors();
@@ -12533,9 +12527,9 @@ boolean isFrozen();
 
 以下示例显示了将AOP代理投射到`Advised`接口上并检查和处理其建议：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 Advised advised = (Advised) myObject;
@@ -12657,9 +12651,9 @@ Spring提供了`TargetSource`在`org.springframework.aop.TargetSource`界面中�
 
 您可以使用`swap()`HotSwappableTargetSource上的方法更改目标，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 HotSwappableTargetSource swapper = (HotSwappableTargetSource) beanFactory.getBean("swapper");
@@ -12732,9 +12726,9 @@ Spring提供对Commons Pool 2.2的支持，该池提供了相当有效的池实�
 
 演员表的定义如下：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 PoolingConfig conf = (PoolingConfig) beanFactory.getBean("businessObject");
@@ -12878,9 +12872,9 @@ Java NIO提供了，`ByteBuffer`但是许多库在顶部构建了自己的字节
 
 一个`Encoder`分配其他人必须读取（和释放）的数据缓冲区。因此，`Encoder` 没有太多的工作要做。但是，`Encoder`如果在用数据填充缓冲区时发生序列化错误，则必须注意释放数据缓冲区。例如：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 DataBuffer buffer = factory.allocateBuffer();
@@ -12985,9 +12979,9 @@ an的使用者`Encoder`负责释放其接收的数据缓冲区。在WebFlux应�
 
 在Spring中，很容易将枚举值作为属性或构造函数参数注入到bean中。实际上，您不必做任何事情或不了解任何有关Spring内部的知识（甚至不了解诸如之类的类`FieldRetrievingFactoryBean`）。以下示例枚举显示了注入枚举值的难易程度：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package javax.persistence;
@@ -13001,9 +12995,9 @@ public enum PersistenceContextType {
 
 现在考虑以下类型的setter `PersistenceContextType`和相应的bean定义：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package example;
@@ -13475,9 +13469,9 @@ public class Client {
 
 尽管您可以`NamespaceHandler`为整个名称空间编写自己的代码（并因此提供解析名称空间中每个元素的代码），但通常情况下，Spring XML配置文件中的每个顶级XML元素都会产生一个bean定义（在我们的示例中，单个`` 元素导致单个`SimpleDateFormat`bean定义）。Spring提供了许多支持这种情况的便利类。在下面的示例中，我们使用`NamespaceHandlerSupport`类：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package org.springframework.samples.xml;
@@ -13498,9 +13492,9 @@ public class MyNamespaceHandler extends NamespaceHandlerSupport {
 
 `BeanDefinitionParser`如果`NamespaceHandler`遇到遇到已映射到特定bean定义解析器的类型的XML元素（`dateformat`在这种情况下），则使用A。换句话说，`BeanDefinitionParser`负责解析模式中定义的一个不同的顶级XML元素。在解析器中，我们可以访问XML元素（因此也可以访问其子元素），以便我们可以解析自定义XML内容，如以下示例所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package org.springframework.samples.xml;
@@ -13627,9 +13621,9 @@ http \：//www.mycompany.example/schema/myns/myns.xsd=org/springframework/sample
 
 前面的配置在彼此之间嵌套了自定义扩展。``元素实际配置的`Component` 类是该类（在下一个示例中显示）。请注意，`Component`该类如何不公开该`components`属性的setter方法。这使得很难（或几乎不可能）`Component`通过使用setter注入来为该类配置bean定义。以下清单显示了`Component`该类：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package com.foo;
@@ -13663,9 +13657,9 @@ public class Component {
 
 解决此问题的典型方法是创建一个自定义`FactoryBean`，以公开该属性的setter `components`属性。以下清单显示了这样的一个习惯 `FactoryBean`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package com.foo;
@@ -13732,9 +13726,9 @@ public class ComponentFactoryBean implements FactoryBean<Component> {
 
 再次按照[前面描述的过程](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#xsd-custom-introduction)，然后创建一个自定义`NamespaceHandler`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package com.foo;
@@ -13751,9 +13745,9 @@ public class ComponentNamespaceHandler extends NamespaceHandlerSupport {
 
 接下来是风俗`BeanDefinitionParser`。请记住，我们正在创建一个`BeanDefinition`描述的`ComponentFactoryBean`。以下清单显示了我们的自定义`BeanDefinitionParser`实现：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package com.foo;
@@ -13830,9 +13824,9 @@ http \：//www.foo.example/schema/component/component.xsd=com/foo/component.xsd
 
 然后，我们可以创建另一个`BeanDefinition`当 `'jcache:cache-name'`属性被解析。这`BeanDefinition`则初始化命名的JCache我们。我们还可以修改的现有项`BeanDefinition`，以 `'checkingAccountService'`使其依赖于此新的JCache-initializing `BeanDefinition`。以下清单显示了我们的`JCacheInitializer`：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package com.foo;
@@ -13868,9 +13862,9 @@ public class JCacheInitializer {
 
 接下来，我们需要创建关联的`NamespaceHandler`，如下所示：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package com.foo;
@@ -13889,9 +13883,9 @@ public class JCacheNamespaceHandler extends NamespaceHandlerSupport {
 
 接下来，我们需要创建解析器。请注意，在这种情况下，因为我们要解析XML属性，所以我们编写了a `BeanDefinitionDecorator`而不是a `BeanDefinitionParser`。以下清单显示了我们的`BeanDefinitionDecorator`实现：
 
-爪哇
+  
 
-科特林
+ 
 
 ```java
 package com.foo;
