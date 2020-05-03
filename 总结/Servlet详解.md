@@ -4,7 +4,7 @@ Servlet3.1中Servlet的结构：HttpServlet——》GenericServlet ——》 {Se
 
 ![image-20200416115428093](images/image-20200416115428093.png)
 
-#1. Servlet接口
+# 1. Servlet接口
 
 Servlet3.1的接口规范
 

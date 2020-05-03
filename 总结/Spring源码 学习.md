@@ -1,966 +1,686 @@
-# Servlet3.0新规范
+# SpringIOC
+
+​	IOC和DI的概念
+​		IoC(思想，设计模式)主要的实现方式有两种：依赖查找，依赖注入。
+​		依赖注入是一种更可取的方式(实现的方式)
+​	使用IOC的好处
+​		不用自己组装，拿来就用。
+​		享受单例的好处，效率高，不浪费空间
+​		便于单元测试，方便切换mock组件
+​		便于进行AOP操作，对于使用者是透明的
+​		统一配置，便于修改
+​	IOC容器
+​		Spring容器(Bean工厂)可分为两种：
+​			BeanFactory，这是最基础、面向Spring的
+​			ApplicationContext，这是在BeanFactory基础之上，面向使用Spring框架的开发者。提供了一系列的功能！
+​		Bean生命周期：
+​			BeanDefinitionReader读取Resource所指向的配置文件资源，然后解析配置文件。配置文件中每一个<bean>解析成一个BeanDefinition对象，并保存到BeanDefinitionRegistry中；
+​			容器扫描BeanDefinitionRegistry中的BeanDefinition；调用InstantiationStrategy进行Bean实例化的工作；使用BeanWrapper完成Bean属性的设置工作；
+​		ApplicationContext和BeanFactory区别
+​			ApplicationContext会利用Java反射机制自动识别出配置文件中定义的BeanPostProcessor、 InstantiationAwareBeanPostProcesso 和BeanFactoryPostProcessor后置器，并自动将它们注册到应用上下文中。而BeanFactory需要在代码中通过手工调用addBeanPostProcessor()方法进行注册
+​			ApplicationContext在初始化应用上下文的时候就实例化所有单实例的Bean。而BeanFactory在初始化容器的时候并未实例化Bean，直到第一次访问某个Bean时才实例化目标Bean。
+​			单例Bean缓存池：Spring 在DefaultSingletonBeanRegistry类中提供了一个用于缓存单实例 Bean 的缓存器，它是一个用HashMap实现的缓存器，单实例的Bean以beanName为键保存在这个HashMap中。
+​	IOC容器装配Bean
+​		装配Bean方式
+​			XML配置
+​			Java配置
+​			注解
+​			基于Groovy DSL配置(这种很少见)
+​		依赖注入方式
+​			属性注入-->通过setter()方法注入
+​			构造函数注入
+​			工厂注入
+​		Bean对象之间关系
+​			依赖-->挺少用的(使用depends-on就是依赖关系了-->前置依赖【依赖的Bean需要初始化之后，当前Bean才会初始化】)
+​			继承-->可能会用到(指定abstract和parent来实现继承关系)
+​			引用-->最常见(使用ref就是引用关系了)
+​		Bean的作用域
+​			单例Singleton
+​			多例prototype
+​			与Web应用环境相关的Bean作用域
+​				reqeust
+​				session
+​				globalSession
+​			使用与Web应用环境相关的Bean作用域需要手动设置代理
+​		处理自动装配的歧义性
+​			使用@Primary注解设置为首选的注入Bean
+​			使用@Qualifier注解设置特定名称的Bean来限定注入！
+​		引用属性文件以及Bean属性
+​			引用配置文件的数据使用的是${}
+​			引用Bean的属性使用的是#{}
+​		短小不常见的知识点
+​			组合配置文件：XML与JavaConfig互相引用
+​			方法替换：使用某个Bean的方法替换成另一个Bean的方法
+​			属性编辑器：Spring可以对基本类型做转换就归结于属性编辑器的功劳！
+​			国际化：使用不同语言(英语、中文)的操作系统去显式不同的语言
+​			profile与条件化的Bean：满足了某个条件才初始化Bean，这可以方便切换生产环境和开发环境~
+​			容器事件：类似于我们的Servlet的监听器，只不过它是在Spring中实现了~
+
+# 彻底理解SpringIOC、DI
+
+## 前言
+
+你可能会有如下问题：
+
+1、想看Spring源码，但是不知道应当如何入手去看，对整个Bean的流程没有概念，碰到相关问题也没有头绪如何下手
+
+2、看过几遍源码，没办法彻底理解，没什么感觉，没过一阵子又忘了
+
+本文将结合实际问题，由问题引出源码，并在解释时会尽量以图表的形式让你一步一步彻底理解Spring Bean的IOC、DI、生命周期、作用域等。
+
+## 先看一个循环依赖问题
+
+## 现象
+
+循环依赖其实就是循环引用，也就是两个或则两个以上的bean互相持有对方，最终形成闭环。比如A依赖于B，B依赖于C，C又依赖于A。如下图：
+
+![img](https://user-gold-cdn.xitu.io/2018/11/12/16707fe6df69cab7?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+如何理解“依赖”呢，在Spring中有：
+
+- 构造器循环依赖
+- field属性注入循环依赖
+
+直接上代码：
+
+### 构造器循环依赖
 
-## 目的
 
-Servlet3.0规范的新特性主要是为了3个目的：
-	1.简化开发
-	2.便于布署
-	3.支持Web2.0原则
-为了简化开发流程，Servlet3.0引入了注解（annotation），这使得web布署描述符web.xml不在是必须的选择
 
-1、要求：
-	jdk6.0+
-	Tomcat7.0+
-2、利用注解替代了web.xml配置文件
-	@WebServlet：配置Servlet的
-	@WebInitParam:配置Servlet、Filter的初始化参数
-	@WebFilter：配置过滤器
-	@WebListener：注册监听器
-	@MultipartConfig//证明客户端提交的表单数据是由多部分组成的
 
-没有web.xml文件的情况下，使用注解进行代替。
-由此可见，开发中对项目起到配置功能的除了xml和properties文件之外，注解也可以进行配置。而且使用起来极为方便，唯一的缺点在于在进行修改映射的时候需要改动源代码。但是，这可以直接忽略。
 
-## **Pluggability可插入性**
-​	当使用任何第三方的框架，如Struts，JSF或Spring，我们都需要在web.xml中添加对应的Servlet的入口。这使得web描述符笨重而难以维护。Servlet3.0的新的可插入特性使得web应用程序模块化而易于维护。通过web fragment实现的可插入性减轻了开发人员的负担，不需要再在web.xml中配置很多的Servlet入口。
 
-## **Asynchronous Processing异步处理**
-
-​	另外一个显著的改变就是Servlet3.0支持异步处理，这对AJAX应用程序非常有用。当一个Servlet创建一个线程来创建某些请求的时候，如查询数据库或消息连接，这个线程要等待直到获得所需要的资源才能够执行其他的操作。异步处理通过运行线程执行其他的操作来避免了这种阻塞。
-Apart from the features mentioned here, several other enhancements have been made to the existing API. The sections towards the end of the article will explore these features one by one in detail.
-除了这些新特性之外， Servlet3.0对已有的API也做了一些改进，在本文的最后我们会做介绍。
-
-## **Annotations in Servlet 注解**
-
-Servlet3.0的一个主要的改变就是支持注解。使用注解来定义Servlet和filter使得我们不用在web.xml中定义相应的入口。
-
-### **@WebServlet**
-
-@WebServlet用来定义web应用程序中的一个Servlet。这个注解可以应用于继承了HttpServlet。这个注解有多个属性，例如name，urlPattern, initParams,我们可以使用者的属性来定义Servlet的行为。urlPattern属性是必须指定的。
-例如我们可以象下面的例子这样定义：
-
-```java
-1. @WebServlet(name = "GetQuoteServlet",  urlPatterns = {"/getquote"} )
-2. public class GetQuoteServlet extends HttpServlet {
-3.     @Override
-4.     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-5.             throws ServletException, IOException {
-6.         PrintWriter out = response.getWriter();
-7.         try {
-8.             String symbol = request.getParameter("symbol");
-9.             out.println("<h1>Stock Price is</h1>" + StockQuoteBean.getPrice(symbol);
-10.         } finally {
-11.             out.close();
-12.         }
-13.     }
-14. }
-15.
-16. public class StockQuoteBean {
-17. private StockQuoteServiceEntity serviceEntity = new StockQuoteServiceEntity();
-18.     public double getPrice(String symbol) {
-19.         if(symbol !=null )  {
-20. return serviceEntity.getPrice(symbol);
-21.          } else {
-22.             return 0.0;
-23.         }
-24.     }
-25. }
-```
-
-在上面的例子中，一个Servlet只对应了一个urlPattern。实际上一个Servlet可以对应多个urlPattern，我们可以这样定义：
-
-```java
-1. @WebServlet(name = "GetQuoteServlet",  urlPatterns = {"/getquote",  "/stockquote"} )
-
-2. public class GetQuoteServlet extends HttpServlet {
-
-3.     @Override
-
-4.     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-
-5.             throws ServletException, IOException {
-
-6.         PrintWriter out = response.getWriter();
-
-7.         try {
-
-8.             String symbol = request.getParameter("symbol");
-
-9.             out.println("<h1>Stock Price is</h1>" + StockQuoteBean.getPrice(symbol);
-
-10.         } finally {
-
-11.             out.close();
-
-12.         }
-
-13.     }
-
-14. }
-```
-
-### **@WebFilter**
-
-我们可以使用@WebFilter注解来定义filter。这个注解可以被应用在实现了javax.servlet.Filter接口的类上。同样的，urlPattern属性是必须指定的。下面就是一个例子。
-
-```java
-1. @WebFilter(filterName = "AuthenticateFilter", urlPatterns = {"/stock.jsp", "/getquote"})
-
-2. public class AuthenticateFilter implements Filter {
-
-3.
-
-4.     public void doFilter(ServletRequest request, ServletResponse response,
-
-5.             FilterChain chain)     throws IOException, ServletException {
-
-6.         String username = ((HttpServletRequest) request).getParameter("uname");
-
-7.         String password = ((HttpServletRequest) request).getParameter("password");
-
-8.           if (username == null || password == null) {
-
-9.                  ((HttpServletResponse) response).sendRedirect("index.jsp");            }
-
-10. if (username.equals("admin") && password.equals("admin")) {
-
-11.                 chain.doFilter(request, response);      }
-
-12. else {
-
-13.                 ((HttpServletResponse) response).sendRedirect("index.jsp");         }
-
-14.          }
-
-15.
-
-16.     public void destroy() {
-
-17.     }
-
-18.     public void init(FilterConfig filterConfig) {
-
-19.     }
-
-20. }
-```
-
-### **@WebInitParam**
-
-可以使用@WebInitParam注解来制定Servlet或filter的初始参数。当然我们也可以使用@WebServlet或@WebFileter的initParam属性来指定初始参数。下面是使用@WebInitParam的例子：
-
-```java
-1. @WebServlet(name = "GetQuoteServlet", urlPatterns = {"/getquote"})
-
-2. @WebInitParam(name = "default_market", value = "NASDAQ")
-
-3. public class GetQuoteServlet extends HttpServlet {
-
-4.     @Override
-
-5.     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-
-6.             throws ServletException, IOException {
-
-7.         response.setContentType("text/html;charset=UTF-8");
-
-8.         PrintWriter out = response.getWriter();
-
-9.         try {
-
-10.             String market = getInitParameter("default_market");
-
-11.             String symbol = request.getParameter("symbol");
-
-12.             out.println("<h1>Stock Price in " + market + " is</h1>" + StockQuoteBean.getPrice(symbol, market));
-
-13.         } finally {
-
-14.             out.close();
-
-15.         }
-
-16.     }
-
-17. }
-```
-
-下面是使用initParam属性的例子：
-
-```java
-. @WebServlet(name = "GetQuoteServlet",
-
-2.             urlPatterns = {"/getquote"},
-
-3.             initParams={@WebInitParam(name="default_market",  value="NASDAQ")}
-
-4.            )
-
-5. public class GetQuoteServlet extends HttpServlet {
-
-6.     @Override
-
-7.     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-
-8.             throws ServletException, IOException {
-
-9.         response.setContentType("text/html;charset=UTF-8");
-
-10.         PrintWriter out = response.getWriter();
-
-11.         try {
-
-12.             String market = getInitParameter("default_market");
-
-13.             String symbol = request.getParameter("symbol");
-
-14.             out.println("<h1>Stock Price in " + market + " is</h1>" + StockQuoteBean.getPrice(symbol, market));
-
-15.         } finally {
-
-16.             out.close();
-
-17.         }
-
-18.     }
-
-19. }
-```
-
-### **@WebListener**
-
-@WebListener注解被应用在作为listener监听web应用程序事件的类上，所以@WebListener能够被应用在实现了ServletContextListener，ServletContextAttributeListener，ServletRequestListener，ServletRequestAttributeListener，HttpSessionListener和HttpSessionAttributeListener接口的类上。在下面的例子中，该类实现了ServletContextListener接口。
-
-```java
-1. @WebListener
-
-2. public class QuoteServletContextListener implements ServletContextListener {
-
-3.    public void contextInitialized(ServletContextEvent sce) {
-
-4.    ServletContext context = sce.getServletContext();
-
-5. context.setInitParameter(“default_market”, “NASDAQ”);
-
-6. }
-
-7. public void contextDestroyed(ServletContextEvent sce) {
-
-8. }
-
-9. }
-```
-
-### **@MultipartConfig**
-
-使用@MultipartConfig注解来指定Servlet要求的multipart MIME类型。这种类型的MIME附件将从request对象中读取。
-
-## 其他
-
-**The Metadata and Common Annotations 元数据与通用的注解**
-除了以上的Servlet特定的注解之外，Servlet3.0还支持JSR175（Java元数据规范）和JSR250（Java平台通用注解）所规定的注解，包括：
-  \*  安全相关的注解，如 @DeclareRoles 和 @RolesAllowed
-  \*  使用EJB的注解，如 @EJB 和 @EJBs
-  \* 资源注入相关的注解，如 @Resource 和 @Resources
-  \* 使用JPA的注解，如 @PersistenceContext, @PersistenceContexts, @PersistenceUnit, 和 @PersistenceUnits
-  \* 生命周期的注解，如 @PostConstruct和 @PreDestroy
-  \* 提供WebService引用的注解，如 @WebServiceRef and @WebServiceRefs
-**注解和web.xml哪个会生效**
-注解的引入使得web.xml变成可选的了。但是，我们还是可以使用web.xml。容器会根据web.xml中的metadata-complete元素的值来决定使用web.xml还是使用注解。如果该元素的值是true，那么容器不处理注解，web.xml是所有信息的来源。如果该元素不存在或者其值不为true，容器才会处理注解。
-**Web框架的可插入性**
-我们前面说过了Servlet3.0的改进之一就是使得我们能够将框架和库插入到web应用程序中。这种可插入性减少了配置，并且提高了web应用程序的模块化。Servlet3.0是通过web模块布署描述片段（简称web片段）来实现插入性的。
-一个web片段就是web.xml文件的一部分，被包含在框架特定的Jar包的META-INF目录中。Web片段使得该框架组件逻辑上就是web应用程序的一部分，不需要编辑web布署描述文件。
-Web片段中使用的元素和布署文件中使用的元素基本相同，除了根元素不一样。Web片段的根元素是<web-fragment>,而且文件名必须叫做web-fragment.xml。容器只会在放在WEB-INF\lib目录下的Jar包中查找web-fragment.xml文件。如果这些Jar包含有web-fragment.xml文件，容器就会装载需要的类来处理他们。
-在web.xml中，我们要求Servlet的name必须唯一。同样的，在web.xml和所有的web片段中，Servlet的name也必须唯一。
-下面就是一个web-fragment的例子：
-web-fragment.xml
-
-```xml
- <web-fragment>
-
-2. <servlet>
-
-3. <servlet-name>ControllerServlet</servlet-name>
-
-4. <servlet-class>com.app.control.ControllerServlet</servlet-class>
-
-5. </servlet>
-
-6. <listener>
-
-7. <listener-class>com.listener.AppServletContextListener</listener-class>
-
-8. </listener>
-
-9. </web-fragment>
-```
-
-框架的Jar包是放在WEB-INF\lib目录下的，但是Servlet3.0提供两种方法指定多个web片段之间的顺序：
-  1. 绝对顺序
-  2. 相对顺序
-我们通过web.xml文件中的<absolute-ordering>元素来指定绝对顺序。这个元素有之元素name，name的值是各个web片段的name元素的值。这样就指定了web片段的顺序。如果多个web片段有相同的名字，容器会忽略后出现的web片段。下面是一个指定绝对顺序的例子：
-web.xml
 
 ```
-1. <web-app>
-
-2. <name>DemoApp</name>
-
-3. <absolute-ordering>
-
-4. <name>WebFragment1</name>
-
-5. <name>WebFragment2</name>
-
-6. </absolute-ordering>
-
-7. ...
-
-8. </web-app>
-```
-
-
-
-相对顺序通过web-fragment.xml中的<ordering>元素来确定。Web片段的顺序由<ordering>的子元素<before>,<after>和<others>来决定。当前的web片段会放在所有的<before>元素中的片段之前。同样的，会放在所有的<after>元素中的片段之后。<others>用来代替所有的其他片段。注意只有当web.xml中没有<absolute-ordering>时，容器才会使用web片段中定义的相对顺序。
-下面是一个帮助理解相对顺序的例子：
-web-fragment.xml
-
-```xml
-1. <web-fragment>
-
-2. <name>WebFragment1</name>
-
-3. <ordering><after>WebFragment2</after></ordering>
-
-4. ...
-
-5. </web-fragment>
-```
-
-
-
-web-fragment.xml
-
-```xml
-1. <web-fragment>
-
-2. <name>WebFragment2</name>
-
-3. ..
-
-4. </web-fragment>
-```
-
+@Service
+public class A {  
+    public A(B b) {  }
+}
 复制代码
-
-web-fragment.xml
-
-```xml
-1. <web-fragment>
-
-2. <name>WebFragment3</name>
-
-3. <ordering><before><others/></before></ordering>
-....
-</web-fragment>
 ```
 
 
 
-这些文件将会按照下面的顺序被处理：
-
-  1. WebFragment3
-  2. WebFragment2
-  3. WebFragment1
-
-包含WebFragment3的Jar文件被最先处理，包含WebFragment2的文件被第二个处理，包含WebFragment1的文件被最后处理。
-如果既没有定义绝对顺序，也没有定义相对顺序，那么容器就认为所有的web片段间没有顺序上的依赖关系。
-
-**Servlet中的异步处理**
-
-​	很多时候Servlet要和其他的资源进行互动，例如访问数据库，调用web service。在和这些资源互动的时候，Servlet不得不等待数据返回，然后才能够继续执行。这使得Servlet调用这些资源的时候阻塞。Servlet3.0通过引入异步处理解决了这个问题。异步处理允许线程调用资源的时候不被阻塞，而是直接返回。AsyncContext负责管理从资源来的回应。AsyncContext决定该回应是应该被原来的线程处理还是应该分发给容器中其他的资源。AsyncContext有一些方法如start，dispatch和complete来执行异步处理。
-要想使用Servlet3.0的异步处理，我们需要设置@Webservlet和@WebFilter注解的asyncSupport属性。这个属性是布尔值，缺省值是false。
-Servlet3.0的异步处理可以很好的和AJAX配合。在Servlet的init方法中，我们能够访问数据库或从JMS读取消息。在doGet或doPost方法中，我们能够启动异步处理，AsyncContext会通过AsyncEvent和AsyncListener来管理线程和数据库操作/JMS操作自己的关系。
-
-## **已有API的改进**
-除了这些新特性之外，Servlet3.0还对以往已经存在的API做了一些改进。
-
-### **HttpServletRequest**
-
-To support the multipart/form-data MIME type, the following methods have been added to the HttpServletRequest interface:
-为了支持multipart/form-data MIME类型，在HttpServletRequest接口中添加了项目的方法：
-  * Iterable<Part> getParts()
-  * Part getPart(String name)
-
-### **Cookies**
-为了避免一些跨站点攻击，Servlet3.0支持HttpOnly的cookie。HttpOnly cookie不想客户端暴露script代码。Servlet3.0在Cookie类中添加了如下的方法来支持HttpOnly cookie：
-  * void setHttpOnly(boolean isHttpOnly)
-  * boolean isHttpOnly()
-
-### **ServletContext**
-通过在ServletContext中添加下面的方法，Servlet3.0允许Servlet或filter被编程的加入到context中：
-
-  * addServlet(String servletName, String className)
-  * addServlet(String servletName, Servlet servlet)
-  * addServlet(String servletName, Class<? extends Servlet> servletClass)
-  * addFilter(String filterName, String className)
-  * addFilter(String filterName, Filter filter)
-  * addFilter(String filterName, Class<? extends Filter>filterClass)
-  * setInitParameter (String name, String Value)
 
 
 
 
-
-# Java SPI 服务动态扩展
-
-## SPI是什么
-
-SPI全称Service Provider Interface，是Java提供的一套用来被第三方实现或者扩展的API，它可以用来启用框架扩展和替换组件。
-
-整体机制图如下：
-
-
-
-![img](https:////upload-images.jianshu.io/upload_images/5618238-5d8948367cb9b18e.png?imageMogr2/auto-orient/strip|imageView2/2/w/848/format/webp)
-
-Java SPI 实际上是“**基于接口的编程＋策略模式＋配置文件**”组合实现的动态加载机制。
-
-系统设计的各个抽象，往往有很多不同的实现方案，在面向的对象的设计里，一般推荐模块之间基于接口编程，模块之间不对实现类进行硬编码。一旦代码里涉及具体的实现类，就违反了可拔插的原则，如果需要替换一种实现，就需要修改代码。为了实现在模块装配的时候能不在程序里动态指明，这就需要一种服务发现机制。
-
- Java SPI就是提供这样的一个机制：为某个接口寻找服务实现的机制。有点类似IOC的思想，就是将装配的控制权移到程序之外，在模块化设计中这个机制尤其重要。所以SPI的核心思想就是**解耦**。
-
-## 使用场景
-
-概括地说，适用于：**调用者根据实际使用需要，启用、扩展、或者替换框架的实现策略**
-
-比较常见的例子：
-
-- 数据库驱动加载接口实现类的加载
-   JDBC加载不同类型数据库的驱动
-- 日志门面接口实现类加载
-   SLF4J加载不同提供商的日志实现类
-- Spring
-   Spring中大量使用了SPI,比如：对servlet3.0规范对ServletContainerInitializer的实现、自动类型转换Type Conversion SPI(Converter SPI、Formatter SPI)等
-- Dubbo
-   Dubbo中也大量使用SPI的方式实现框架的扩展, 不过它对Java提供的原生SPI做了封装，允许用户扩展实现Filter接口
-
-## 使用介绍
-
-要使用Java SPI，需要遵循如下约定：
-
-- 1、当服务提供者提供了接口的一种具体实现后，在jar包的META-INF/services目录下创建一个以“接口全限定名”为命名的文件，内容为实现类的全限定名；
-- 2、接口实现类所在的jar包放在主程序的classpath中；
-- 3、主程序通过java.util.ServiceLoder动态装载实现模块，它通过扫描META-INF/services目录下的配置文件找到实现类的全限定名，把类加载到JVM；
-- 4、SPI的实现类必须携带一个不带参数的构造方法；
-
-## 示例代码
-
-**步骤1**、定义一组接口 (假设是org.foo.demo.IShout)，并写出接口的一个或多个实现，(假设是org.foo.demo.animal.Dog、org.foo.demo.animal.Cat)
-
-```java
-public interface IShout {
-    void shout();
-}
-public class Cat implements IShout {
-    @Override
-    public void shout() {
-        System.out.println("miao miao");
+```
+@Service
+public class B {  
+    public B(C c) {  
     }
 }
-public class Dog implements IShout {
-    @Override
-    public void shout() {
-        System.out.println("wang wang");
-    }
-}
+复制代码
 ```
 
-**步骤2**、在 src/main/resources/ 下建立 /META-INF/services 目录， 新增一个以接口命名的文件 (org.foo.demo.IShout文件)，内容是要应用的实现类（这里是org.foo.demo.animal.Dog和org.foo.demo.animal.Cat，每行一个类）。
 
-文件位置
 
-```java
-- src
-    -main
-        -resources
-            - META-INF
-                - services
-                    - org.foo.demo.IShout
+
+
+
+
+
+
+```
+@Service
+public class C {  
+    public C(A a) {  }
+}复制代码
 ```
 
-文件内容
 
-```java
-org.foo.demo.animal.Dog
-org.foo.demo.animal.Cat
+
+结果：项目启动失败，发现了一个cycle。
+
+![img](https://user-gold-cdn.xitu.io/2018/11/12/16708043be99065a?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+###  2.field属性注入循环依赖
+
+
+
+
+
+
+
+```
+@Service
+public class A1 {  
+    @Autowired  
+    private B1 b1;
+}复制代码
 ```
 
-**步骤3**、使用 ServiceLoader 来加载配置文件中指定的实现。
 
-```java
-public class SPIMain {
-    public static void main(String[] args) {
-        ServiceLoader<IShout> shouts = ServiceLoader.load(IShout.class);
-        for (IShout s : shouts) {
-            s.shout();
+
+
+
+
+
+
+
+```
+@Service
+public class B1 {  
+    @Autowired  
+    public C1 c1;
+}复制代码
+```
+
+
+
+
+
+
+
+
+
+```
+@Service
+public class C1 {  
+    @Autowired  public A1 a1;
+}复制代码
+```
+
+
+
+结果：项目启动成功
+
+![img](https://user-gold-cdn.xitu.io/2018/11/12/1670808ac258af58?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+###  3.field属性注入循环依赖（prototype）
+
+```
+@Service
+@Scope("prototype")
+public class A1 {  
+    @Autowired  
+    private B1 b1;
+}复制代码
+```
+
+
+
+
+
+
+
+
+
+```
+@Service
+@Scope("prototype")
+public class B1 {  
+    @Autowired  
+    public C1 c1;
+}复制代码
+```
+
+
+
+
+
+
+
+
+
+```
+@Service
+@Scope("prototype")
+public class C1 {  
+    @Autowired  public A1 a1;
+}复制代码
+```
+
+结果：项目启动失败，发现了一个cycle。
+
+![img](https://user-gold-cdn.xitu.io/2018/11/12/16708043be99065a?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+现象总结：同样对于循环依赖的场景，构造器注入和prototype类型的属性注入都会初始化Bean失败。因为@Service默认是单例的，所以单例的属性注入是可以成功的。
+
+## 分析原因
+
+分析原因也就是在发现SpringIOC的过程，如果对源码不感兴趣可以关注每段源码分析之后的**总结和循环依赖问题的分析**即可。
+
+### SpringBean的加载流程（源码分析）
+
+简单一段代码作为入口
+
+```
+ApplicationContext ac = new ClassPathXmlApplicationContext("spring.xml");
+ac.getBean(XXX.class);复制代码
+```
+
+ClassPathXmlApplicationContext是一个加载XML配置文件的类，与之相对的还有AnnotationConfigWebApplicationContext，这两个类大差不差的，只是ClassPathXmlApplicationContext的Resource是XML文件而AnnotationConfigWebApplicationContext是Scan注解获得的。
+
+看到第二行就已经可以直接获取bean的实例了，所以第一行构造方法时，就已经完成了对所有bean的加载。
+
+ClassPathXmlApplicationContext举例，他里面储存的东西如下：
+
+| **对象名**                  | **类 型**                      | **作 用**                                                    | **归属类**                                  |
+| --------------------------- | ------------------------------ | ------------------------------------------------------------ | ------------------------------------------- |
+| configResources             | Resource[]                     | 配置文件资源对象数组                                         | ClassPathXmlApplicationContext              |
+| configLocations             | String[]                       | 配置文件字符串数组，存储配置文件路径                         | AbstractRefreshableConfigApplicationContext |
+| beanFactory                 | DefaultListableBeanFactory     | 上下文使用的Bean工厂                                         | AbstractRefreshableApplicationContext       |
+| beanFactoryMonitor          | Object                         | Bean工厂使用的同步监视器                                     | AbstractRefreshableApplicationContext       |
+| id                          | String                         | 上下文使用的唯一Id，标识此ApplicationContext                 | AbstractApplicationContext                  |
+| parent                      | ApplicationContext             | 父级ApplicationContext                                       | AbstractApplicationContext                  |
+| beanFactoryPostProcessors   | List<BeanFactoryPostProcessor> | 存储BeanFactoryPostProcessor接口，Spring提供的一个扩展点     | AbstractApplicationContext                  |
+| startupShutdownMonitor      | Object                         | refresh方法和destory方法公用的一个监视器，避免两个方法同时执行 | AbstractApplicationContext                  |
+| shutdownHook                | Thread                         | Spring提供的一个钩子，JVM停止执行时会运行Thread里面的方法    | AbstractApplicationContext                  |
+| resourcePatternResolver     | ResourcePatternResolver        | 上下文使用的资源格式解析器                                   | AbstractApplicationContext                  |
+| lifecycleProcessor          | LifecycleProcessor             | 用于管理Bean生命周期的生命周期处理器接口                     | AbstractApplicationContext                  |
+| messageSource               | MessageSource                  | 用于实现国际化的一个接口                                     | AbstractApplicationContext                  |
+| applicationEventMulticaster | ApplicationEventMulticaster    | Spring提供的事件管理机制中的事件多播器接口                   | AbstractApplicationContext                  |
+| applicationListeners        | Set<ApplicationListener>       | Spring提供的事件管理机制中的应用监听器                       | AbstractApplicationContext                  |
+
+构造方法如下：
+
+![img](https://user-gold-cdn.xitu.io/2018/11/13/1670d0adae936cb5?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+接下来大概看看refresh方法：
+
+![img](https://user-gold-cdn.xitu.io/2018/11/13/1670d0d78678f8cb?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+子方法先不看，先看看refresh方法的结构，其实就有几点值得学习：
+
+1、方法为什么加锁？ 是为了避免多线程的场景下同时刷新Spring上下文
+
+2、虽然整个方法是加锁的，但是却用了Synchronized关键字的对象锁startUpShutdownMonitor，这样做有两个好处：
+
+（1）关闭资源的时候会调用close()方法，close()方法也使用了同样的对象锁，而关闭资源的close和refresh的两个冲突的方法，这样可以避免冲突
+
+（2）此处对象锁相对于整个方法加锁的话，同步的范围更小了，锁的粒度更小，效率更高
+
+3、这个方法refresh定义了整个Spring IOC的流程，每一个方法名字都清晰易懂，可维护性、可读性很强
+
+**总结：看源码需要找准入口，看的时候多思考，学习Spring的巧妙的设计。ApplicationContext的构造方法中最关键是方法是refresh，其中有一些比价好的设计。**
+
+### obtainFreshBeanFactory方法
+
+这个方法作用是获取刷新Spring上下文的Bean工厂：
+
+```
+protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {  
+    this.refreshBeanFactory();  
+    return this.getBeanFactory();
+}复制代码
+protected final void refreshBeanFactory() throws BeansException {  
+    if (this.hasBeanFactory()) {    
+        this.destroyBeans();    
+        this.closeBeanFactory();  
+    }  
+    try {    
+        DefaultListableBeanFactory beanFactory = this.createBeanFactory();    
+        beanFactory.setSerializationId(this.getId());    
+        this.customizeBeanFactory(beanFactory);    
+        this.loadBeanDefinitions(beanFactory);    
+        synchronized(this.beanFactoryMonitor) {      
+            this.beanFactory = beanFactory;    }  
+        } catch (IOException var5) {    
+            throw new ApplicationContextException("I/O error parsing bean definition source for " + this.getDisplayName(), var5);  
         }
-    }
-}
+}复制代码
 ```
 
-代码输出：
+这断代码的核心是DefaultListableBeanFactory，核心类我们再整理一下，以图表格式：
 
-```java
-wang wang
-miao miao
-```
+下面有三个加粗的Map，这些个Map是解决问题的关键。。。我们之后详细分析
 
-## 原理解析
+| **对象名**                    | **类 型**                       | **作 用**                                           | **归属类**                         |
+| ----------------------------- | ------------------------------- | --------------------------------------------------- | ---------------------------------- |
+| aliasMap                      | Map<String, String>             | 存储Bean名称->Bean别名映射关系                      | SimpleAliasRegistry                |
+| **singletonObjects**          | **Map**                         | **存储单例Bean名称->单例Bean实现映射关系**          | **DefaultSingletonBeanRegistry**   |
+| **singletonFactories**        | **Map**                         | **存储Bean名称->ObjectFactory实现映射关系**         | **DefaultSingletonBeanRegistry**   |
+| **earlySingletonObjects**     | **Map**                         | **存储Bean名称->预加载Bean实现映射关系**            | **DefaultSingletonBeanRegistry**   |
+| registeredSingletons          | Set<String>                     | 存储注册过的Bean名                                  | DefaultSingletonBeanRegistry       |
+| singletonsCurrentlyInCreation | Set<String>                     | 存储当前正在创建的Bean名                            | DefaultSingletonBeanRegistry       |
+| disposableBeans               | Map<String, Object>             | 存储Bean名称->Disposable接口实现Bean实现映射关系    | DefaultSingletonBeanRegistry       |
+| factoryBeanObjectCache        | Map<String, Object>             | 存储Bean名称->FactoryBean接口Bean实现映射关系       | FactoryBeanRegistrySupport         |
+| propertyEditorRegistrars      | Set<PropertyEditorRegistrar>    | 存储PropertyEditorRegistrar接口实现集合             | AbstractBeanFactory                |
+| embeddedValueResolvers        | List<StringValueResolver>       | 存储StringValueResolver（字符串解析器）接口实现列表 | AbstractBeanFactory                |
+| beanPostProcessors            | List<BeanPostProcessor>         | 存储 BeanPostProcessor接口实现列表                  | AbstractBeanFactory                |
+| mergedBeanDefinitions         | Map<String, RootBeanDefinition> | 存储Bean名称->合并过的根Bean定义映射关系            | AbstractBeanFactory                |
+| alreadyCreated                | Set<String>                     | 存储至少被创建过一次的Bean名集合                    | AbstractBeanFactory                |
+| ignoredDependencyInterfaces   | Set<Class>                      | 存储不自动装配的接口Class对象集合                   | AbstractAutowireCapableBeanFactory |
+| resolvableDependencies        | Map<Class, Object>              | 存储修正过的依赖映射关系                            | DefaultListableBeanFactory         |
+| beanDefinitionMap             | Map<String, BeanDefinition>     | 存储Bean名称-->Bean定义映射关系                     | DefaultListableBeanFactory         |
+| beanDefinitionNames           | List<String>                    | 存储Bean定义名称列表                                | DefaultListableBeanFactory         |
 
-首先看ServiceLoader类的签名类的成员变量：
+### BeanDefinition在IOC容器中的注册
 
-```java
-public final class ServiceLoader<S> implements Iterable<S>{
-private static final String PREFIX = "META-INF/services/";
+接下来简要分析一下loadBeanDefinitions。
 
-    // 代表被加载的类或者接口
-    private final Class<S> service;
+对于这个BeanDefinition，我是这么理解的: 它是SpringIOC过程中间的一个产物，可以看成是对Bean定义的抽象，里面封装的数据都是与Bean定义相关的，封装了一些基本的bean的Property、initi-method、destroy-method等。
 
-    // 用于定位，加载和实例化providers的类加载器
-    private final ClassLoader loader;
+这里的主要方法是loadBeanDefinitions，这里不详细展开说，它主要做了几件事：
 
-    // 创建ServiceLoader时采用的访问控制上下文
-    private final AccessControlContext acc;
+1、初始化了BeanDefinitionReader
 
-    // 缓存providers，按实例化的顺序排列
-    private LinkedHashMap<String,S> providers = new LinkedHashMap<>();
+2、通过BeanDefinitionReader获取Resource，也就是xml配置文件的位置，并且把文件转换成一个叫Document的对象
 
-    // 懒查找迭代器
-    private LazyIterator lookupIterator;
-  
-    ......
-}
-```
+3、接下来需要将Document对象转化成容器内部的数据结构（也就是BeanDefinition），也即是将Bean定义的List、Map、Set等各种元素进行解析，转换成Managed类（Spring对BeanDefinition数据的封装)放在BeanDefinition中；这个方法是RegisterBeanDefinition()，也就是解析的过程。
 
-参考具体ServiceLoader具体源码，代码量不多，加上注释一共587行，梳理了一下，实现的流程如下：
+4、解析完成后，会把解析的结果放到BeanDefinition对象中并设置到一个Map中
 
-- 1 应用程序调用ServiceLoader.load方法
-   ServiceLoader.load方法内先创建一个新的ServiceLoader，并实例化该类中的成员变量，包括：
-  - loader(ClassLoader类型，类加载器)
-  - acc(AccessControlContext类型，访问控制器)
-  - providers(LinkedHashMap<String,S>类型，用于缓存加载成功的类)
-  - lookupIterator(实现迭代器功能)
-- 2 应用程序通过迭代器接口获取对象实例
-   ServiceLoader先判断成员变量providers对象中(LinkedHashMap<String,S>类型)是否有缓存实例对象，如果有缓存，直接返回。
-   如果没有缓存，执行类的装载，实现如下：
-- (1) 读取META-INF/services/下的配置文件，获得所有能被实例化的类的名称，值得注意的是，ServiceLoader**可以跨越jar包获取META-INF下的配置文件**，具体加载配置的实现代码如下：
+以上这个过程就是BeanDefinition在IOC容器中的注册。
 
-```dart
-        try {
-            String fullName = PREFIX + service.getName();
-            if (loader == null)
-                configs = ClassLoader.getSystemResources(fullName);
-            else
-                configs = loader.getResources(fullName);
-        } catch (IOException x) {
-            fail(service, "Error locating configuration files", x);
-        }
-```
-
-- (2) 通过反射方法Class.forName()加载类对象，并用instance()方法将类实例化。
-- (3) 把实例化后的类缓存到providers对象中，(LinkedHashMap<String,S>类型） 然后返回实例对象。
-
-## 总结
-
-**优点**：
- 使用Java SPI机制的优势是实现解耦，使得第三方服务模块的装配控制的逻辑与调用者的业务代码分离，而不是耦合在一起。应用程序可以根据实际业务情况启用框架扩展或替换框架组件。
-
-相比使用提供接口jar包，供第三方服务模块实现接口的方式，SPI的方式使得源框架，不必关心接口的实现类的路径，可以不用通过下面的方式获取接口实现类：
-
-- 代码硬编码import 导入实现类
-- 指定类全路径反射获取：例如在JDBC4.0之前，JDBC中获取数据库驱动类需要通过**Class.forName("com.mysql.jdbc.Driver")**，类似语句先动态加载数据库相关的驱动，然后再进行获取连接等的操作
-- 第三方服务模块把接口实现类实例注册到指定地方，源框架从该处访问实例
-
-通过SPI的方式，第三方服务模块实现接口后，在第三方的项目代码的META-INF/services目录下的配置文件指定实现类的全路径名，源码框架即可找到实现类
-
-**缺点**：
-
-- 虽然ServiceLoader也算是使用的延迟加载，但是基本只能通过遍历全部获取，也就是接口的实现类全部加载并实例化一遍。如果你并不想用某些实现类，它也被加载并实例化了，这就造成了浪费。获取某个实现类的方式不够灵活，只能通过Iterator形式获取，不能根据某个参数来获取对应的实现类。
-- 多个并发多线程使用ServiceLoader类的实例是不安全的。
-
-## 参考
-
-[Java核心技术36讲](https://links.jianshu.com/go?to=https%3A%2F%2Ftime.geekbang.org%2Fcolumn%2Fintro%2F82%3Fcode%3Dw8EZ6RGOQApZJ5tpAzP8dRzeVHxZ4q%2FfOdSbSZzbkhc%3D)
- [The Java™ Tutorials](https://links.jianshu.com/go?to=https%3A%2F%2Fdocs.oracle.com%2Fjavase%2Ftutorial%2Fext%2Fbasics%2Fspi.html)
- [Java Doc](https://links.jianshu.com/go?to=https%3A%2F%2Fdocs.oracle.com%2Fjavase%2F8%2Fdocs%2Fapi%2Fjava%2Futil%2FServiceLoader.html)
- [Service Provider Interface: Creating Extensible Java Applications](https://links.jianshu.com/go?to=https%3A%2F%2Fwww.developer.com%2Fjava%2Farticle.php%2F3848881%2FService-Provider-Interface-Creating-Extensible-Java-Applications.htm)
- [Service provider interface](https://links.jianshu.com/go?to=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FService_provider_interface)
- [Java ServiceLoader使用和解析](https://links.jianshu.com/go?to=https%3A%2F%2Fwww.cnblogs.com%2Flovesqcc%2Fp%2F5229353.html)
- [Java基础之SPI机制](https://links.jianshu.com/go?to=https%3A%2F%2Fblog.csdn.net%2Fyangguosb%2Farticle%2Fdetails%2F78772730)
- [Java中SPI机制深入及源码解析](https://links.jianshu.com/go?to=https%3A%2F%2Fcxis.me%2F2017%2F04%2F17%2FJava%E4%B8%ADSPI%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90%2F)
- [SPI机制简介](https://links.jianshu.com/go?to=http%3A%2F%2Fwww.spring4all.com%2Farticle%2F260)
-
-## 典型事例：jdbc的设计
-
-jdbc连接源码分析
-使用实例
-What?
-SPI机制（Service Provider Interface)其实源自服务提供者框架（Service Provider Framework，参考【EffectiveJava】page6)，是一种将服务接口与服务实现分离以达到解耦、大大提升了程序可扩展性的机制。引入服务提供者就是引入了spi接口的实现者，通过本地的注册发现获取到具体的实现类，轻松可插拔
-
-典型实例：jdbc的设计
-通常各大厂商（如Mysql、Oracle）会根据一个统一的规范(java.sql.Driver)开发各自的驱动实现逻辑。客户端使用jdbc时不需要去改变代码，直接引入不同的spi接口服务即可。
-Mysql的则是com.mysql.jdbc.Drive,Oracle则是oracle.jdbc.driver.OracleDriver。
+再回到Refresh方法，总结每一步如下图：
 
 
 
-伪代码如下:
+**总结：这一部分步骤主要是Spring如何加载Xml文件或者注解，并把它解析成BeanDefinition。**
 
-	//注:从jdbc4.0之后无需这个操作,spi机制会自动找到相关的驱动实现
-	//Class.forName(driver);
-	
-	//1.getConnection()方法，连接MySQL数据库。有可能注册了多个Driver，这里通过遍历成功连接后返回。
-	con = DriverManager.getConnection(mysqlUrl,user,password);
-	//2.创建statement类对象，用来执行SQL语句！！
-	Statement statement = con.createStatement();
-	//3.ResultSet类，用来存放获取的结果集！！
-	ResultSet rs = statement.executeQuery(sql);
+### Spring创建Bean的过程
 
-jdbc连接源码分析
+先回到之前的refresh方法(也就是在构造ApplicationContext时的方法)，我们跳过不重要的部分：
 
-1. java.sql.DriverManager静态块初始执行，其中使用spi机制加载jdbc具体实现
+![img](https://user-gold-cdn.xitu.io/2018/11/14/1671267589e00578?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
 
-```
- //java.sql.DriverManager.java   
- //当调用DriverManager.getConnection(..)时，static会在getConnection(..)执行之前被触发执行
-    /**
-     * Load the initial JDBC drivers by checking the System property
-     * jdbc.properties and then use the {@code ServiceLoader} mechanism
-     */
-    static {
-        loadInitialDrivers();
-        println("JDBC DriverManager initialized");
-    }
-```
+我们直接看finishBeanFactoryInitialization里面的preInstantiateSingletons方法，顾名思义初始化所有的单例bean，截取部分如下：
 
+![img](https://user-gold-cdn.xitu.io/2018/11/14/167129de5be02614?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
 
-2.loadInitialDrivers()中完成了引入的数据库驱动的查找以及载入，本示例只引入了oracle厂商的mysql，我们具体看看。
+现在来看核心的getBean方法，对于所有获取Bean对象是实例，都是用这个getBean方法，这个方法最终调用的是doGetBean方法，这个方法就是所谓的DI（依赖注入）发生的地方。
 
-2.loadInitialDrivers()中完成了引入的数据库驱动的查找以及载入，本示例只引入了oracle厂商的mysql，我们具体看看。
+程序=数据+算法，之前的BeanDefinition就是“数据”，依赖注入也就是在BeanDefinition准备好情况下进行进行的，这个过程不简单，因为Spring提供了很多参数配置，每一个参数都代表了IOC容器的特性，这些特性的实现需要在Bean的生命周期中完成。
 
-     //java.util.serviceLoader.java
-    
-       private static void loadInitialDrivers() {
-            String drivers;
-            try {
-                drivers = AccessController.doPrivileged(new PrivilegedAction<String>() {
-                    public String run() {
-                    //使用系统变量方式加载
-                        return System.getProperty("jdbc.drivers");
-                    }
-                });
-            } catch (Exception ex) {
-                drivers = null;
-            }
-            //如果spi 存在将使用spi方式完成提供的Driver的加载
-            // If the driver is packaged as a Service Provider, load it.
-            // Get all the drivers through the classloader
-            // exposed as a java.sql.Driver.class service.
-            // ServiceLoader.load() replaces the sun.misc.Providers()
-    
-            AccessController.doPrivileged(new PrivilegedAction<Void>() {
-                public Void run() {
-    
-    //查找具体的provider,就是在META-INF/services/***.Driver文件中查找具体的实现。
-                    ServiceLoader<Driver> loadedDrivers = ServiceLoader.load(Driver.class);
-                    Iterator<Driver> driversIterator = loadedDrivers.iterator();
-     /* Load these drivers, so that they can be instantiated.
-                 * It may be the case that the driver class may not be there
-                 * i.e. there may be a packaged driver with the service class
-                 * as implementation of java.sql.Driver but the actual class
-                 * may be missing. In that case a java.util.ServiceConfigurationError
-                 * will be thrown at runtime by the VM trying to locate
-                 * and load the service.
-                 *
-                 * Adding a try catch block to catch those runtime errors
-                 * if driver not available in classpath but it's
-                 * packaged as service and that service is there in classpath.
-                 */
-                 //查找具体的实现类的全限定名称
-                try{
-                    while(driversIterator.hasNext()) {
-                        driversIterator.next();//加载并初始化实现类
-                    }
-                } catch(Throwable t) {
-                // Do nothing
-                }
-                return null;
-            }
-        });
-    
-        println("DriverManager.initialize: jdbc.drivers = " + drivers);
-    
-        if (drivers == null || drivers.equals("")) {
-            return;
-        }
-        String[] driversList = drivers.split(":");
-       ....
-            }
-        }
+代码比较多，就不贴了，大家可以自行查看AbstractBeanFactory里面的doGetBean方法,这里直接上图，这个图就是依赖注入的整个过程：
+
+![img](https://user-gold-cdn.xitu.io/2018/11/15/16717dea23ee7ce9?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+**总结：Spring创建好了BeanDefinition之后呢，会开始实例化Bean，并且对Bean的依赖属性进行填充。实例化时底层使用了CGLIB或Java反射技术。上图中instantiateBean核PupulateBean方法很重要！**
+
+### 循环依赖问题分析
+
+我们先总结一下之前的结论：
+
+1、构造器注入和prototype类型的field注入发生循环依赖时都无法初始化
+
+2、field注入单例的bean时，尽管有循环依赖，但bean仍然可以被成功初始化
+
+针对这几个结论，提出问题
+
+1. 单例的设值注入bean是如何解决循环依赖问题呢？如果A中注入了B，那么他们初始化的顺序是什么样子的？
+2. 为什么prototype类型的和构造器类型的Spring无法解决循环依赖呢？
+
+之前在DefaultListableBeanFactory类中，列出了一个表格；现在我把关键的精华属性列出来：
 
 
-3.java.util.ServiceLoader 加载spi实现类.
-
-上一步的核心代码如下，我们接着分析：
-
-```
-//java.util.serviceLoader.java
-
-ServiceLoader<Driver> loadedDrivers = ServiceLoader.load(Driver.class);
-Iterator<Driver> driversIterator = loadedDrivers.iterator();
-try{
-  //查找具体的实现类的全限定名称
-     while(driversIterator.hasNext()) {
-     //加载并初始化实现
-         driversIterator.next();
-     }
- } catch(Throwable t) {
- // Do nothing
- }
-```
-
-主要是通过ServiceLoader来完成的,我们按照执行顺序来看看ServiceLoader实现：
-
-```
-//初始化一个ServiceLoader,load参数分别是需要加载的接口class对象,当前类加载器
-    public static <S> ServiceLoader<S> load(Class<S> service) {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        return ServiceLoader.load(service, cl);
-    }
-    public static <S> ServiceLoader<S> load(Class<S> service,
-                                            ClassLoader loader)
-    {
-        return new ServiceLoader<>(service, loader);
-    }
-
-```
 
 
-遍历所有存在的service实现
-
-        public boolean hasNext() {
-            if (acc == null) {
-                return hasNextService();
-            } else {
-                PrivilegedAction<Boolean> action = new PrivilegedAction<Boolean>() {
-                    public Boolean run() { return hasNextService(); }
-                };
-                return AccessController.doPrivileged(action, acc);
-            }
-        }
-
-
-     //写死的一个目录
-           private static final String PREFIX = "META-INF/services/";
-     private boolean hasNextService() {
-            if (nextName != null) {
-                return true;
-            }
-            if (configs == null) {
-                try {
-                    String fullName = PREFIX + service.getName();
-                    //通过相对路径读取classpath中META-INF目录的文件，也就是读取服务提供者的实现类全限定名
-                    if (loader == null)
-                        configs = ClassLoader.getSystemResources(fullName);
-                    else
-                        configs = loader.getResources(fullName);
-                } catch (IOException x) {
-                    fail(service, "Error locating configuration files", x);
-                }
-            }
-            //判断是否读取到实现类全限定名,比如mysql的“com.mysql.jdbc.Driver
-                while ((pending == null) || !pending.hasNext()) {
-                    if (!configs.hasMoreElements()) {
-                        return false;
-                    }
-                    pending = parse(service, configs.nextElement());
-                }
-                nextName = pending.next();//nextName保存,后续初始化实现类使用
-                return true;//查到了 返回true，接着调用next()
-            }
 
 
 
 ```
-     public S next() {
-            if (acc == null) {//用来判断serviceLoader对象是否完成初始化
-                return nextService();
-            } else {
-                PrivilegedAction<S> action = new PrivilegedAction<S>() {
-                    public S run() { return nextService(); }
-                };
-                return AccessController.doPrivileged(action, acc);
-            }
-        }
-      private S nextService() {
-            if (!hasNextService())
-                throw new NoSuchElementException();
-            String cn = nextName;//上一步找到的服务实现者全限定名
-            nextName = null;
-            Class<?> c = null;
-            try {
-            //加载字节码返回class对象.但并不去初始化（换句话就是说不去执行这个类中的static块与static变量初始化）
-            //
-                c = Class.forName(cn, false, loader);
-            } catch (ClassNotFoundException x) {
-                fail(service,
-                     "Provider " + cn + " not found");
-            }
-            if (!service.isAssignableFrom(c)) {
-                fail(service,
-                     "Provider " + cn  + " not a subtype");
-            }
-            try {
-	            //初始化这个实现类.将会通过static块的方式触发实现类注册到DriverManager(其中组合了一个CopyOnWriteArrayList的registeredDrivers成员变量)中
-                S p = service.cast(c.newInstance());
-                providers.put(cn, p);//本地缓存 （全限定名，实现类对象）
-                return p;
-            } catch (Throwable x) {
-                fail(service,
-                     "Provider " + cn + " could not be instantiated",
-                     x);
-            }
-            throw new Error();          // This cannot happen
-        }
+一级缓存：
+/** 保存所有的singletonBean的实例 */
+private final Map<String, Object> singletonObjects = new ConcurrentHashMap<String, Object>(64);
 
-```
-
-上一步中，Sp = service.cast(c.newInstance()) 将会导致具体实现者的初始化，比如mysqlJDBC，会触发如下代码：
-
-上一步中，Sp = service.cast(c.newInstance()) 将会导致具体实现者的初始化，比如mysqlJDBC，会触发如下代码：
-
-    //com.mysql.jdbc.Driver.java
-    ......
-        private final static CopyOnWriteArrayList<DriverInfo> registeredDrivers = new CopyOnWriteArrayList<>();
-    ......
-    static {
-        try {
-    	     //并发安全的想一个copyOnWriteList中方
-            java.sql.DriverManager.registerDriver(new Driver());
-        } catch (SQLException E) {
-            throw new RuntimeException("Can't register driver!");
-        }
-    }
-
-4.最终Driver全部注册并初始化完毕，开始执行DriverManager.getConnection(url, “root”, “root”)方法并返回。
-
-使用实例
-四个项目:spiInterface、spiA、spiB、spiDemo
-
-spiInterface中定义了一个com.zs.IOperation接口。
-
-spiA、spiB均是这个接口的实现类，服务提供者。
-
-spiDemo作为客户端,引入spiA或者spiB依赖，面向接口编程，通过spi的方式获取具体实现者并执行接口方法。
-
-```
-├─spiA
-│  └─src
-│      ├─main
-│      │  ├─java
-│      │  │  └─com
-│      │  │      └─zs
-│      │  ├─resources
-│      │  │  └─META-INF
-│      │  │      └─services
-│      │  └─webapp
-│      │      └─WEB-INF
-│      └─test
-│          └─java
-├─spiB
-│  └─src
-│      ├─main
-│      │  ├─java
-│      │  │  └─com
-│      │  │      └─zs
-│      │  ├─resources
-│      │  │  └─META-INF
-│      │  │      └─services
-│      │  └─webapp
-│      │      └─WEB-INF
-│      └─test
-│          └─java
-├─spiDemo
-│  └─src
-│      ├─main
-│      │  ├─java
-│      │  │  └─com
-│      │  │      └─zs
-│      │  ├─resources
-│      │  └─webapp
-│      │      └─WEB-INF
-│      └─test
-│          └─java
-└─spiInterface
-    └─src
-        ├─main
-        │  ├─java
-        │  │  └─com
-        │  │      └─zs
-        │  ├─resources
-        │  └─webapp
-        │      └─WEB-INF
-        └─test
-            └─java
-                └─spiInterface
+二级缓存：
+/** 保存所有早期创建的Bean对象，这个Bean还没有完成依赖注入 */
+private final Map<String, Object> earlySingletonObjects = new HashMap<String, Object>(16);
+三级缓存：
+/** singletonBean的生产工厂*/
+private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<String, ObjectFactory<?>>(16);
+ 
+/** 保存所有已经完成初始化的Bean的名字（name） */
+private final Set<String> registeredSingletons = new LinkedHashSet<String>(64);
+ 
+/** 标识指定name的Bean对象是否处于创建状态  这个状态非常重要 */
+private final Set<String> singletonsCurrentlyInCreation =
+	Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>(16));
+复制代码
 ```
 
 
 
-spiDemo		
+前面三个Map，我们称为单例初始化的三级缓存，理解这个问题，**我们目前只需关注“三级”，也就是****singletonFactories**
 
-	package com.zs;
-	
-	import java.sql.Connection;
-	import java.sql.DriverManager;
-	import java.sql.ResultSet;
-	import java.sql.SQLException;
-	import java.sql.Statement;
-	import java.util.Iterator;
-	import java.util.ServiceLoader;
-	
-	public class Launcher {
-	
-		public static void main(String[] args) throws Exception {
-	
-	//		jdbcTest();
-			showSpiPlugins();
-	}
-	private static void jdbcTest() throws SQLException {
-		String url = "jdbc:mysql://localhost:3306/test";
-		Connection conn = DriverManager.getConnection(url, "root", "root");
-		Statement statement = conn.createStatement();
-		ResultSet set = statement.executeQuery("select * from test.user");
-		while (set.next()) {
-			System.out.println(set.getLong("id"));
-			System.out.println(set.getString("userName"));
-			System.out.println(set.getInt("age"));
+分析：
+
+对于问题1，单例的设值注入，如果A中注入了B，B应该是A中的一个属性，那么猜想应该是A已经被instantiate（实例化）之后，在populateBean（填充A中的属性）时，对B进行初始化。
+
+对于问题2，instantiate（实例化）其实就是理解成new一个对象的过程，而new的时候肯定要执行构造方法，所以猜想对于应该是A在instantiate（实例化）时，进行B的初始化。
+
+有了分析和猜想之后呢，围绕关键的属性，根据从上图的doGetBean方法开始到populateBean所有的代码，我整理了如下图：
+
+![img](https://user-gold-cdn.xitu.io/2018/11/17/1672097789fb9abe?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+上图是整个过程中关键的代码路径，感兴趣的可以自己debug几回，最关键的解决循环依赖的是如上的两个标红的方法，第一个方法getSingleton会从singletonFactories里面拿Singleton，而addSingletonFactory会把Singleton放入singletonFactories。
+
+**对于问题1：单例的设值注入bean是如何解决循环依赖问题呢？如果A中注入了B，那么他们初始化的顺序是什么样子的？**
+
+假设循环注入是A-B-A：A依赖B(A中autowire了B)，B又依赖A（B中又autowire了A）：
+
+![img](https://user-gold-cdn.xitu.io/2018/11/17/16720b0a8ca086c6?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+本质就是三级缓存发挥作用，解决了循环。
+
+**对于当时问题2，instantiate（实例化）其实就是理解成new一个对象的过程，而new的时候肯定要执行构造方法，所以猜想对于应该是A在instantiate（实例化）时，进行B的初始化。**
+
+答案也很简单，因为A中构造器注入了B，那么A在关键的方法addSingletonFactory()之前就去初始化了B，导致三级缓存中根本没有A，所以会发生死循环，Spring发现之后就抛出异常了。至于Spring是如何发现异常的呢，本质上是根据Bean的状态给Bean进行mark，如果递归调用时发现bean当时正在创建中，那么久抛出循环依赖的异常即可。
+
+**那么prototype的Bean是如何初始化的呢？**
+
+prototypeBean有一个关键的属性：
+
+
+
+
+
+
+
+```
+/** Names of beans that are currently in creation */
+private final ThreadLocal<Object> prototypesCurrentlyInCreation =
+	new NamedThreadLocal<Object>("Prototype beans currently in creation");
+复制代码
+```
+
+
+
+保存着正在创建的prototype的beanName，在流程上并没有暴露任何factory之类的缓存。并且在`beforePrototypeCreation(String beanName)`方法时，把每个正在创建的prototype的BeanName放入一个set中：
+
+
+
+
+
+
+
+```
+protected void beforePrototypeCreation(String beanName) {
+		Object curVal = this.prototypesCurrentlyInCreation.get();
+		if (curVal == null) {
+			this.prototypesCurrentlyInCreation.set(beanName);
 		}
-	}
-	private static void showSpiPlugins() {
-		ServiceLoader<IOperation> operations = ServiceLoader.load(IOperation.class);
-		Iterator<IOperation> operationIterator = operations.iterator();
-		
-		while (operationIterator.hasNext()) {
-			IOperation operation = operationIterator.next();
-			System.out.println(operation.operation(6, 3));
+		else if (curVal instanceof String) {
+			Set<String> beanNameSet = new HashSet<String>(2);
+			beanNameSet.add((String) curVal);
+			beanNameSet.add(beanName);
+			this.prototypesCurrentlyInCreation.set(beanNameSet);
 		}
-	}
-	}
+		else {
+			Set<String> beanNameSet = (Set<String>) curVal;
+			beanNameSet.add(beanName);
+		}
+}复制代码
+```
 
-https://github.com/lemon-simple/SPIDEMO
 
 
+并且会循环依赖时检查beanName是否处于创建状态，如果是就抛出异常：
+
+
+
+
+
+
+
+```
+protected boolean isPrototypeCurrentlyInCreation(String beanName) {
+    Object curVal = this.prototypesCurrentlyInCreation.get();
+    return (curVal != null &&
+    (curVal.equals(beanName) || (curVal instanceof Set && ((Set<?>) curVal).contains(beanName))));
+}复制代码
+```
+
+
+
+从流程上就可以查看，无论是构造注入还是设值注入，第二次进入同一个Bean的getBean方法是，一定会在校验部分抛出异常，因此不能完成注入，也就不能实现循环引用。
+
+**总结：Spring在InstantiateBean时执行构造器方法，构造出实例，如果是单例的话，会将它放入一个\**singletonBeanFactory\**的缓存中，再进行populateBean方法，设置属性。通过一个singletonBeanFactory的缓存解决了循环依赖的问题。**
+
+## 再解决一个问题
+
+现在大家已经对Spring整个流程有点感觉了，我们再来解决一个简单的常见的问题：
+
+考虑一下如下的singleton代码：
+
+
+
+
+
+
+
+```
+    @Service
+    public class SingletonBean{
+
+       @Autowired 
+       private PrototypeBean prototypeBean;
+
+       public void doSomething(){
+         System.out.println(prototypeBean.toString());       }
+
+    }复制代码
+```
+
+
+
+
+
+
+
+
+
+```
+     @Component 
+     @Scope(value="prototype")
+     public class PrototypeBean{
+     }复制代码
+```
+
+
+
+一个Singleton的Bean中Autowired了一个prototype的Bean，那么问题来了，每次调用SingletonBean.doSomething()时打印的对象是不是同一个呢？
+
+有了之前的知识储备，我们简单分析一下：因为Singleton是单例的，所以在项目启动时就会初始化，prototypeBean本质上只是它的一个Property，那么ApplicationContex中只存在一个SingletonBean和一个初始化SingletonBean时创建的一个prototype类型的PrototypeBean。
+
+那么每次调用SingletonBean.doSomething()时，Spring会从ApplicationContex中获取SingletonBean，每次获取的SingletonBean是同一个，所以即便PrototypeBean是prototype的，但PrototypeBean仍然是同一个。每次打印出来的内存地址肯定是同一个。
+
+### 那这个问题如何解决呢？
+
+解决办法也很简单，这种情况我们不能通过注入的方式注入一个prototypeBean，只能在程序运行时手动调用getBean("prototypeBean")方法，我写了一个简单的工具类：
+
+
+
+
+
+
+
+```
+@Service
+public class SpringBeanUtils implements ApplicationContextAware {  
+    private static ApplicationContext appContext;  
+    @Override  
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException { 
+       SpringBeanUtils.appContext=applicationContext;  
+    }  
+    public static ApplicationContext getAppContext() {    
+        return appContext;  
+    }  
+    public static Object getBean(String beanName) {    
+        checkApplicationContext();    
+        return appContext.getBean(beanName);  
+    }  
+    private static void checkApplicationContext() {    
+        if (null == appContext) {      
+            throw new IllegalStateException("applicaitonContext未注入");   
+         }  
+    }  
+    @SuppressWarnings("unchecked")  
+    public static <T> T getBean(Class<T> clazz) {    
+        checkApplicationContext();    
+        Map<?, ?> map = appContext.getBeansOfType(clazz);    
+        return map.isEmpty() ? null : (T) map.values().iterator().next();  
+    }
+ }复制代码
+```
+
+
+
+对于这个ApplicationContextAware接口：
+
+在某些特殊的情况下，Bean需要实现某个功能，但该功能必须借助于Spring容器才能实现，此时就必须让该Bean先获取Spring容器，然后借助于Spring容器实现该功能。为了让Bean获取它所在的Spring容器，可以让该Bean实现ApplicationContextAware接口。
+
+感兴趣的读者自己可以试试。
+
+**总结：**
+
+**回到循环依赖的问题，有的人可能会问 singletonBeanFactory只是一个三级缓存，那么一级缓存和二级缓存有什么用呢？**
+
+**其实大家只要理解整个流程就可以切入了，Spring在初始化Singleton的时候大致可以分几步，初始化——设值——销毁，循环依赖的场景下只有A——B——A这样的顺序，但在并发的场景下，每一步在执行时，都有可能调用getBean方法，而单例的Bean需要保证只有一个instance，那么Spring就是通过这些个缓存外加对象锁去解决这类问题，同时也可以省去不必要的重复操作。Spring的锁的粒度选取也是很吊的，这里暂时不深入研究了。**
+
+**解决此类问题的关键是要对SpringIOC和DI的整个流程做到心中有数，看源码一般情况下不要求每一行代码都了解透彻，但是对于整个的流程和每个流程中在做什么事需要了然，这样实际遇到问题时才可以很快的切入进行分析解决。**
+
+
+
+# Spring AOP
+
+​	AOP原理
+​		AOP实际上就是OOP的补充，将代码横向抽取成一个独立的模块，再织入到目标方法中
+​		底层是动态代理技术
+​			JDK动态代理(基于接口)
+​			CBLib动态代理(基于类)
+​			在Spring AOP中，如果使用的是单例，推荐使用CGLib代理
+​	AOP术语
+​		连接点(Join point)
+​			能够被拦截的地方
+​		切点(Poincut)
+​			具体定位的连接点
+​		增强/通知(Advice)
+​			表示添加到切点的一段逻辑代码，并定位连接点的方位信息
+​		织入(Weaving)
+​			将增强/通知添加到目标类的具体连接点上的过程。
+​		引入/引介(Introduction)
+​			允许我们向现有的类添加新方法或属性。是一种特殊的增强！
+​		切面(Aspect)
+​			切面由切点和增强/通知组成，它既包括了横切逻辑的定义、也包括了连接点的定义
+​	Spring对AOP的支持
+​		基于代理的经典SpringAOP：需要实现接口，手动创建代理
+​		纯POJO切面：使用XML配置，aop命名空间
+​		@AspectJ注解驱动的切面：使用注解的方式，这是最简洁和最方便的！
+​	知识点
+​		增强方式
+​			前置增强
+​			后置增强
+​			环绕增强
+​			异常抛出增强
+​			引介/引入增强
+​		切面类型
+​			一般切面
+​			切点切面
+​			引介/引入切面
+​		自动创建代理对象
+​			BeanNameAutoProxyCreator
+​			DefaultAdvisorAutoProxyCreator
+​			AnnotationAwareAspectJAutoProxyCreator
+​		切点函数
+​			方法切点函数，其中execution()是用得最多的
+​			方法入参函数切点函数
+​			目标类切点函数类
+​			代理类切点函数
 
 # Spring bean的生命周期概述
 
@@ -2025,6 +1745,11 @@ public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
 
 
 
+
+
+
+
+
 ### doCreatebean方法
 
 **如果允许则会把创建出来的这个对象放到第二个map当中**
@@ -2437,162 +2162,7 @@ IOC容器包括BeanDefinition，singletonObjects(单例缓存池)， beanFactory
 
 
 
-
-# Spring WEB启动源码
-
-spring-web 下 **resources/META-INF/services/javax.servlet.ServletContainerInitializer**
-
-```
-org.springframework.web.SpringServletContainerInitializer
-```
-
-## **SpringServletContainerInitializer **
-
-​	Servlet 3.0 {@link ServletContainerInitializer}设计为使用Spring的{@link WebApplicationInitializer} * SPI支持基于代码的Servlet容器配置，而不是（或可能与传统的基于* {@code web.xml}的组合）方法。
-
-它的onStartup方法找到所有的**WebApplicationInitializer**的实现类，按照Order排序，然后依次执行
-
-#### onStartup(webAppInitializerClasses, ServletContext)
-
-```java
-//感兴趣的类WebApplicationInitializer，该类的所有实现会传入onStartup方法 Set<Class<?>> webAppInitializerClasses 属性中
-@HandlesTypes(WebApplicationInitializer.class)
-public class SpringServletContainerInitializer implements ServletContainerInitializer {
-	
-    /**
- * 将{ServletContext}委托给应用程序类路径上存在的任何{@link WebApplicationInitializer} 实现。
-	 *  <p>因为此类声明了@ {@ code HandlesTypes（WebApplicationInitializer.class）}，所以Servlet 3.0+容器将自动扫描类路径以查找Spring的{@code WebApplicationInitializer}接口的实现
-	 *  并提供所有此类类型的集合此方法的{@code webAppInitializerClasses}参数。  <p>如果在类路径上没有找到{@code WebApplicationInitializer}实现，则*该方法实际上是无操作的。
-	 *  将发出INFO级别的日志消息，通知用户*实际上已经调用了{@code ServletContainerInitializer}，但是没有找到{@code WebApplicationInitializer}实现。
-	 *  * <p>假设检测到一种或多种{@code WebApplicationInitializer}类型，则将实例化它们（如果@ {@ link * org.springframework.core.annotation.Order @，则将对它们进行排序）。存在Order}注释
-	 *  或*已实现{@link org.springframework.core.Ordered Ordered}接口）。然后，将在每个实例上调用{@link WebApplicationInitializer＃onStartup（ServletContext）} *方法，
-	 *  委派{@code ServletContext}这样，以便每个实例可以注册和配置Servlet，例如Spring的{@code DispatcherServlet}，侦听器等作为Spring的{@code ContextLoaderListener}，
-	 *  *或其他任何Servlet API组件（例如过滤器）。 * @param webAppInitializer对在应用程序类路径上发现的{{link WebApplicationInitializer}的所有实现进行分类
-	 *  * @param servletContext要初始化的Servlet上下文
-*/
-    @Override
-	public void onStartup(@Nullable Set<Class<?>> webAppInitializerClasses, ServletContext servletContext)
-			throws ServletException {
-
-		List<WebApplicationInitializer> initializers = new LinkedList<>();
-
-		if (webAppInitializerClasses != null) {
-			for (Class<?> waiClass : webAppInitializerClasses) {
-				// Be defensive: Some servlet containers provide us with invalid classes,
-				// no matter what @HandlesTypes says...
-				if (!waiClass.isInterface() && !Modifier.isAbstract(waiClass.getModifiers()) &&
-						WebApplicationInitializer.class.isAssignableFrom(waiClass)) {
-					try {
-						initializers.add((WebApplicationInitializer)
-		ReflectionUtils.accessibleConstructor(waiClass).newInstance());
-					}
-	
-				}
-			}
-		}
-
-
-		//若我们的WebApplicationInitializer的实现类 实现了Orderd接口或标注@Order注解，会进行排序
-		AnnotationAwareOrderComparator.sort(initializers);
-		//依次循环调用我们感兴趣的实例的onStartup方法
-		for (WebApplicationInitializer initializer : initializers) {
-			initializer.onStartup(servletContext);
-		}
-	}
-}
-```
-
-## WebApplicationInitializer 接口
-
-#### onStartup(ServletContext)
-
-​	在Servlet 3.0+环境中实现的接口，以便以编程方式配置ServletContext，这与传统的基于web.xml的方法相反（或可能与*结合）
-
-```java
-public interface WebApplicationInitializer {
-	/**
-	 *初始化此Web应用程序所需的任何Servlet，过滤器，侦听器，上下文参数和属性来配置给定的ServletContext
-	 */
-	void onStartup(ServletContext servletContext) throws ServletException;
-}
-```
-
-
-
-## BeanDefinition 接口
-
-BeanDefinition接口描述了一个bean实例，它具有属性值，构造函数参数值以及具体实现所提供的更多信息。
-
-这只是一个最小的接口：主要目的是允许{BeanFactoryPostProcessor}内省和修改属性值和其他bean元数据
-
-```java
-public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
-
-setParentName
-getParentName
-setBeanClassName
-getBeanClassName
-setScope
-getScope
-setLazyInit
-isLazyInit
-setDependsOn
-getDependsOn
-setAutowireCandidate
-isAutowireCandidate
-setPrimary
-isPrimary
-setFactoryBeanName
-getFactoryBeanName
-setFactoryMethodName
-getFactoryMethodName
-getConstructorArgumentValues
-hasConstructorArgumentValues
-getPropertyValues
-hasPropertyValues
-setInitMethodName
-getInitMethodName
-setDestroyMethodName
-getDestroyMethodName
-setRole
-getRole
-setDescription
-getDescription
-getResolvableType
-isSingleton
-isPrototype
-isAbstract
-getResourceDescription
-getOriginatingBeanDefinition
-SCOPE_SINGLETON
-SCOPE_PROTOTYPE
-ROLE_APPLICATION
-ROLE_SUPPORT
-ROLE_INFRASTRUCTURE
-```
-
-
-
-## BeanFactoryPostProcessor 接口
-
-工厂挂钩，允许自定义修改应用程序上下文的 bean定义，以适应上下文基础 bean工厂的bean属性值
-
-#### postProcessBeanFactory(beanFactory)
-
-```java
-@FunctionalInterface
-public interface BeanFactoryPostProcessor {
-	//在标准初始化之后，修改应用程序上下文的内部bean工厂。所有bean定义都将被加载，但是还没有实例化bean *。这甚至可以覆盖或添加*属性，甚至可以用于初始化bean。
-	//@param beanFactory应用程序上下文使用的bean工厂
-	void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException;
-
-}
-
-```
-
-
-
-# Spring Bean的启动
+# Spring Bean的初始化
 
 ## AnnotationConfigApplicationContext
 
@@ -2889,7 +2459,7 @@ public static void registerBeanDefinition(
 
 ​	与普通的BeanFactory相比，应该假定ApplicationContext来检测在其内部bean工厂中定义的特殊bean：因此，此类自动注册BeanFactoryPostProcessor、BeanPostProcessor和ApplicationListener 在上下文中被定义为bean。
 
-#### 3. 重点：refresh()
+#### 3. 重点：<a id="refresh">refresh()</a>
 
 ```java
 public abstract class AbstractApplicationContext extends DefaultResourceLoader
@@ -3827,6 +3397,81 @@ public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, St
 }
 ```
 
+## BeanDefinition 接口
+
+BeanDefinition接口描述了一个bean实例，它具有属性值，构造函数参数值以及具体实现所提供的更多信息。
+
+这只是一个最小的接口：主要目的是允许{BeanFactoryPostProcessor}内省和修改属性值和其他bean元数据
+
+![image-20200503120038598](images\image-20200503120038598.png)
+
+```java
+public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
+
+setParentName
+getParentName
+setBeanClassName
+getBeanClassName
+setScope
+getScope
+setLazyInit
+isLazyInit
+setDependsOn
+getDependsOn
+setAutowireCandidate
+isAutowireCandidate
+setPrimary
+isPrimary
+setFactoryBeanName
+getFactoryBeanName
+setFactoryMethodName
+getFactoryMethodName
+getConstructorArgumentValues
+hasConstructorArgumentValues
+getPropertyValues
+hasPropertyValues
+setInitMethodName
+getInitMethodName
+setDestroyMethodName
+getDestroyMethodName
+setRole
+getRole
+setDescription
+getDescription
+getResolvableType
+isSingleton
+isPrototype
+isAbstract
+getResourceDescription
+getOriginatingBeanDefinition
+SCOPE_SINGLETON
+SCOPE_PROTOTYPE
+ROLE_APPLICATION
+ROLE_SUPPORT
+ROLE_INFRASTRUCTURE
+```
+
+
+
+## BeanFactoryPostProcessor 接口
+
+工厂挂钩，允许自定义修改应用程序上下文的 bean定义，以适应上下文基础 bean工厂的bean属性值
+
+#### postProcessBeanFactory(beanFactory)
+
+```java
+@FunctionalInterface
+public interface BeanFactoryPostProcessor {
+	//在标准初始化之后，修改应用程序上下文的内部bean工厂。所有bean定义都将被加载，但是还没有实例化bean *。这甚至可以覆盖或添加*属性，甚至可以用于初始化bean。
+	//@param beanFactory应用程序上下文使用的bean工厂
+	void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException;
+
+}
+
+```
+
+
+
 
 
 ## BeanPostProcessor初始化后的回调后置处理器接口
@@ -4420,7 +4065,7 @@ class ProxImpl implements IProx{
 
  
 
- 
+
 
 可以看到定义的hello方法已经被执行，并且可以在不定义接口的实现类的时候仍然可以执行方法获取结果，这其实就很容易想到mybatis中直接调用mapper接口获取查询结果其实也是调用的mapper的动态代理类，说明动态代理对于构造框架有很重要的作用
 
@@ -4441,9 +4086,7 @@ Proxy.newProxyInstance(c.getClassLoader(),c.isInterface()?new Class[]{c}:c.getIn
 [![复制代码](https://common.cnblogs.com/images/copycode.gif)](javascript:void(0);)
 
 ```java
-    public static Object newProxyInstance(ClassLoader loader,
-                                          Class<?>[] interfaces,
-                                          InvocationHandler h)throws IllegalArgumentException{
+public static Object newProxyInstance(ClassLoader loader, Class<?>[] interfaces, InvocationHandler h)throws IllegalArgumentException{
         //InvocationHandler不能为null
         Objects.requireNonNull(h);
     　　 //克隆出所有传入的接口数组
@@ -4609,9 +4252,7 @@ Class<?> cl = getProxyClass0(loader, intfs);
 
 ### 4.Factory的get方法
 
-　　通过上面的逻辑可以得知 最后是新建了Factory factory = new Factory(key, parameter, subKey, valuesMap); 并将这个factory赋值给Suplier调用get方法返回构造的代理类。所以我们直接看
-
-Factory的get方法即可
+　通过上面的逻辑可以得知 最后是新建了Factory factory = new Factory(key, parameter, subKey, valuesMap); 并将这个factory赋值给Suplier调用get方法返回构造的代理类。所以我们直接看Factory的get方法即可
 
 [![复制代码](https://common.cnblogs.com/images/copycode.gif)](javascript:void(0);)
 
@@ -6279,3 +5920,2228 @@ private Object createHelper() {
  ## 总结
 
 　　对比jdk动态代理和cglib动态代理我们可以得知  jdk动态代理只能代理接口，而cglib动态代理可以代理类或者接口，说明cglib的优势更加明显。但是jdk动态代理是java原生支持，所以不需要引入额外的包，cglib需要引入额外的包。二者的原理类似，都是在内存中根据jvm的字节码文件规范动态创建class并使用传入的类加载器加载到内存中，再反射调用生成代理实例，并且都根据类加载器做了相应的缓存。实际使用中应根据利弊按需使用
+
+# Servlet3.0新规范
+
+## 目的
+
+Servlet3.0规范的新特性主要是为了3个目的：
+	1.简化开发
+	2.便于布署
+	3.支持Web2.0原则
+为了简化开发流程，Servlet3.0引入了注解（annotation），这使得web布署描述符web.xml不在是必须的选择
+
+1、要求：
+	jdk6.0+
+	Tomcat7.0+
+2、利用注解替代了web.xml配置文件
+	@WebServlet：配置Servlet的
+	@WebInitParam:配置Servlet、Filter的初始化参数
+	@WebFilter：配置过滤器
+	@WebListener：注册监听器
+	@MultipartConfig//证明客户端提交的表单数据是由多部分组成的
+
+没有web.xml文件的情况下，使用注解进行代替。
+由此可见，开发中对项目起到配置功能的除了xml和properties文件之外，注解也可以进行配置。而且使用起来极为方便，唯一的缺点在于在进行修改映射的时候需要改动源代码。但是，这可以直接忽略。
+
+## **Pluggability可插入性**
+
+​	当使用任何第三方的框架，如Struts，JSF或Spring，我们都需要在web.xml中添加对应的Servlet的入口。这使得web描述符笨重而难以维护。Servlet3.0的新的可插入特性使得web应用程序模块化而易于维护。通过web fragment实现的可插入性减轻了开发人员的负担，不需要再在web.xml中配置很多的Servlet入口。
+
+## **Asynchronous Processing异步处理**
+
+​	另外一个显著的改变就是Servlet3.0支持异步处理，这对AJAX应用程序非常有用。当一个Servlet创建一个线程来创建某些请求的时候，如查询数据库或消息连接，这个线程要等待直到获得所需要的资源才能够执行其他的操作。异步处理通过运行线程执行其他的操作来避免了这种阻塞。
+Apart from the features mentioned here, several other enhancements have been made to the existing API. The sections towards the end of the article will explore these features one by one in detail.
+除了这些新特性之外， Servlet3.0对已有的API也做了一些改进，在本文的最后我们会做介绍。
+
+## **Annotations in Servlet 注解**
+
+Servlet3.0的一个主要的改变就是支持注解。使用注解来定义Servlet和filter使得我们不用在web.xml中定义相应的入口。
+
+### **@WebServlet**
+
+@WebServlet用来定义web应用程序中的一个Servlet。这个注解可以应用于继承了HttpServlet。这个注解有多个属性，例如name，urlPattern, initParams,我们可以使用者的属性来定义Servlet的行为。urlPattern属性是必须指定的。
+例如我们可以象下面的例子这样定义：
+
+```java
+1. @WebServlet(name = "GetQuoteServlet",  urlPatterns = {"/getquote"} )
+2. public class GetQuoteServlet extends HttpServlet {
+3.     @Override
+4.     protected void doGet(HttpServletRequest request, HttpServletResponse response)
+5.             throws ServletException, IOException {
+6.         PrintWriter out = response.getWriter();
+7.         try {
+8.             String symbol = request.getParameter("symbol");
+9.             out.println("<h1>Stock Price is</h1>" + StockQuoteBean.getPrice(symbol);
+10.         } finally {
+11.             out.close();
+12.         }
+13.     }
+14. }
+15.
+16. public class StockQuoteBean {
+17. private StockQuoteServiceEntity serviceEntity = new StockQuoteServiceEntity();
+18.     public double getPrice(String symbol) {
+19.         if(symbol !=null )  {
+20. return serviceEntity.getPrice(symbol);
+21.          } else {
+22.             return 0.0;
+23.         }
+24.     }
+25. }
+```
+
+在上面的例子中，一个Servlet只对应了一个urlPattern。实际上一个Servlet可以对应多个urlPattern，我们可以这样定义：
+
+```java
+1. @WebServlet(name = "GetQuoteServlet",  urlPatterns = {"/getquote",  "/stockquote"} )
+
+2. public class GetQuoteServlet extends HttpServlet {
+
+3.     @Override
+
+4.     protected void doGet(HttpServletRequest request, HttpServletResponse response)
+
+5.             throws ServletException, IOException {
+
+6.         PrintWriter out = response.getWriter();
+
+7.         try {
+
+8.             String symbol = request.getParameter("symbol");
+
+9.             out.println("<h1>Stock Price is</h1>" + StockQuoteBean.getPrice(symbol);
+
+10.         } finally {
+
+11.             out.close();
+
+12.         }
+
+13.     }
+
+14. }
+```
+
+### **@WebFilter**
+
+我们可以使用@WebFilter注解来定义filter。这个注解可以被应用在实现了javax.servlet.Filter接口的类上。同样的，urlPattern属性是必须指定的。下面就是一个例子。
+
+```java
+1. @WebFilter(filterName = "AuthenticateFilter", urlPatterns = {"/stock.jsp", "/getquote"})
+
+2. public class AuthenticateFilter implements Filter {
+
+3.
+
+4.     public void doFilter(ServletRequest request, ServletResponse response,
+
+5.             FilterChain chain)     throws IOException, ServletException {
+
+6.         String username = ((HttpServletRequest) request).getParameter("uname");
+
+7.         String password = ((HttpServletRequest) request).getParameter("password");
+
+8.           if (username == null || password == null) {
+
+9.                  ((HttpServletResponse) response).sendRedirect("index.jsp");            }
+
+10. if (username.equals("admin") && password.equals("admin")) {
+
+11.                 chain.doFilter(request, response);      }
+
+12. else {
+
+13.                 ((HttpServletResponse) response).sendRedirect("index.jsp");         }
+
+14.          }
+
+15.
+
+16.     public void destroy() {
+
+17.     }
+
+18.     public void init(FilterConfig filterConfig) {
+
+19.     }
+
+20. }
+```
+
+### **@WebInitParam**
+
+可以使用@WebInitParam注解来制定Servlet或filter的初始参数。当然我们也可以使用@WebServlet或@WebFileter的initParam属性来指定初始参数。下面是使用@WebInitParam的例子：
+
+```java
+1. @WebServlet(name = "GetQuoteServlet", urlPatterns = {"/getquote"})
+
+2. @WebInitParam(name = "default_market", value = "NASDAQ")
+
+3. public class GetQuoteServlet extends HttpServlet {
+
+4.     @Override
+
+5.     protected void doGet(HttpServletRequest request, HttpServletResponse response)
+
+6.             throws ServletException, IOException {
+
+7.         response.setContentType("text/html;charset=UTF-8");
+
+8.         PrintWriter out = response.getWriter();
+
+9.         try {
+
+10.             String market = getInitParameter("default_market");
+
+11.             String symbol = request.getParameter("symbol");
+
+12.             out.println("<h1>Stock Price in " + market + " is</h1>" + StockQuoteBean.getPrice(symbol, market));
+
+13.         } finally {
+
+14.             out.close();
+
+15.         }
+
+16.     }
+
+17. }
+```
+
+下面是使用initParam属性的例子：
+
+```java
+. @WebServlet(name = "GetQuoteServlet",
+
+2.             urlPatterns = {"/getquote"},
+
+3.             initParams={@WebInitParam(name="default_market",  value="NASDAQ")}
+
+4.            )
+
+5. public class GetQuoteServlet extends HttpServlet {
+
+6.     @Override
+
+7.     protected void doGet(HttpServletRequest request, HttpServletResponse response)
+
+8.             throws ServletException, IOException {
+
+9.         response.setContentType("text/html;charset=UTF-8");
+
+10.         PrintWriter out = response.getWriter();
+
+11.         try {
+
+12.             String market = getInitParameter("default_market");
+
+13.             String symbol = request.getParameter("symbol");
+
+14.             out.println("<h1>Stock Price in " + market + " is</h1>" + StockQuoteBean.getPrice(symbol, market));
+
+15.         } finally {
+
+16.             out.close();
+
+17.         }
+
+18.     }
+
+19. }
+```
+
+### **@WebListener**
+
+@WebListener注解被应用在作为listener监听web应用程序事件的类上，所以@WebListener能够被应用在实现了ServletContextListener，ServletContextAttributeListener，ServletRequestListener，ServletRequestAttributeListener，HttpSessionListener和HttpSessionAttributeListener接口的类上。在下面的例子中，该类实现了ServletContextListener接口。
+
+```java
+1. @WebListener
+
+2. public class QuoteServletContextListener implements ServletContextListener {
+
+3.    public void contextInitialized(ServletContextEvent sce) {
+
+4.    ServletContext context = sce.getServletContext();
+
+5. context.setInitParameter(“default_market”, “NASDAQ”);
+
+6. }
+
+7. public void contextDestroyed(ServletContextEvent sce) {
+
+8. }
+
+9. }
+```
+
+### **@MultipartConfig**
+
+使用@MultipartConfig注解来指定Servlet要求的multipart MIME类型。这种类型的MIME附件将从request对象中读取。
+
+## 其他
+
+**The Metadata and Common Annotations 元数据与通用的注解**
+除了以上的Servlet特定的注解之外，Servlet3.0还支持JSR175（Java元数据规范）和JSR250（Java平台通用注解）所规定的注解，包括：
+  \*  安全相关的注解，如 @DeclareRoles 和 @RolesAllowed
+  \*  使用EJB的注解，如 @EJB 和 @EJBs
+  \* 资源注入相关的注解，如 @Resource 和 @Resources
+  \* 使用JPA的注解，如 @PersistenceContext, @PersistenceContexts, @PersistenceUnit, 和 @PersistenceUnits
+  \* 生命周期的注解，如 @PostConstruct和 @PreDestroy
+  \* 提供WebService引用的注解，如 @WebServiceRef and @WebServiceRefs
+**注解和web.xml哪个会生效**
+注解的引入使得web.xml变成可选的了。但是，我们还是可以使用web.xml。容器会根据web.xml中的metadata-complete元素的值来决定使用web.xml还是使用注解。如果该元素的值是true，那么容器不处理注解，web.xml是所有信息的来源。如果该元素不存在或者其值不为true，容器才会处理注解。
+**Web框架的可插入性**
+我们前面说过了Servlet3.0的改进之一就是使得我们能够将框架和库插入到web应用程序中。这种可插入性减少了配置，并且提高了web应用程序的模块化。Servlet3.0是通过web模块布署描述片段（简称web片段）来实现插入性的。
+一个web片段就是web.xml文件的一部分，被包含在框架特定的Jar包的META-INF目录中。Web片段使得该框架组件逻辑上就是web应用程序的一部分，不需要编辑web布署描述文件。
+Web片段中使用的元素和布署文件中使用的元素基本相同，除了根元素不一样。Web片段的根元素是<web-fragment>,而且文件名必须叫做web-fragment.xml。容器只会在放在WEB-INF\lib目录下的Jar包中查找web-fragment.xml文件。如果这些Jar包含有web-fragment.xml文件，容器就会装载需要的类来处理他们。
+在web.xml中，我们要求Servlet的name必须唯一。同样的，在web.xml和所有的web片段中，Servlet的name也必须唯一。
+下面就是一个web-fragment的例子：
+web-fragment.xml
+
+```xml
+ <web-fragment>
+
+2. <servlet>
+
+3. <servlet-name>ControllerServlet</servlet-name>
+
+4. <servlet-class>com.app.control.ControllerServlet</servlet-class>
+
+5. </servlet>
+
+6. <listener>
+
+7. <listener-class>com.listener.AppServletContextListener</listener-class>
+
+8. </listener>
+
+9. </web-fragment>
+```
+
+框架的Jar包是放在WEB-INF\lib目录下的，但是Servlet3.0提供两种方法指定多个web片段之间的顺序：
+
+    1. 绝对顺序
+    2. 相对顺序
+       我们通过web.xml文件中的<absolute-ordering>元素来指定绝对顺序。这个元素有之元素name，name的值是各个web片段的name元素的值。这样就指定了web片段的顺序。如果多个web片段有相同的名字，容器会忽略后出现的web片段。下面是一个指定绝对顺序的例子：
+       web.xml
+
+```
+1. <web-app>
+
+2. <name>DemoApp</name>
+
+3. <absolute-ordering>
+
+4. <name>WebFragment1</name>
+
+5. <name>WebFragment2</name>
+
+6. </absolute-ordering>
+
+7. ...
+
+8. </web-app>
+```
+
+
+
+相对顺序通过web-fragment.xml中的<ordering>元素来确定。Web片段的顺序由<ordering>的子元素<before>,<after>和<others>来决定。当前的web片段会放在所有的<before>元素中的片段之前。同样的，会放在所有的<after>元素中的片段之后。<others>用来代替所有的其他片段。注意只有当web.xml中没有<absolute-ordering>时，容器才会使用web片段中定义的相对顺序。
+下面是一个帮助理解相对顺序的例子：
+web-fragment.xml
+
+```xml
+1. <web-fragment>
+
+2. <name>WebFragment1</name>
+
+3. <ordering><after>WebFragment2</after></ordering>
+
+4. ...
+
+5. </web-fragment>
+```
+
+
+
+web-fragment.xml
+
+```xml
+1. <web-fragment>
+
+2. <name>WebFragment2</name>
+
+3. ..
+
+4. </web-fragment>
+```
+
+复制代码
+
+web-fragment.xml
+
+```xml
+1. <web-fragment>
+
+2. <name>WebFragment3</name>
+
+3. <ordering><before><others/></before></ordering>
+....
+</web-fragment>
+```
+
+
+
+这些文件将会按照下面的顺序被处理：
+
+    1. WebFragment3
+    2. WebFragment2
+    3. WebFragment1
+
+包含WebFragment3的Jar文件被最先处理，包含WebFragment2的文件被第二个处理，包含WebFragment1的文件被最后处理。
+如果既没有定义绝对顺序，也没有定义相对顺序，那么容器就认为所有的web片段间没有顺序上的依赖关系。
+
+**Servlet中的异步处理**
+
+​	很多时候Servlet要和其他的资源进行互动，例如访问数据库，调用web service。在和这些资源互动的时候，Servlet不得不等待数据返回，然后才能够继续执行。这使得Servlet调用这些资源的时候阻塞。Servlet3.0通过引入异步处理解决了这个问题。异步处理允许线程调用资源的时候不被阻塞，而是直接返回。AsyncContext负责管理从资源来的回应。AsyncContext决定该回应是应该被原来的线程处理还是应该分发给容器中其他的资源。AsyncContext有一些方法如start，dispatch和complete来执行异步处理。
+要想使用Servlet3.0的异步处理，我们需要设置@Webservlet和@WebFilter注解的asyncSupport属性。这个属性是布尔值，缺省值是false。
+Servlet3.0的异步处理可以很好的和AJAX配合。在Servlet的init方法中，我们能够访问数据库或从JMS读取消息。在doGet或doPost方法中，我们能够启动异步处理，AsyncContext会通过AsyncEvent和AsyncListener来管理线程和数据库操作/JMS操作自己的关系。
+
+## **已有API的改进**
+
+除了这些新特性之外，Servlet3.0还对以往已经存在的API做了一些改进。
+
+### **HttpServletRequest**
+
+To support the multipart/form-data MIME type, the following methods have been added to the HttpServletRequest interface:
+为了支持multipart/form-data MIME类型，在HttpServletRequest接口中添加了项目的方法：
+
+  * Iterable<Part> getParts()
+  * Part getPart(String name)
+
+### **Cookies**
+
+为了避免一些跨站点攻击，Servlet3.0支持HttpOnly的cookie。HttpOnly cookie不想客户端暴露script代码。Servlet3.0在Cookie类中添加了如下的方法来支持HttpOnly cookie：
+
+  * void setHttpOnly(boolean isHttpOnly)
+  * boolean isHttpOnly()
+
+### **ServletContext**
+
+通过在ServletContext中添加下面的方法，Servlet3.0允许Servlet或filter被编程的加入到context中：
+
+  * addServlet(String servletName, String className)
+  * addServlet(String servletName, Servlet servlet)
+  * addServlet(String servletName, Class<? extends Servlet> servletClass)
+  * addFilter(String filterName, String className)
+  * addFilter(String filterName, Filter filter)
+  * addFilter(String filterName, Class<? extends Filter>filterClass)
+  * setInitParameter (String name, String Value)
+
+
+
+
+
+# Java SPI 服务动态扩展
+
+## SPI是什么
+
+SPI全称Service Provider Interface，是Java提供的一套用来被第三方实现或者扩展的API，它可以用来启用框架扩展和替换组件。
+
+整体机制图如下：
+
+
+
+![img](https:////upload-images.jianshu.io/upload_images/5618238-5d8948367cb9b18e.png?imageMogr2/auto-orient/strip|imageView2/2/w/848/format/webp)
+
+Java SPI 实际上是“**基于接口的编程＋策略模式＋配置文件**”组合实现的动态加载机制。
+
+系统设计的各个抽象，往往有很多不同的实现方案，在面向的对象的设计里，一般推荐模块之间基于接口编程，模块之间不对实现类进行硬编码。一旦代码里涉及具体的实现类，就违反了可拔插的原则，如果需要替换一种实现，就需要修改代码。为了实现在模块装配的时候能不在程序里动态指明，这就需要一种服务发现机制。
+
+ Java SPI就是提供这样的一个机制：为某个接口寻找服务实现的机制。有点类似IOC的思想，就是将装配的控制权移到程序之外，在模块化设计中这个机制尤其重要。所以SPI的核心思想就是**解耦**。
+
+## 使用场景
+
+概括地说，适用于：**调用者根据实际使用需要，启用、扩展、或者替换框架的实现策略**
+
+比较常见的例子：
+
+- 数据库驱动加载接口实现类的加载
+  JDBC加载不同类型数据库的驱动
+- 日志门面接口实现类加载
+  SLF4J加载不同提供商的日志实现类
+- Spring
+  Spring中大量使用了SPI,比如：对servlet3.0规范对ServletContainerInitializer的实现、自动类型转换Type Conversion SPI(Converter SPI、Formatter SPI)等
+- Dubbo
+  Dubbo中也大量使用SPI的方式实现框架的扩展, 不过它对Java提供的原生SPI做了封装，允许用户扩展实现Filter接口
+
+## 使用介绍
+
+要使用Java SPI，需要遵循如下约定：
+
+- 1、当服务提供者提供了接口的一种具体实现后，在jar包的META-INF/services目录下创建一个以“接口全限定名”为命名的文件，内容为实现类的全限定名；
+- 2、接口实现类所在的jar包放在主程序的classpath中；
+- 3、主程序通过java.util.ServiceLoder动态装载实现模块，它通过扫描META-INF/services目录下的配置文件找到实现类的全限定名，把类加载到JVM；
+- 4、SPI的实现类必须携带一个不带参数的构造方法；
+
+## 示例代码
+
+**步骤1**、定义一组接口 (假设是org.foo.demo.IShout)，并写出接口的一个或多个实现，(假设是org.foo.demo.animal.Dog、org.foo.demo.animal.Cat)
+
+```java
+public interface IShout {
+    void shout();
+}
+public class Cat implements IShout {
+    @Override
+    public void shout() {
+        System.out.println("miao miao");
+    }
+}
+public class Dog implements IShout {
+    @Override
+    public void shout() {
+        System.out.println("wang wang");
+    }
+}
+```
+
+**步骤2**、在 src/main/resources/ 下建立 /META-INF/services 目录， 新增一个以接口命名的文件 (org.foo.demo.IShout文件)，内容是要应用的实现类（这里是org.foo.demo.animal.Dog和org.foo.demo.animal.Cat，每行一个类）。
+
+文件位置
+
+```java
+- src
+    -main
+        -resources
+            - META-INF
+                - services
+                    - org.foo.demo.IShout
+```
+
+文件内容
+
+```java
+org.foo.demo.animal.Dog
+org.foo.demo.animal.Cat
+```
+
+**步骤3**、使用 ServiceLoader 来加载配置文件中指定的实现。
+
+```java
+public class SPIMain {
+    public static void main(String[] args) {
+        ServiceLoader<IShout> shouts = ServiceLoader.load(IShout.class);
+        for (IShout s : shouts) {
+            s.shout();
+        }
+    }
+}
+```
+
+代码输出：
+
+```java
+wang wang
+miao miao
+```
+
+## 原理解析
+
+首先看ServiceLoader类的签名类的成员变量：
+
+```java
+public final class ServiceLoader<S> implements Iterable<S>{
+private static final String PREFIX = "META-INF/services/";
+
+    // 代表被加载的类或者接口
+    private final Class<S> service;
+
+    // 用于定位，加载和实例化providers的类加载器
+    private final ClassLoader loader;
+
+    // 创建ServiceLoader时采用的访问控制上下文
+    private final AccessControlContext acc;
+
+    // 缓存providers，按实例化的顺序排列
+    private LinkedHashMap<String,S> providers = new LinkedHashMap<>();
+
+    // 懒查找迭代器
+    private LazyIterator lookupIterator;
+  
+    ......
+}
+```
+
+参考具体ServiceLoader具体源码，代码量不多，加上注释一共587行，梳理了一下，实现的流程如下：
+
+- 1 应用程序调用ServiceLoader.load方法
+  ServiceLoader.load方法内先创建一个新的ServiceLoader，并实例化该类中的成员变量，包括：
+  - loader(ClassLoader类型，类加载器)
+  - acc(AccessControlContext类型，访问控制器)
+  - providers(LinkedHashMap<String,S>类型，用于缓存加载成功的类)
+  - lookupIterator(实现迭代器功能)
+- 2 应用程序通过迭代器接口获取对象实例
+  ServiceLoader先判断成员变量providers对象中(LinkedHashMap<String,S>类型)是否有缓存实例对象，如果有缓存，直接返回。
+  如果没有缓存，执行类的装载，实现如下：
+- (1) 读取META-INF/services/下的配置文件，获得所有能被实例化的类的名称，值得注意的是，ServiceLoader**可以跨越jar包获取META-INF下的配置文件**，具体加载配置的实现代码如下：
+
+```dart
+        try {
+            String fullName = PREFIX + service.getName();
+            if (loader == null)
+                configs = ClassLoader.getSystemResources(fullName);
+            else
+                configs = loader.getResources(fullName);
+        } catch (IOException x) {
+            fail(service, "Error locating configuration files", x);
+        }
+```
+
+- (2) 通过反射方法Class.forName()加载类对象，并用instance()方法将类实例化。
+- (3) 把实例化后的类缓存到providers对象中，(LinkedHashMap<String,S>类型） 然后返回实例对象。
+
+## 总结
+
+**优点**：
+ 使用Java SPI机制的优势是实现解耦，使得第三方服务模块的装配控制的逻辑与调用者的业务代码分离，而不是耦合在一起。应用程序可以根据实际业务情况启用框架扩展或替换框架组件。
+
+相比使用提供接口jar包，供第三方服务模块实现接口的方式，SPI的方式使得源框架，不必关心接口的实现类的路径，可以不用通过下面的方式获取接口实现类：
+
+- 代码硬编码import 导入实现类
+- 指定类全路径反射获取：例如在JDBC4.0之前，JDBC中获取数据库驱动类需要通过**Class.forName("com.mysql.jdbc.Driver")**，类似语句先动态加载数据库相关的驱动，然后再进行获取连接等的操作
+- 第三方服务模块把接口实现类实例注册到指定地方，源框架从该处访问实例
+
+通过SPI的方式，第三方服务模块实现接口后，在第三方的项目代码的META-INF/services目录下的配置文件指定实现类的全路径名，源码框架即可找到实现类
+
+**缺点**：
+
+- 虽然ServiceLoader也算是使用的延迟加载，但是基本只能通过遍历全部获取，也就是接口的实现类全部加载并实例化一遍。如果你并不想用某些实现类，它也被加载并实例化了，这就造成了浪费。获取某个实现类的方式不够灵活，只能通过Iterator形式获取，不能根据某个参数来获取对应的实现类。
+- 多个并发多线程使用ServiceLoader类的实例是不安全的。
+
+## 参考
+
+[Java核心技术36讲](https://links.jianshu.com/go?to=https%3A%2F%2Ftime.geekbang.org%2Fcolumn%2Fintro%2F82%3Fcode%3Dw8EZ6RGOQApZJ5tpAzP8dRzeVHxZ4q%2FfOdSbSZzbkhc%3D)
+ [The Java™ Tutorials](https://links.jianshu.com/go?to=https%3A%2F%2Fdocs.oracle.com%2Fjavase%2Ftutorial%2Fext%2Fbasics%2Fspi.html)
+ [Java Doc](https://links.jianshu.com/go?to=https%3A%2F%2Fdocs.oracle.com%2Fjavase%2F8%2Fdocs%2Fapi%2Fjava%2Futil%2FServiceLoader.html)
+ [Service Provider Interface: Creating Extensible Java Applications](https://links.jianshu.com/go?to=https%3A%2F%2Fwww.developer.com%2Fjava%2Farticle.php%2F3848881%2FService-Provider-Interface-Creating-Extensible-Java-Applications.htm)
+ [Service provider interface](https://links.jianshu.com/go?to=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FService_provider_interface)
+ [Java ServiceLoader使用和解析](https://links.jianshu.com/go?to=https%3A%2F%2Fwww.cnblogs.com%2Flovesqcc%2Fp%2F5229353.html)
+ [Java基础之SPI机制](https://links.jianshu.com/go?to=https%3A%2F%2Fblog.csdn.net%2Fyangguosb%2Farticle%2Fdetails%2F78772730)
+ [Java中SPI机制深入及源码解析](https://links.jianshu.com/go?to=https%3A%2F%2Fcxis.me%2F2017%2F04%2F17%2FJava%E4%B8%ADSPI%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90%2F)
+ [SPI机制简介](https://links.jianshu.com/go?to=http%3A%2F%2Fwww.spring4all.com%2Farticle%2F260)
+
+## 典型事例：jdbc的设计
+
+jdbc连接源码分析
+使用实例
+What?
+SPI机制（Service Provider Interface)其实源自服务提供者框架（Service Provider Framework，参考【EffectiveJava】page6)，是一种将服务接口与服务实现分离以达到解耦、大大提升了程序可扩展性的机制。引入服务提供者就是引入了spi接口的实现者，通过本地的注册发现获取到具体的实现类，轻松可插拔
+
+典型实例：jdbc的设计
+通常各大厂商（如Mysql、Oracle）会根据一个统一的规范(java.sql.Driver)开发各自的驱动实现逻辑。客户端使用jdbc时不需要去改变代码，直接引入不同的spi接口服务即可。
+Mysql的则是com.mysql.jdbc.Drive,Oracle则是oracle.jdbc.driver.OracleDriver。
+
+
+
+伪代码如下:
+
+	//注:从jdbc4.0之后无需这个操作,spi机制会自动找到相关的驱动实现
+	//Class.forName(driver);
+	
+	//1.getConnection()方法，连接MySQL数据库。有可能注册了多个Driver，这里通过遍历成功连接后返回。
+	con = DriverManager.getConnection(mysqlUrl,user,password);
+	//2.创建statement类对象，用来执行SQL语句！！
+	Statement statement = con.createStatement();
+	//3.ResultSet类，用来存放获取的结果集！！
+	ResultSet rs = statement.executeQuery(sql);
+
+jdbc连接源码分析
+
+1. java.sql.DriverManager静态块初始执行，其中使用spi机制加载jdbc具体实现
+
+```
+ //java.sql.DriverManager.java   
+ //当调用DriverManager.getConnection(..)时，static会在getConnection(..)执行之前被触发执行
+    /**
+     * Load the initial JDBC drivers by checking the System property
+     * jdbc.properties and then use the {@code ServiceLoader} mechanism
+     */
+    static {
+        loadInitialDrivers();
+        println("JDBC DriverManager initialized");
+    }
+```
+
+
+2.loadInitialDrivers()中完成了引入的数据库驱动的查找以及载入，本示例只引入了oracle厂商的mysql，我们具体看看。
+
+     //java.util.serviceLoader.java
+    
+       private static void loadInitialDrivers() {
+            String drivers;
+            try {
+                drivers = AccessController.doPrivileged(new PrivilegedAction<String>() {
+                    public String run() {
+                    //使用系统变量方式加载
+                        return System.getProperty("jdbc.drivers");
+                    }
+                });
+            } catch (Exception ex) {
+                drivers = null;
+            }
+            //如果spi 存在将使用spi方式完成提供的Driver的加载
+            // If the driver is packaged as a Service Provider, load it.
+            // Get all the drivers through the classloader
+            // exposed as a java.sql.Driver.class service.
+            // ServiceLoader.load() replaces the sun.misc.Providers()
+    
+            AccessController.doPrivileged(new PrivilegedAction<Void>() {
+                public Void run() {
+    
+    //查找具体的provider,就是在META-INF/services/***.Driver文件中查找具体的实现。
+                    ServiceLoader<Driver> loadedDrivers = ServiceLoader.load(Driver.class);
+                    Iterator<Driver> driversIterator = loadedDrivers.iterator();
+     /* Load these drivers, so that they can be instantiated.
+                 * It may be the case that the driver class may not be there
+                 * i.e. there may be a packaged driver with the service class
+                 * as implementation of java.sql.Driver but the actual class
+                 * may be missing. In that case a java.util.ServiceConfigurationError
+                 * will be thrown at runtime by the VM trying to locate
+                 * and load the service.
+                 *
+                 * Adding a try catch block to catch those runtime errors
+                 * if driver not available in classpath but it's
+                 * packaged as service and that service is there in classpath.
+                 */
+                 //查找具体的实现类的全限定名称
+                try{
+                    while(driversIterator.hasNext()) {
+                        driversIterator.next();//加载并初始化实现类
+                    }
+                } catch(Throwable t) {
+                // Do nothing
+                }
+                return null;
+            }
+        });
+    
+        println("DriverManager.initialize: jdbc.drivers = " + drivers);
+    
+        if (drivers == null || drivers.equals("")) {
+            return;
+        }
+        String[] driversList = drivers.split(":");
+       ....
+            }
+        }
+
+
+3.java.util.ServiceLoader 加载spi实现类.
+
+上一步的核心代码如下，我们接着分析：
+
+```
+//java.util.serviceLoader.java
+
+ServiceLoader<Driver> loadedDrivers = ServiceLoader.load(Driver.class);
+Iterator<Driver> driversIterator = loadedDrivers.iterator();
+try{
+  //查找具体的实现类的全限定名称
+     while(driversIterator.hasNext()) {
+     //加载并初始化实现
+         driversIterator.next();
+     }
+ } catch(Throwable t) {
+ // Do nothing
+ }
+```
+
+主要是通过ServiceLoader来完成的,我们按照执行顺序来看看ServiceLoader实现：
+
+```
+//初始化一个ServiceLoader,load参数分别是需要加载的接口class对象,当前类加载器
+    public static <S> ServiceLoader<S> load(Class<S> service) {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        return ServiceLoader.load(service, cl);
+    }
+    public static <S> ServiceLoader<S> load(Class<S> service,
+                                            ClassLoader loader)
+    {
+        return new ServiceLoader<>(service, loader);
+    }
+
+```
+
+
+遍历所有存在的service实现
+
+        public boolean hasNext() {
+            if (acc == null) {
+                return hasNextService();
+            } else {
+                PrivilegedAction<Boolean> action = new PrivilegedAction<Boolean>() {
+                    public Boolean run() { return hasNextService(); }
+                };
+                return AccessController.doPrivileged(action, acc);
+            }
+        }
+
+
+     //写死的一个目录
+           private static final String PREFIX = "META-INF/services/";
+     private boolean hasNextService() {
+            if (nextName != null) {
+                return true;
+            }
+            if (configs == null) {
+                try {
+                    String fullName = PREFIX + service.getName();
+                    //通过相对路径读取classpath中META-INF目录的文件，也就是读取服务提供者的实现类全限定名
+                    if (loader == null)
+                        configs = ClassLoader.getSystemResources(fullName);
+                    else
+                        configs = loader.getResources(fullName);
+                } catch (IOException x) {
+                    fail(service, "Error locating configuration files", x);
+                }
+            }
+            //判断是否读取到实现类全限定名,比如mysql的“com.mysql.jdbc.Driver
+                while ((pending == null) || !pending.hasNext()) {
+                    if (!configs.hasMoreElements()) {
+                        return false;
+                    }
+                    pending = parse(service, configs.nextElement());
+                }
+                nextName = pending.next();//nextName保存,后续初始化实现类使用
+                return true;//查到了 返回true，接着调用next()
+            }
+
+
+
+```
+     public S next() {
+            if (acc == null) {//用来判断serviceLoader对象是否完成初始化
+                return nextService();
+            } else {
+                PrivilegedAction<S> action = new PrivilegedAction<S>() {
+                    public S run() { return nextService(); }
+                };
+                return AccessController.doPrivileged(action, acc);
+            }
+        }
+      private S nextService() {
+            if (!hasNextService())
+                throw new NoSuchElementException();
+            String cn = nextName;//上一步找到的服务实现者全限定名
+            nextName = null;
+            Class<?> c = null;
+            try {
+            //加载字节码返回class对象.但并不去初始化（换句话就是说不去执行这个类中的static块与static变量初始化）
+            //
+                c = Class.forName(cn, false, loader);
+            } catch (ClassNotFoundException x) {
+                fail(service,
+                     "Provider " + cn + " not found");
+            }
+            if (!service.isAssignableFrom(c)) {
+                fail(service,
+                     "Provider " + cn  + " not a subtype");
+            }
+            try {
+	            //初始化这个实现类.将会通过static块的方式触发实现类注册到DriverManager(其中组合了一个CopyOnWriteArrayList的registeredDrivers成员变量)中
+                S p = service.cast(c.newInstance());
+                providers.put(cn, p);//本地缓存 （全限定名，实现类对象）
+                return p;
+            } catch (Throwable x) {
+                fail(service,
+                     "Provider " + cn + " could not be instantiated",
+                     x);
+            }
+            throw new Error();          // This cannot happen
+        }
+
+```
+
+上一步中，Sp = service.cast(c.newInstance()) 将会导致具体实现者的初始化，比如mysqlJDBC，会触发如下代码：
+
+    //com.mysql.jdbc.Driver.java
+    ......
+        private final static CopyOnWriteArrayList<DriverInfo> registeredDrivers = new CopyOnWriteArrayList<>();
+    ......
+    static {
+        try {
+    	     //并发安全的想一个copyOnWriteList中方
+            java.sql.DriverManager.registerDriver(new Driver());
+        } catch (SQLException E) {
+            throw new RuntimeException("Can't register driver!");
+        }
+    }
+
+4.最终Driver全部注册并初始化完毕，开始执行DriverManager.getConnection(url, “root”, “root”)方法并返回。
+
+使用实例
+四个项目:spiInterface、spiA、spiB、spiDemo
+
+spiInterface中定义了一个com.zs.IOperation接口。
+
+spiA、spiB均是这个接口的实现类，服务提供者。
+
+spiDemo作为客户端,引入spiA或者spiB依赖，面向接口编程，通过spi的方式获取具体实现者并执行接口方法。
+
+```
+├─spiA
+│  └─src
+│      ├─main
+│      │  ├─java
+│      │  │  └─com
+│      │  │      └─zs
+│      │  ├─resources
+│      │  │  └─META-INF
+│      │  │      └─services
+│      │  └─webapp
+│      │      └─WEB-INF
+│      └─test
+│          └─java
+├─spiB
+│  └─src
+│      ├─main
+│      │  ├─java
+│      │  │  └─com
+│      │  │      └─zs
+│      │  ├─resources
+│      │  │  └─META-INF
+│      │  │      └─services
+│      │  └─webapp
+│      │      └─WEB-INF
+│      └─test
+│          └─java
+├─spiDemo
+│  └─src
+│      ├─main
+│      │  ├─java
+│      │  │  └─com
+│      │  │      └─zs
+│      │  ├─resources
+│      │  └─webapp
+│      │      └─WEB-INF
+│      └─test
+│          └─java
+└─spiInterface
+    └─src
+        ├─main
+        │  ├─java
+        │  │  └─com
+        │  │      └─zs
+        │  ├─resources
+        │  └─webapp
+        │      └─WEB-INF
+        └─test
+            └─java
+                └─spiInterface
+```
+
+
+
+spiDemo		
+
+	package com.zs;
+	
+	import java.sql.Connection;
+	import java.sql.DriverManager;
+	import java.sql.ResultSet;
+	import java.sql.SQLException;
+	import java.sql.Statement;
+	import java.util.Iterator;
+	import java.util.ServiceLoader;
+	
+	public class Launcher {
+	
+		public static void main(String[] args) throws Exception {
+	
+	//		jdbcTest();
+			showSpiPlugins();
+	}
+	private static void jdbcTest() throws SQLException {
+		String url = "jdbc:mysql://localhost:3306/test";
+		Connection conn = DriverManager.getConnection(url, "root", "root");
+		Statement statement = conn.createStatement();
+		ResultSet set = statement.executeQuery("select * from test.user");
+		while (set.next()) {
+			System.out.println(set.getLong("id"));
+			System.out.println(set.getString("userName"));
+			System.out.println(set.getInt("age"));
+		}
+	}
+	private static void showSpiPlugins() {
+		ServiceLoader<IOperation> operations = ServiceLoader.load(IOperation.class);
+		Iterator<IOperation> operationIterator = operations.iterator();
+		
+		while (operationIterator.hasNext()) {
+			IOperation operation = operationIterator.next();
+			System.out.println(operation.operation(6, 3));
+		}
+	}
+	}
+
+https://github.com/lemon-simple/SPIDEMO
+
+# Spring MVC创建过程
+
+​	先分析Spring MVC的整体结构，然后具体分析每层的创建过程
+
+## 1.1 SpringMvc整体结构介绍
+
+​	Spring MVC中核心Servlet的继承结构图，分为java左边部分和spring右边部分
+
+![image-20200417122256982](E:/Git/make/总结/images/image-20200417122256982.png)
+
+​	Servlet的继承结构中共有五个类，GenericServlet和HttpServlet在Servlet中说过，HttpServletBean、FrameWorkServlet和DispatcherServlet是Spring MVC中的。
+
+​	这三个类直接实现三个接口：EnvironmentAware、EnvironmentCapable和ApplicationContextAware。
+
+### EnvironmentAware接口
+
+​	EnvironmentAware接口只有一个**setEnvironment(Environment)**方法，HttpServletBean实现了EnvironmentAware接口，spring会自动调用setEnvironment(Environment)传入Environment属性
+
+```java
+public abstract class HttpServletBean extends HttpServlet implements EnvironmentCapable, EnvironmentAware {
+@Override
+public void setEnvironment(Environment environment) {
+   Assert.isInstanceOf(ConfigurableEnvironment.class, environment, "ConfigurableEnvironment required");
+   this.environment = (ConfigurableEnvironment) environment;
+}
+```
+
+> ​	XXAware在spring里表示对XX类可以感知：如果在xx类里使用spring的东西，可以通过实现xxAware接口告诉spring，spring会送过来，接收的方式通过实现接口唯一的方法set-xx
+
+### EnvironmentCapable接口
+
+​	EnvironmentCapable意思是具有Environment的能力，可以提供Environment，EnvironmentCapable唯一的方法是Environment getEnvironment();
+
+​	实现EnvironmentCapable接口的类就是告诉spring它可以提供Environment，当spring需要Environment时会调用它的getEnvironment方法跟它要
+
+ApplicatonContext和Environment
+
+​	应用程序上下文和环境，在HttpServletBean中Environment使用的是StandardServletEnvironment(在createEnvironment方法中创建)，这里封装了**ServletContext**和**ServletConfig**、**JndiProperty**、**系统环境变量**和**系统属性**，这些都封装在**propertySources属性**下。
+
+```java
+HttpServletBean
+  
+protected ConfigurableEnvironment createEnvironment() {
+   return new StandardServletEnvironment();
+}
+```
+
+​	ServletConfigPropertySource的类型是StandardWrapperFacade，是Tomcat里定义的ServletConfig类型，所以，ServletConfigPropertySource封装的就是ServletConfig。
+
+​	web.xml定义的contextConfigLocation可以在config下的parameters看到，config其实是Tomcat中StandardWrapper——存放Servlet的容器。
+
+​	ServletContextProprtySource中保存的ServletContext
+
+​	<img src="E:/Git/make/总结/images/image-20200417152435718.png" alt="image-20200417152435718" style="zoom: 50%;" />
+
+​	JndiPropertySource存放的是Jndi	
+
+​	MapPropertySource存放的是虚拟机的属性，如Java版本、操作系统的名字、版本等
+
+​	SystemEnvironmentPropertySource存放的是环境变量，Java_home、path等属性
+
+## 1.2 HttpServletBean
+
+​	Servlet创建时可以直接调用无参数的init方法
+
+```java
+public final void init() throws ServletException {
+  	//将servlet中配置的参数封装到pvs变量中，requiredProperties必须参数，否则报错
+    PropertyValues pvs = new HttpServletBean.ServletConfigPropertyValues(this.getServletConfig(), this.requiredProperties);
+    if (!pvs.isEmpty()) {
+        try {
+            BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(this);
+            ResourceLoader resourceLoader = new ServletContextResourceLoader(this.getServletContext());
+            bw.registerCustomEditor(Resource.class, new ResourceEditor(resourceLoader, this.getEnvironment()));
+            //模版方法，可以在子类调用，做些初始化工作，bw代表DispatcherServlet
+            this.initBeanWrapper(bw);
+          	//将配置的初始化值设置到DispatcherServlet
+            bw.setPropertyValues(pvs, true);
+        } catch (BeansException var4) {
+        }
+    }
+    //模版方法，子类初始化的入口方法
+    this.initServletBean();
+}
+```
+
+​	在HttpServletBean的init中，首先将Servlet中配置的参数使用BeanWeapper设置到DispatcherServlet的相关属性，然后调用模版方法initServletBean，子类通过该方法初始化
+
+> ​	BeanWrapper是Spring提供的用来操作JavaBean属性的工具，可以修改一个对象的属性
+>
+> ​	User user = new User();
+>
+> BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(user);
+>
+> ​    bw.setPropertyValue("username","zhangsan");
+
+## 1.3 FrameworkServlet
+
+​	FrameworkServlet的初始化入口方法就是上面HttpServletBean中init方法里最后调用的initServletBean方法
+
+```java
+protected final void initServletBean() throws ServletException {
+        this.webApplicationContext = this.initWebApplicationContext();
+        this.initFrameworkServlet();
+}
+```
+
+​	核心代码只有两句，初始化WebApplicationContext和初始化initFrameworkServlet(模版方法，子类可以覆盖，但子类没有使用它)。
+
+​	所以FrameworkServlet在构建的过程主要就是初始化了initWebApplicationContext	
+
+​	initWebApplicatoinContext方法做了三件事
+
+		1. 获取spring的根容器rootContext
+
+     		2. 设置webApplicationContext并根据情况调用onRefresh方法
+               		3. 将webApplicationContext设置到ServletContext中
+
+```java
+protected WebApplicationContext initWebApplicationContext() {
+    WebApplicationContext rootContext = WebApplicationContextUtils.getWebApplicationContext(this.getServletContext());
+    WebApplicationContext wac = null;
+  	//如果已经通过构造方法设置了webApplicationContext
+    if (this.webApplicationContext != null) {
+        wac = this.webApplicationContext;
+        if (wac instanceof ConfigurableWebApplicationContext) {
+            ConfigurableWebApplicationContext cwac = (ConfigurableWebApplicationContext)wac;
+            if (!cwac.isActive()) {
+                if (cwac.getParent() == null) {
+                    cwac.setParent(rootContext);
+                }
+                this.configureAndRefreshWebApplicationContext(cwac);
+            }
+        }
+    }
+    if (wac == null) {
+        //当webApplicationContext已经存在ServletContext中时，通过配置在Servlet中的contextAttribute参数获取
+        wac = this.findWebApplicationContext();
+    }
+    if (wac == null) {
+      	//如果webApplicationContext还没创建，根据rootContext创建
+        wac = this.createWebApplicationContext(rootContext);
+    }
+    if (!this.refreshEventReceived) {
+        //当ContextRefreshedEvent事件还没有触发时调用次方法，模版方法，子类可以重写
+        this.onRefresh(wac);
+    }
+    if (this.publishContext) {
+        String attrName = this.getServletContextAttributeName();
+        //将ApplicationContext保存到ServletContext中
+        this.getServletContext().setAttribute(attrName, wac);
+    }
+    return wac;
+}
+```
+
+### 获取Spring的根容器rootContext
+
+​	默认情况spring会将自己的容器设置成ServletContext的属性，默认根容器的key为org.springframework.web.context.WebApplicationContext.ROOT，定义在WebApplicationContext中。
+
+​	所以获取根容器只需要调用ServletContext的getArrtibute就可以
+
+​	ServletContext # getAttribute("org.springframework.web.context.WebApplicationContext.ROOT");
+
+### 设置webApplicationContext并根据情况调用onRefresh方法
+
+​	设置webApplicationContext共有三种方法：
+
+ 1. 在构造方法中传递webApplicationContext参数，只需要对其设置即可。该方法主要用于Servlet3.0后的环境，Servlet3.0后可以在程序中使用ServletContext.addServlet方式注册Servlet，就可以在新建FrameworkServlet和其子类时通过构成方法传递已经准备好的webApplicationContext
+
+ 2. webApplicationContext已经在ServletContext中，这时只需要在配置Servlet时将ServletContext中的webApplicationContext的name配置到contextAttribute属性即可。
+
+ 3. 在前两种无效情况下自己创建一个。正常情况下使用这个方式。创建过程在createWebApplicationContext方法中，createWebApplicationContext内部又调用了configureAndRefreshWebApplicationContext方法。
+
+    首先调用getContextClass方法获取创建的类型，可以通过contextClass属性设置到Servlet中，默认使用org.springframework.web.context.support.XmlWebApplicationContext。
+
+    ​	然后检查属不属于ConfigurableWebApplicationContext类型，不属于抛异常
+
+    ​	接下来根据BeanUtils.instantiateClass（contextClass）进行创建
+
+    ​	将设置的contextConfigLocation参数传入，默认传入WEB-INFO/[ServletName]-Servlet.xml，然后进行配置。
+
+    ​	configureAndRefreshWebApplicationContext方法中添加监听ContextRefreshedEvent的监听器，可以根据传入的参数进行选择，实际监听的事ContextRefreshListener所监听的事件
+
+    ```java
+    protected WebApplicationContext createWebApplicationContext(ApplicationContext parent) {
+      	//获取创建类型
+        Class<?> contextClass = this.getContextClass();
+      	//检查创建类型
+        if (!ConfigurableWebApplicationContext.class.isAssignableFrom(contextClass)) {
+        } else {
+          	//具体创建
+            ConfigurableWebApplicationContext wac = (ConfigurableWebApplicationContext)BeanUtils.instantiateClass(contextClass);
+            wac.setEnvironment(this.getEnvironment());
+            wac.setParent(parent);
+            //将设置的contextConfigLocation参数传给wac，默认传入WEB-INFO/[ServletName]-Servlet.xml
+            wac.setConfigLocation(this.getContextConfigLocation());
+            this.configureAndRefreshWebApplicationContext(wac);
+            return wac;
+        }
+    }
+    ```
+
+```java
+protected void configureAndRefreshWebApplicationContext(ConfigurableWebApplicationContext wac) {
+    if (ObjectUtils.identityToString(wac).equals(wac.getId())) {
+        if (this.contextId != null) {
+            wac.setId(this.contextId);
+        } else {
+            wac.setId(ConfigurableWebApplicationContext.APPLICATION_CONTEXT_ID_PREFIX + ObjectUtils.getDisplayString(this.getServletContext().getContextPath()) + '/' + this.getServletName());
+        }
+    }
+    wac.setServletContext(this.getServletContext());
+    wac.setServletConfig(this.getServletConfig());
+    wac.setNamespace(this.getNamespace());
+  	//添加监听ContextRefreshedEvent的监听器
+    wac.addApplicationListener(new SourceFilteringListener(wac, new FrameworkServlet.ContextRefreshListener()));
+    ConfigurableEnvironment env = wac.getEnvironment();
+    if (env instanceof ConfigurableWebEnvironment) {
+        ((ConfigurableWebEnvironment)env).initPropertySources(this.getServletContext(), this.getServletConfig());
+    }
+    this.postProcessWebApplicationContext(wac);
+    this.applyInitializers(wac);
+    wac.refresh();
+}
+```
+
+​	ContextRefreshListener是FrameworkServlet的内部类，监听ContxtRefreshedEvent事件，当接收到消息时调用FrameworkServlet的onApplicationEvent方法，在onApplicationEvent方法中会调用一次onRefresh方法，并将refreshEventReceived标志设置为true，表示已经refresh
+
+```java
+ class ContextRefreshListener implements ApplicationListener<ContextRefreshedEvent> {
+        public void onApplicationEvent(ContextRefreshedEvent event) {
+            FrameworkServlet.this.onApplicationEvent(event);
+        }
+    }
+    
+public void onApplicationEvent(ContextRefreshedEvent event) {
+    this.refreshEventReceived = true;
+    this.onRefresh(event.getApplicationContext());
+}
+```
+
+​	当使用第三种方法初始化时已经refresh，不需要再调用onRefresh。第一种也调用了ConfigureAndRefreshWebApplication方法，也refresh过，所以只有使用第二种方式初始化时webApplicationContext时才会在这里调用onRefresh方法。
+
+​	不管哪种方式，onRefresh最终肯定只会调用一次，且DispatcherServlet时通过重写这个模版方法实现初始化的。
+
+### 将webApplicationContext设置到ServletContext中
+
+​	根据publishContext标志判断是否将创建的webApplicationContext设置到ServletContext的属性中，publishContext标志可以在配置Servlet时通过init-param参数设置，HttpServletBean初始化时会将其设置到publishContext参数。
+
+​	将webApplicationContext设置到ServletContext的属性中为了方便获取
+
+> ​	配置Servlet时可以设置的一些初始化参数
+>
+> ​	contextAttribute：在ServletContext的属性中，用作WebApplicationContext的属性名称
+>
+> ​	contextClass：创建WebApplicationContext的类型
+>
+> ​	contextConfigLocation：Spring MVC配置文件的位置
+>
+> ​	publicshContext：是否将webApplicationContext设置到ServletContext的属性
+
+## 1.4 DispatcherServlet
+
+​	onRefresh方法是DispatcherServlet的入口方法。 onRefresh中简单调用了initStrategies，在initStrategies中调用了九个初始化方法。
+
+​	分为两个方法为了层次清晰 刷新容器和初始化
+
+```java
+#DispatcherServlet
+
+protected void onRefresh(ApplicationContext context) {
+    this.initStrategies(context);
+}
+
+protected void initStrategies(ApplicationContext context) {
+    this.initMultipartResolver(context);
+    this.initLocaleResolver(context);
+    this.initThemeResolver(context);
+    this.initHandlerMappings(context);
+    this.initHandlerAdapters(context);
+    this.initHandlerExceptionResolvers(context);
+    this.initRequestToViewNameTranslator(context);
+    this.initViewResolvers(context);
+    this.initFlashMapManager(context);
+}
+```
+
+​	initLocaleResolver初始化分为两部分
+
+​		首先通过context.getBean在容器里面按注册时的名称或类型，这里是名称localeResolver进行查找。
+
+​		如果找不到就调用getDefaultStrategy方法按照类型LocaleResolver获取默认的组件
+
+​		context 是FrameworkServlet中创建的WebApplicationContext，而不是ServletContext。
+
+```java
+private void initLocaleResolver(ApplicationContext context) {
+    try {
+        this.localeResolver = (LocaleResolver)context.getBean("localeResolver", LocaleResolver.class);
+       
+    } catch (NoSuchBeanDefinitionException var3) {
+        this.localeResolver = (LocaleResolver)this.getDefaultStrategy(context, LocaleResolver.class);
+    }
+}
+```
+
+​	getDefaultStrategy方法通过调用getDefaultStrategy重载返回list的方法，不为空取第一个LocaleResolver。
+
+​	因为HandlerMapping等组件可以有多个，所以返回list
+
+```java
+protected <T> T getDefaultStrategy(ApplicationContext context, Class<T> strategyInterface) {
+    List<T> strategies = this.getDefaultStrategies(context, strategyInterface);
+    if (strategies.size() != 1) {
+    } else {
+        return strategies.get(0);
+    }
+}
+
+protected <T> List<T> getDefaultStrategies(ApplicationContext context, Class<T> strategyInterface) {
+        String key = strategyInterface.getName();
+  			//从DefaultStrategies获取所需策略的类型
+        String value = defaultStrategies.getProperty(key);
+        if (value == null) {
+            return new LinkedList();
+        } else {
+          	//如果有多个默认值，根据都好分割为数组
+            String[] classNames = StringUtils.commaDelimitedListToStringArray(value);
+            List<T> strategies = new ArrayList(classNames.length);
+            String[] var7 = classNames;
+            int var8 = classNames.length;
+						//按照取到的类型初始化策略
+            for(int var9 = 0; var9 < 	、var8; ++var9) {
+                String className = var7[var9];
+                try {
+                    Class<?> clazz = ClassUtils.forName(className, DispatcherServlet.class.getClassLoader());
+                    Object strategy = this.createDefaultStrategy(context, clazz);
+                    strategies.add(strategy);
+                } catch (ClassNotFoundException var13) {
+                } catch (LinkageError var14) {
+                }
+            }
+            return strategies;
+        }
+    }
+```
+
+​	上面方法defaultStrategies.getProperty(key)是如何来的，就可以理解默认初始化的方式。
+
+​	defaultStrategies里存放的是org.springframework.web.DispatcherServlet.properties里定义的键值
+
+```java
+    private static final Properties defaultStrategies;
+static {
+    try {
+        ClassPathResource resource = new ClassPathResource("DispatcherServlet.properties", DispatcherServlet.class);
+        defaultStrategies = PropertiesLoaderUtils.loadProperties(resource);
+    } catch (IOException var1) {
+        throw new IllegalStateException("Could not load 'DispatcherServlet.properties': " + var1.getMessage());
+    }
+}
+```
+
+​	该文件定义了不同组件的类型，上传组件MultipartResolver没有默认配置。这九个配置就是onRefresh里面初始化的九个方法。
+
+​	HandlerMapping、HandlerAdapter、HandlerExceptionResolver都配置了多个
+
+> ​		默认配置不是最优配置，只是在没有配置时候又个默认值。可能有些已经弃用了。
+>
+> ​		默认配置只有自相应类型没有配置时才会使用。
+>
+> ​		<mvc:annotation-driven/>不会使用默认配置，因为它配置了HandlerMapping、HandlerAdapter、HandlerExceptionResolver
+
+```properties
+# Default implementation classes for DispatcherServlet's strategy interfaces.
+# Used as fallback when no matching beans are found in the DispatcherServlet context.
+# Not meant to be customized by application developers.
+org.springframework.web.servlet.LocaleResolver=org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver
+
+org.springframework.web.servlet.ThemeResolver=org.springframework.web.servlet.theme.FixedThemeResolver
+
+org.springframework.web.servlet.HandlerMapping=org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping,\
+   org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping
+
+org.springframework.web.servlet.HandlerAdapter=org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter,\
+   org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter,\
+   org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter
+
+org.springframework.web.servlet.HandlerExceptionResolver=org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerExceptionResolver,\
+   org.springframework.web.servlet.mvc.annotation.ResponseStatusExceptionResolver,\
+   org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver
+
+org.springframework.web.servlet.RequestToViewNameTranslator=org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator
+
+org.springframework.web.servlet.ViewResolver=org.springframework.web.servlet.view.InternalResourceViewResolver
+
+org.springframework.web.servlet.FlashMapManager=org.springframework.web.servlet.support.SessionFlashMapManager
+```
+
+​	
+
+​	本节分析了Spring MVC自身的创建过程，Spring MVC中Servlet共有三个层次，分别是HttpServletBean、FrameworkServlet和DispatcherServlet。
+
+​	HttpServletBean直接继承自Java的HttpServlet，作用是将Servlet中配置的参数设置到相应的属性
+
+​	FrameworkServlet初始化了WebApplicationContext，共有三种方式
+
+​	DispatcherServlet初始化了自身的九个组件
+
+
+
+# Spring MVC 处理请求
+
+​	本节分析Spring MVC如何处理请求的。分为两步：
+
+1. 首先分析HttpServletBean、FrameworkServlet和DispatcherServlet的处理过程，可以明白从Servlet容器将请求交给Spring MVC一直到DispatcherServlet具体处理请求前都做了些什么
+
+  2. 重点分析Spring MVC中最核心的处理方法doDispatch的结构
+
+### 2.1 HttpServletBean
+
+​    HttpServletBean主要参与了创建工作，在处理请求中没有涉及相应的请求处理。
+
+### 2.2 FrameworkServlet
+
+​    Servlet处理过程：从Servlet的service方法开始，然后在HttpServlet的service方法中根据不同类型将请求路由到doGet、doHead、doPost、doPut、doDelete、doOption、doTrace，并做了doHead、doOption、doTrace的默认实现，doHead调用了doGet，返回只有header没有body的response。
+
+​    FrameworkServlet重写了service、doGet、doPost、doPut、doDelete、doOptions、doTrace，在service增加了对PATCH类型的处理，其他类型的请求直接交给父类进行处理；doOptions和doTrace可以设置是否交给父类处理(默认都是交给父类处理，doOptions会在父类的处理结果中增加PATCH类型)；doGet、doPost、doPut和doDelete都是自己处理。所有需要自己处理的请求都交给了processRequest方法进行统一处理。
+
+​    以下是service和doGet的代码：
+
+```java
+protected void service(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+   HttpMethod httpMethod = HttpMethod.resolve(request.getMethod());
+   if (httpMethod == HttpMethod.PATCH || httpMethod == null) {
+      processRequest(request, response);
+   }
+   else {
+      super.service(request, response);
+   }
+}
+protected final void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+   processRequest(request, response);
+}
+```
+
+​    由上可以看出，将请求合并到processRequest中，在里面Spring MVC对不同类型的请求用不同的Handler进行处理。![image-20200417210800618](E:/Git/make/总结/images/image-20200417210800618.png)
+
+​	ProcessRequest方法是FrameworkServlet类在处理请求中最核心的方法
+
+```java
+protected final void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    long startTime = System.currentTimeMillis();
+    Throwable failureCause = null;
+  	//获取localContextHolder中原来保存的localContext
+    LocaleContext previousLocaleContext = LocaleContextHolder.getLocaleContext();
+  	//获取当前的localContext
+    LocaleContext localeContext = this.buildLocaleContext(request);
+  	//获取RequestContextHolder中原来保存的RequestAttributes
+    RequestAttributes previousAttributes = RequestContextHolder.getRequestAttributes();
+  	//获取当前请求的ServletRequestAttributes
+    ServletRequestAttributes requestAttributes = this.buildRequestAttributes(request, response, previousAttributes);
+    WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
+    asyncManager.registerCallableInterceptor(FrameworkServlet.class.getName(), new FrameworkServlet.RequestBindingInterceptor());
+  	//当前的localContext和当前请求的ServletRequestAttributes设置到localContextHolder和RequestContextHolder
+    this.initContextHolders(request, localeContext, requestAttributes);
+    try {
+      	//实际处理请求入口
+        this.doService(request, response);
+    } catch (ServletException var17) {
+        failureCause = var17;
+        throw var17;
+    } catch (IOException var18) {
+        failureCause = var18;
+        throw var18;
+    } catch (Throwable var19) {
+        failureCause = var19;
+        throw new NestedServletException("Request processing failed", var19);
+    } finally {	
+      	//处理完恢复原来的localContext和ServletRequestAttributes到localContextHolder和RequestContextHolder
+        this.resetContextHolders(request, previousLocaleContext, previousAttributes);
+        if (requestAttributes != null) {
+            requestAttributes.requestCompleted();
+        }
+      	//发布ServletRequestHandledEvent消息
+        this.publishRequestHandledEvent(request, response, startTime, (Throwable)failureCause);
+    }
+}
+```
+
+​	processRequest方法中的核心语句是doService(request, response),模版方法，在DispatcherServlet中具体实现。
+
+​	processRequest自己主要做了两件事
+
+     		1. 对localContext和ServletRequestAttributes的设置及恢复
+               		2. 处理完后发布ServletRequestHandledEvent消息
+
+​    LocaleContext:存放着Locale（本地化信息）；RequestAttributes：是spring的一个接口，通过它可以get/set/removeAttribute，根据scope参数判断操作request还是session，具体使用的是ServletRequestAttributes，ServletRequestAttributes里面封装了request、response、session，通过get就可以获得。
+
+​	ServletRequestAttributes的setAttribute方法，设置属性时通过scope判断是对request还是session进行设置，isRequestActive()，当调用了ServletRequestAttributes的requestCompleted方法后requestActive就会变为false，之前是true。
+
+> ​	因为request执行完了，不能再对它进行操作了，上面的finally块已调用requestAttributes.requestCompleted()的方法
+
+```java
+public void setAttribute(String name, Object value, int scope) {
+    if (scope == 0) {
+      	if (!this.isRequestActive()) {
+                throw new IllegalStateException("Cannot set request attribute - request is not active anymore!");
+            }
+        this.request.setAttribute(name, value);
+    } else {
+        HttpSession session = this.getSession(true);
+        this.sessionAttributesToUpdate.remove(name);
+        session.setAttribute(name, value);
+    }
+}
+```
+
+​    LocaleContext可以获取Locale
+
+​	RequestAttributes用于管理request和session的属性
+
+​	LocaleContextHolder，是抽象类，里面的方法是static的，可以直接使用。没有父类和子类，不能对它实例化。
+
+```java
+public abstract class LocaleContextHolder {
+    private static final ThreadLocal<LocaleContext> localeContextHolder = new NamedThreadLocal("Locale context");
+    private static final ThreadLocal<LocaleContext> inheritableLocaleContextHolder = new NamedInheritableThreadLocal("Locale context");
+```
+
+​	   LocaleContextHolder类里面封装了两个属性localeContextHolder和inheritableLocaleContextHolder，都是LocalContext，其中第二个可以被子线程继承。localeContextHolder提供了get/set方法，可以获取和设置localeContext。另外还提供了get/setLocale方法，可以直接操作Locale，都是static的。
+
+​	 RequestContextHolder也是一样的道理。封装了RequestAttributes，可以get/set/removeAttribute，因为实际封装的ServletRequestAttributes，还可以getRequest、getResponse、getSession，就可以在任何地方获取这些对象了。
+
+​	最后发布 this.publishRequestHandledEvent(request, response, startTime, (Throwable)failureCause)发布ServletRequestHandledEvent消息
+
+​	当publishEvents设置为true时，请求处理结束后就会发出这个消息，无论请求处理成功与否都会发布。publishEvents在web.xml中和Spring MVC的Servlet中可以配置，默认为true。
+
+```java
+private void publishRequestHandledEvent(HttpServletRequest request, HttpServletResponse response, long startTime, Throwable failureCause) {
+    if (this.publishEvents) {
+        long processingTime = System.currentTimeMillis() - startTime;
+        int statusCode = responseGetStatusAvailable ? response.getStatus() : -1;
+        this.webApplicationContext.publishEvent(new ServletRequestHandledEvent(this, request.getRequestURI(), request.getRemoteAddr(), request.getMethod(), this.getServletConfig().getServletName(), WebUtils.getSessionId(request), this.getUsernameForRequest(request), processingTime, failureCause, statusCode));
+    }
+}
+```
+
+​    FrameworkServlet工作流程：首先，在service方法中添加对PATCH的处理，并将所需要自己处理的请求集中到processRequest进行统一处理。然后，processRequest将处理逻辑交给模板方法doService，在doService的的前后使用request获取LocaleContexthe和RequestAttributes进行保存，处理完之后恢复。最后，发布ServletRequesthandledEvent事件。
+
+### 2.3 DispatcherServlet
+
+​    DispatcherServlet里面执行处理的入口方法是doService。doService将处理交给doDispatch进行具体处理，在doDispatch处理前doService做了一些事情：首先判断是不是include请求，如果是则对request的Attribute做个快照备份，等doDispatch处理完之后进行还原，在做完快照后又对request设置了一些属性
+
+```java
+protected void doService(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    if (this.logger.isDebugEnabled()) {
+  String resumed = WebAsyncUtils.getAsyncManager(request).hasConcurrentResult() ? " resumed" : "";
+    }
+  	// 当include请求时对request的Attribute做快照备份
+    Map<String, Object> attributesSnapshot = null;
+    if (WebUtils.isIncludeRequest(request)) {
+        attributesSnapshot = new HashMap();
+        Enumeration attrNames = request.getAttributeNames();
+        label108:
+        while(true) {
+            String attrName;
+            do {
+                if (!attrNames.hasMoreElements()) {
+                    break label108;
+                }
+                attrName = (String)attrNames.nextElement();
+            } while(!this.cleanupAfterInclude && !attrName.startsWith("org.springframework.web.servlet"));
+
+            attributesSnapshot.put(attrName, request.getAttribute(attrName));
+        }
+    }
+		// 对request设置一些属性
+    request.setAttribute(WEB_APPLICATION_CONTEXT_ATTRIBUTE, this.getWebApplicationContext());
+    request.setAttribute(LOCALE_RESOLVER_ATTRIBUTE, this.localeResolver);
+    request.setAttribute(THEME_RESOLVER_ATTRIBUTE, this.themeResolver);
+    request.setAttribute(THEME_SOURCE_ATTRIBUTE, this.getThemeSource());
+    FlashMap inputFlashMap = this.flashMapManager.retrieveAndUpdate(request, response);
+    if (inputFlashMap != null) {
+        request.setAttribute(INPUT_FLASH_MAP_ATTRIBUTE, Collections.unmodifiableMap(inputFlashMap));
+    }
+
+    request.setAttribute(OUTPUT_FLASH_MAP_ATTRIBUTE, new FlashMap());
+    request.setAttribute(FLASH_MAP_MANAGER_ATTRIBUTE, this.flashMapManager);
+
+    try {
+        this.doDispatch(request, response);
+    } finally {
+      	// 还原request快照的属性
+        if (!WebAsyncUtils.getAsyncManager(request).isConcurrentHandlingStarted() && attributesSnapshot != null) {
+            this.restoreAttributesAfterInclude(request, attributesSnapshot);
+        }
+    }
+}
+```
+
+   对request设置的属性中，前面4个属性webApplicationContext、localeResolver、themeResolver和themeSource在Handler和view中使用。后面3个属性都和flashMap相关，主要用于Redirect转发是参数的传递。
+
+​    doDispatch的核心代码：（1）根据request找到Handler  (2)根据Handler找到对应的HandlerAdapter  (3)用HandlerAdapter处理Handler  （4）调用processDispatchResult方法处理上面处理之后的返回结果(包括找到View并渲染输出给用户)。
+
+```java
+mappedHandler = this.getHandler(processedRequest);
+HandlerAdapter ha = this.getHandlerAdapter(mappedHandler.getHandler());
+mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
+ this.processDispatchResult(processedRequest, response, mappedHandler, mv, (Exception)dispatchException);
+```
+
+​    Hanlder :处理器，标注了@RequestMapping的类或者方法，直接对应MVC中的Controller
+
+​    HandlerMapping : 根据请求查找Handler，
+
+​    handlerAdapter ：适配器，调用具体的Handler对请求进行处理。
+
+​	Hanlder相关与设备，HandlerMapping根据需求选择不同的设备，handlerAdapter具体操作设备的工人，不同的设备需要不同的工人。
+
+​	View和ViewResolver的原理与Handler与HandlerMapping的原理类似。View用来展示数据的，ViewResolver用来查找View。
+
+### 2.4 DoDispatch结构
+
+![image-20200417223334684](E:/Git/make/总结/images/image-20200417223334684.png)
+
+详细分析doDispatch内部的结构及处理的流程
+
+```java
+protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    HttpServletRequest processedRequest = request;
+    HandlerExecutionChain mappedHandler = null;
+    boolean multipartRequestParsed = false;
+    WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
+
+    try {
+        try {
+            ModelAndView mv = null;
+            Object dispatchException = null;
+
+            try {
+              	//检查是不是上传请求
+                // 是上传资源的话将request转换为multipartHttpServletRequest
+                processedRequest = this.checkMultipart(request);
+                multipartRequestParsed = processedRequest != request;
+                //根据request找到Handler
+              	mappedHandler = this.getHandler(processedRequest);
+                if (mappedHandler == null || mappedHandler.getHandler() == null) {
+                    this.noHandlerFound(processedRequest, response);
+                    return;
+                }
+								//根据Handler找到HandlerAdapter
+                HandlerAdapter ha = this.getHandlerAdapter(mappedHandler.getHandler());
+              	//处理GET、HEAD请求的Last-Modified
+                String method = request.getMethod();
+                boolean isGet = "GET".equals(method);
+                if (isGet || "HEAD".equals(method)) {
+                    long lastModified = ha.getLastModified(request, mappedHandler.getHandler());
+                    if (this.logger.isDebugEnabled()) {
+                        this.logger.debug("Last-Modified value for [" + getRequestUri(request) + "] is: " + lastModified);
+                    }
+
+                    if ((new ServletWebRequest(request, response)).checkNotModified(lastModified) && isGet) {
+                        return;
+                    }
+                }
+								// 执行相应Interceptor的preHandle
+                if (!mappedHandler.applyPreHandle(processedRequest, response)) {
+                    return;
+                }
+								//HandlerAdapter使用Handler处理请求
+                mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
+              	// 如果需要异步处理，直接返回
+                if (asyncManager.isConcurrentHandlingStarted()) {
+                    return;
+                }
+								// 当view为空时，根据request设置默认view
+                this.applyDefaultViewName(processedRequest, mv);
+                //执行相应Interceptor的postHandle
+                mappedHandler.applyPostHandle(processedRequest, response, mv);
+            } catch (Exception var20) {
+                dispatchException = var20;
+            } catch (Throwable var21) {
+                dispatchException = new NestedServletException("Handler dispatch failed", var21);
+            }
+						// 处理返回结果。包括处理异常、渲染页面、发出完成通知触发Interceptor的afterCompletion
+            this.processDispatchResult(processedRequest, response, mappedHandler, mv, (Exception)dispatchException);
+        } catch (Exception var22) {
+            this.triggerAfterCompletion(processedRequest, response, mappedHandler, var22);
+        } catch (Throwable var23) {
+            this.triggerAfterCompletion(processedRequest, response, mappedHandler, new NestedServletException("Handler processing failed", var23));
+        }
+
+    } finally {
+      	// 判断是否执行异步请求
+        if (asyncManager.isConcurrentHandlingStarted()) {
+            if (mappedHandler != null) {
+             mappedHandler.applyAfterConcurrentHandlingStarted(processedRequest, response);
+            }
+          // 删除上传请求的资源
+        } else if (multipartRequestParsed) {
+            this.cleanupMultipart(processedRequest);
+        }
+    }
+}
+```
+
+doDispatch分为两部分：处理请求和渲染页面。开头定义了几个变量
+
+> ​	HttpServletRequest processedRequest：实际处理时所用的request，如果不是上传请求则直接使用接收到的request，否则封装为上传类型的request
+>
+> ​	HandlerExecutionChain mappedHandler：处理请求的处理器链(包含处理器和对应的Interceptor)
+>
+> ​	Boolean multipartRequestParsed：是不是上传请求的标志
+>
+> ​	ModelAndView mv：封装Model和View的容器
+>
+> ​	Exception dispatchException：处理请求过程中抛出的异常。不包含渲染过程抛出的异常	
+
+​	doDispatch中首先检查是不是上传请求，是则将request转换为multipartHttpServletRequest，并将multipartRequestParsed标志设置为true。其中使用了MultipartResolver。
+
+​	然后通过getHandler方法获取Handler处理器链，使用HandlerMapping返回值为HandlerExecutionChain类型，其中包含与当前request相匹配的Interceptor和Handler。
+
+```java
+protected HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {
+    Iterator var2 = this.handlerAdapters.iterator();
+    HandlerAdapter ha;
+    do {
+        if (!var2.hasNext()) {
+            throw new ServletException("No adapter for handler [" + handler + "]: The DispatcherServlet configuration needs to include a HandlerAdapter that supports this handler");
+        }
+        ha = (HandlerAdapter)var2.next();
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace("Testing handler adapter [" + ha + "]");
+        }
+    } while(!ha.supports(handler));
+    return ha;
+}
+```
+
+​	方法结构非常简单，HandlerExecutionChain的类型类似前面Tomcat中的Pipeline，Interceptor和Handler相当于Value和BaseValue，执行时先一次执行Interceptor的preHandle方法，最后执行Handler，返回时按相反的顺序执行Interceptor的postHandle方法。
+
+​	接下来处理Get、HEAD请求的Last-Modified。当浏览器第一次根服务器请求资源(GET、Head请求)时，服务器在返回的请求头里包含一个Last-Modified的属性，代表本资源最后是什么时候修改的。浏览器以后发送请求时会同时发送之前接收到的Last-Modified，服务器接收到带Last-Modified的请求后会用其值和自己实际资源的最后修改事件做对比，如果资源过期了则返回新的资源(同时返回新的Last-Modified)，否则直接返回304状态吗表示资源为过期，浏览器直接使用之前缓存的结果。
+
+​	接下来依次调用相应Interceptor的preHandle。
+
+​	处理完Interceptor的preHandle后就到了此方法最关键的地方—让HandlerAdapter使用Handler处理请求，Controller就是在这个地方执行的。这里主要使用了HandlerAdapter。
+
+​	Handler处理完请求后，如果需要异步处理，则直接返回，如果不需要异步处理，当view为空时(如Handler返回值为void)，设置默认view，然后执行相应Interceptor的postHandle。设置默认view的过程中使用到了ViewNameTranslator。
+
+​	结下来使用processDispatchResult方法处理前面返回的结果，其中包括处理异常、渲染页面、触发Interceptor的afterCompletion方法三部分内容。
+
+​	doDispatch的异常处理结构。doDispatch有两层异常捕获，内层是捕获在对请求进行处理的过程中抛出的异常，外层主要是在处理渲染页面时抛出的。
+
+​	内层的异常就是执行请求处理时的异常会设置到dispatchException变量，然后在processDispatchResult方法中进行处理，外层则是处理processDispatchResult方法抛出的异常。processDispatchResult代码如下
+
+```java
+private void processDispatchResult(HttpServletRequest request, HttpServletResponse response, HandlerExecutionChain mappedHandler, ModelAndView mv, Exception exception) throws Exception {
+    boolean errorView = false;
+  	// 如果请求处理的过程中有异常抛出则处理异常
+    if (exception != null) {
+        if (exception instanceof ModelAndViewDefiningException) {
+            this.logger.debug("ModelAndViewDefiningException encountered", exception);
+            mv = ((ModelAndViewDefiningException)exception).getModelAndView();
+        } else {
+            Object handler = mappedHandler != null ? mappedHandler.getHandler() : null;
+            mv = this.processHandlerException(request, response, handler, exception);
+            errorView = mv != null;
+        }
+    }	
+  	// 渲染页面
+    if (mv != null && !mv.wasCleared()) {
+        this.render(mv, request, response);
+        if (errorView) {
+            WebUtils.clearErrorRequestAttributes(request);
+        }
+    } else if (this.logger.isDebugEnabled()) {
+    }
+    if (!WebAsyncUtils.getAsyncManager(request).isConcurrentHandlingStarted()) {		 // 发出请求处理完成的通知，触发Interceptor的afterCompletion
+        if (mappedHandler != null) {
+            mappedHandler.triggerAfterCompletion(request, response, (Exception)null);
+        }
+    }
+}
+```
+
+​		processDispatchResult处理异常的方式其实就是将相应的错误页面设置到View，在其中的processHandlerException方法中用到了HandlerExceptionResolver。
+
+​	渲染页面具体在render方法中执行，render中首先对response设置了Local，过程中使用到了LocalResolver，然后判断View如果是String类型则调用resolveViewName方法使用ViewResolver得到实际的View，最后调用View的render方法对页面进行具体渲染，渲染的过程中使用到了ThemeResolver。
+
+​	最后通过mappedHandler的triggerAfterCompletion方法触发Interceptor的afterCompletion方法，这里的Interceptor也是按反方向执行的。到这里processDispatchResult方法就执行完了。
+
+​	再返回doDispatch方法中，在最后的finally中判断是否请求启动了异步处理，如果启动了则调用相应异步处理的拦截器，否则如果是上传请求则删除上传请求过程中产生的临时资源。	
+
+## 小结
+
+​	分析了Spring MVC中请求处理的过程。首先对三个Servlet进行分析，然后单独分析DispatcherServlet中的doDispatch方法。
+
+​	三个Servlet的处理过程大致功能如下：
+
+​		HttpServletBean：没有参与实际请求的处理
+
+​		FrameworkServlet：将不同类型的请求合并到了processRequest方法统一处理，processRequest方法中做了三件事：
+
+​			调用了doService模版方法具体处理请求
+
+​			将当前请求的LocaleContext和ServletRequestAttributes在处理请求前设置到了LocaleContextHodler和RequestContextHolder，并在请求处理完成后恢复。
+
+​			请求处理完后发布了ServletRequestHandleEvent消息
+
+​		DispatcherServlet：doService方法给request设置了一些属性并将请求交给doDispatch方法具体处理
+
+​	DispatcherServlet中的doDispatch方法完成Spring MVC中请求处理过程的顶层设计，它使用DispatcherServlet中的九大组件完成了具体的请求处理。另外HandlerMapping、Handler和HandlerAdapter这三个概念的含义及它们之间的关系也非常重要。
+
+# Spring MVC 原理
+
+​	如果在 web.xml 中设置 DispatcherServlet 的**为 /** 时,当用户发 起 请 求 , 请 求 一 个 控 制 器 , 首 先 会 执 行**DispatcherServlet**. 由DispatcherServlet 调 用 **HandlerMapping** 的DefaultAnnotationHandlerMapping **解 析 URL**, 解 析 后 调 用**HandlerAdatper** 组 件 的 AnnotationMethodHandlerAdapter **调 用Controller 中的 HandlerMethod.**当 HandlerMethod 执行完成后会返回**View**,会被 ViewResovler 进行视图解析,解析后调用 **jsp 对应的.class 文件并运行**,最终把运行.class 文件的结果响应给客户端.	
+
+Spring MVC本质是一个Servlet，Servlet运行需要一个Servlet容器，如常用的Tocmat。Servlet容器帮我们统一做了像底层Socket连接那种通用又麻烦的工作，让开发变得轻松，只需要按照Servlet的接口做就可以。
+
+​	Spring MVC又在此基础上提供了一套通用的解决方案，Servlet都可以不用写，只关注业务就可以。
+
+​	下面以Tomcat为例分析Servlet容器的结构和原理。
+
+​	Tomca可以分为两大部分：连接器和容器，连接器专门用于处理网络连接相关的事情，如Socket连接、request封装、连接线程池维护等工作，容器用来存放我们编写的网站程序，Tomcat中一共有4层容器：Engine、Host、Context和Wrapper。一个Wrapper对应一个Servlet，一个Context对应一个应用，一个Host对应一个站点，Engine是引擎，一个容器只有一个。Context和Host的区别是Host代表站点，如不同的域名，而Context表示站点下的一个应用。一套容器和多个连接器组成一个Service，一个Tomcat中可以有多个Service。
+
+​	Servlet接口一共定义了5个方法，其中init方法和destroy用于初始化和销毁Servlet，整个生命周期中只会被调用一次；service方法实际处理请求；getServletConfig方法返回的ServletConfig，可以获取到配置Servlet时使用init-param配置的参数，还可以获取ServletContext；getServletlnfo方法可以获取到一些Servlet相关的信息，如作者、版权等，这个方法需要自己实现，默认返回空字符串。
+
+​	Java提供了两个Servlet的实现类：GenericServlet和HttpServlet。
+
+​	GenericServlet主要做了三件事：①实现了ServletConfig接口，让我们可以直接调用ServletConfig中的方法；②提供了无参的init方法；③提供了log方法。
+
+​	HttpServlet主要做了两仲事：①将ServletRequest和ServletResponse转换为了HttpServletRequest和HttpServletResponse;②根据Http请求类型（如Get、Post等）将请求路由到了7个不同的处理方法，这样在编写代码时只需要将不同类型的处理代码编写到不同的方法中就可以了，如常见的doGet、doPost方法就是在这里定义的。
+
+​	Spring MVC的本质是个Servlet，这个Servlet继承自HttpServlet。Spring MVC中提供了三个层次的Servlet：HttpServletBean、FrameworkServlet和DispatcherServlet，下层继承上层，HttpServletBean直接继承自Java的HttpServlet。
+
+​	HttpServletBean用于将Servlet中配置的参数设置到相应的属性中，FrameworkServlet初始化了Spring MVC中所使用的WebApplicationContext，具体处理请求的9大组件是在DispatcherServlet中初始化的。
+
+​	Spring MVC的结构就总结到这里，接下来总结Spring MVC的请求处理过程。SpringMVC中请求的处理主要在DispatcherServlet中，不过它上一层的FrameworkServlet也做了一些工作，首先它将所有类型的请求都转发到processRequest方法，然后在processRequest方法中做了三件事：①调用了doService模板方法具体处理请求，doService方法在DispatcherServlet中实现；（参将当前请求的LocaleContext和ServletRequestAttributes在处理请求前设置到了LocaleContextHolder和RequestContextHolder，并在请求处理完成后恢复；③请求处理完后发布一个ServletRequestHandledEvent类型的消息。
+
+​	DispatcherServlet在doServic方法中将webApplicationContext、IocaleResolver、themeResolver、themeSource、FlashMap和FlashMapManager设置到request的属性中以方便使用，然后将请求交给doDispatch方法进行具体处理。
+
+​	DispatcherServlet的doDispatch方法按执行过程大致可以分为4步：①根据request找到Handler；②根据找到的Handler找到对应的HandlerAdapter；③用HandlerAdapter凋用Handler处理请求；④调用processDispatchResult方法处理Handler处理之后的结果（主要处理异常和找到View并渲染输出给用户）。这4步中的每一步又有自己复杂的处理过程，详细内容这里就不介绍了，21.2节会再和大家一起回顾。
+
+​	前面介绍的Handler、HandlerMapping和HandlerAdapter的关系，Handler是具体干活的工具，HandlerMapping用来找出需要的Handler，HandlerAdapter是怎么具体使用Handler干活，可以理解为使用工具的人。
+
+​	一般做事情都是这个步骤，先找到工具，然后找到使用工具的人，最后人使用工具干活。这种思想就是Spring MVC的灵魂，它贯穿整个Spring MVC。上面说的Handler是MVC中的C层，其实Spring MVC在MVC三层使用的都是这种思想，在V层也就是View层干活的工具是View，查找View使用的是ViewResoLver和RequestToViewNameTranslator，因为View是标准的格式，使用非常简单，所以就没有"使用的人"这个角色；在M层也就是Model层，这层干活的就多了，注释了@ModelAttribute的方法、SessionAttribute、FlashMap、Model以及需要执行的方法的参数和返回值等都属于这一层，HandlerMethodArgumentResolver和HandlerMethodReturn ValueHandler、ModeIFactory和FlashMapManager是这一层中"使用的人"，HandlerMethodArgumentResolver和HandlerMethodReturn ValueHandler同时还担任着"查找共具"的角色。
+
+​	因为Model层贯穿于Controller层和View层之中，所以很容易将其当作那两层中的内容，其实Model层才是Spring MVC最复杂的地方。
+
+# 一个HTTP请求的处理流程
+
+先大致分析一下启动过程，然后详细分析请求的处理过程。
+
+​	因为在web.xml文件中给Spring MVC的Servlet配置了load-on-startup，所以程序启动时会初始化Spring MVC，在HttpServletBean中将配置的contextConfigLocation属性设置到Servlet中，然后在FrameworkServlet中创建了WebApplicationContext，DispatcherServlet根据contextConfigLocation配置的classpath下的appContext.xml文件初始化了Spring MVC中的组件。这就是Spring MVC容器创建的过程。
+
+下面来分析具体处理请求的过程。
+
+1)请求发送到服务器后，服务器程序就会分配一个Socket线程来跟它连接，接着创建出request和response，然后交给对应的Servlet处理，这样请求就从Servlet容器传递到了Servlet（Servlet容器）。
+
+2)在Servlet中请求首先会被HttpServlet处理，在HttpServlet的service方法中将ServletRequest和ServletResponse转换为HttpServletRequest和HttpServletResponse，并调用转换为后Request和Response的servlce方法(Java的HttpServlet)。
+
+3)接下来请求就到了Spring MVC，在Spring MVC中首先由FrameworkServlet的service方法进行处理，这里service方法又会将请求交给HttpServlet的service方法处理。(FrameworkServlet)
+
+4)在HttpServlet的service方法中会根据请求类型将请求传递到对应的方法如doGet方法(Java的HttpServlet)。
+
+5)doGet方法在Spring MVC的FrameworkServlet中，它又将传递到了processRequest方法，然后在processRequest方法中将当前请求的LocaleContext和RequestAttributes设置到LocaleContextHolder和RequestContextHolder后将请求传递到了doService方法，doService方法在DispatcherServlet里实现(FrameworkServlet)。
+
+6)DispatcherServlet的doService方法将webApplicationContext. localeResolver. themeResolver. themeSource. outputFlashMap和flashMapManager设置到了request的属性中，然后将请求传递到了doDispatch方法中(DispatcherServlet)。
+
+7)DispatcherServlet的doDispatch中首先调用checkMultipart方法检查是不是上传请求，然后调用getHandler方法获取到Handler( DispatcherServlet)。
+
+8)getHandler方法获取Handler的过程会遍历容器中所有的HandlerMapping,<<mvc:annotation-driven/>>标签配置的HandlerMapping是RequestMappingHandlerMapping和BeanNameUrIHandlerMapping，在用RequestMappingHandlerMapping匹配时我们的请求会和其初始化时读取到定义的@RequestMapping(value= "hello"))所注释的内容相匹配，然后根据这个条件找到定义的处理器方法hello方法(RequestMappingHandlerMapping)。
+
+9)找到处理器后调用RequestMappingInfoHandlerMapping里的handleMatch方法会将匹配到的Pattern( hello)设置到了request的属性中( RequestMappinglnfoHandlerMapping)。
+
+10)找到Handler后返回DispatcherServlet的doDispatch方法中，然后调用getHandlerAdapter方法根据Handler查找HandlerAdapter．也就是根据工具找使用工具的人。查找的方式也是遍历配置的所有HandlerAdapter，然后分别调用它们的supports方法进行检查，检查的方法通常是看Handler的类型是否支持，RequestMappingHandlerAdapter. HttpRequestHandlerAdapter和SimpleControllerHandlerAdapter,最后找到RequestMappingHandlerAdapter( DispatcherServlet)。
+
+11)DispatcherServlet的doDispatch方法中检查到是Get请求，然后检查是否可以使用缓存，因为RequestMappingHandlerAdapter的getLastModified方法直接返回-l，所以不会使用缓存，接着调用了Handlerlnterceptor的preHandle方法，这里没有配置Handlerlnterceptor，这一步就不管了，接下来用RequestMappingHandlerAdapter便用Handler处理请求（DispatcherServlet）。
+
+12)RequestMappingHandlerAdapter首先在其父类的handle方法中直接将请求传递到了它的handlelnternal方法，handlelnternal方法首先调用getSessionAttributesHandler初始化了本处理器对应的SessionAttributesHandler，并判断出注释有@SessionAttributes，进而调用checkAndPrepare方法禁止了Response的缓存，然后将请求传递到了invokeHandleMethod方法( RequestMappingHandlerAdapter).
+
+13)RequestMappingHandlerAdapter的invokeHandleMethod方法中首先创建了WebDataBinderFactory,ModeIFactory和ServletlnvocableHandlerMethod, ModeIFactory创建过程中会找到定义的注释了@ModeIAttribute的replaceSensitiveWords万法(RequestMappingHandlerAdapter)。
+
+14)接着创建ModelAndViewContainer，并调用ModeIFactory的initModel方法给Model设置参数，这里会调用了定义的replaceSensitiveWords方法，调用前会使用RequestParamMethodArgumentResolver解析出"xxx"参数的值并设置给replaceSensitiveWords方法，方法处理完（去除敏感词）后，ModeIFactory将其使用@ModelAttribute注释中的"xxx"作为name，去除敏感词后的内容作为value设置到Model中(ModeIFactory)。
+
+15)接下来调用ServletInvocableHandlerMethod的invokeAndHandle方法实际执行处理,先在父类InvocableHandlerMethod的invokeForRequest方法中调用了getMethodArgumentValues方法来解析参数，@PathVariable、RedirectAttributes、Model三个参数分别使用PathVariableMethodArgumentResolver、RedirectAttributesMethodArgumentResolver和ModelMethodProcessors三个参数解析器来解析，第一个返回在HandlerMapping中（第9步）设置到request属性中的值，第二个会新建一个RedirectAttributesModeLMap然后设置到mavContainer中并返回，第三个直接返回mavContainer中的Model，这时的Model中已经保存了前面去敏感词后的xx参数(InvocableHandlerMethod).
+
+16)接下来调用InvocableHandlerMethod的dolnvoke方法处理请求，这里实际调用了我们编写的xxx处理方法，其中将"xx"设置到RedirectAttributes中，通过FlashMap传递，将"yy"设置到Model中，因为它在@SessionAttributes中进行了设置，所以会保存到SessionAttributes中，处理完后返回"redirect:/showArticle"，将请求返回到ServletInvocableHandlerMethod(自定义的FollowMeController).
+
+17)ServletlnvocableHandlerMethod使用HandlerMethodReturn ValueHandler处理返回值，因为返回的是String，所以使用的是ViewNameMethodReturn ValueH andler，它首先将返回值"redirect:/showArticle"设置到mavContainer的wew里，然后将mavContainer中的redirect标志redirectModeIScenario设置为了true，这样ServletlnvocableHandlerMethod就处理完了，接着将请求返回RequestMappingHandlerAdapter( ServletInvocableHandlerMethod)。
+
+18)RequestMappingHandlerAdapter调用getModeIAndView方法对返回值进一步处理，首先使用ModeIFactory的updateModel方法处理@SessionAttributes注释，将其中的"xx"参数从Model中取出并使用sessionAttributesHandler保存；然后使用mavContainer中的Model和View创建ModelAndView；最后检查到Model是RedirectAttributes类型（因为我们返回的是redirect视图，而且设置了RedirectAttributes属性，所以mavContamer中getModel会返回RedirectAttributes类型的Model），这时会将之前保存到RedirectAttributes中的"xxx"参数设置到outputFlashMap，这样RequestMappingHandlerAdapter的处理就完成了，请求返回DispatcherServlet中(RequestMappingHandlerAdapter).
+
+19)DispatcherServlet在doDispatch方法中首先检查返回的View是否为空，如果为空使用RequestToViewNameTranslator查找默认View，然后执行Handlerlnterceptor的applyPostHandle方法，这里这两项都不需要处理。接下来将请求传递到processDispatchResult方法( DispatcherServlet)。
+
+20)DispatcherServlet的processDispatchResult方法中首先判断是否有异常，这里没有则不需要处理，然后调用render方法进行页面的渲染。render方法中首先使用localeResolver解析出Locale；然后调用resolveViewName方法解析出View，解析过程使用到了ViewResolver，这里使用的是我们配置的InternalResourceViewResolver，具体处理方法在UrIBasedViewResolver的createView方法中，它检查到是redirect的返回值，所以创建了RedirectView类型的View；然后调用View的render方法渲染输出(DispatcherServlet)。
+
+21)RedirectView的render方法在父类AbstractView中定义，其中调用了RedirectView的renderMergedOutputModel方法，renderMergedOutputModel方法中将request属性中保存的outputFlashMap和FlashMapManager取出，使用FlashMapManager将outputFlashMap保存到了Session中，然后调用sendRedirect方法使用response的sendRedirect方法将请求发出，然后请求返回DispatcherServlet昀processDispatchResult方法(RedirectView)。
+
+22)DispatcherServlet的processDispatchResult方法接着调用Handler的triggerAfierComp-letion方法，进而调用拦截器的afterCompletion方法，然后将请求返回到FrameworkServlet( DispatcherServlet)。
+
+23)在FrameworkServlet的processRequest方法中将原来的LocaleContext和RequestAttributes恢复到LocaleContextHolder和RequestContextHolder中，并发出ServletRequestHandledEvent消息，最后将请求返回给Servlet容器(FrameworkServlet)。
+
+这样一个完整的请求就处理完了。 Redirect后的请求处理过程大致和前面的过程差不多，主要有以下不同：
+
+1. 在上述第6步中DispatcherServlet的doService方法会使用flashMapManager将之前保存的FlashMap取出保存到request的"INPUT_ FLASH—MAP_ ATTRIBUTE"属性中；
+2. 在上述第14步中ModeIFactory的initModel方法会将之前保存在SessionAttributes中的"xx"参数设置到Model中；
+3. 在上述第1 5步中参数解析器使用的是ModeIMethodProcessor和SessionStatusMethodArgumentResolver，它们都是直接从mavContainer中获取的；
+4. 在上述第1 8步中ModelFactory的updateModel方法会在判断mavContainer中sessionStatus的状态后将SessionAttributes清空；
+5. 在上述第20、21步中由于本次返回值不是redirect类型所以IntemaIResourceViewResolver解析出的不是RedirectView而是jsp类型的InternaIResourceView，对应的模板是`/WEB-INF/views/xx.jsp`.
+
+# Spring MVC Java配置源码
+
+## SpringServletContainerInitializer
+
+​	Servlet 3.0 {ServletContainerInitializer}设计为使用Spring的WebApplicationInitializer SPI支持基于代码的Servlet容器配置，而不是（或可能与传统的基于 web.xml 的组合）方法。
+
+Tocmat web容器在启动的时候去调用ServletContainerInitializer的onStartup()，这是Spring实现的Servlet规范的，Servlet容器的初始化器 ，传入ServletContext web上下文对象
+
+spring-web 下 **resources/META-INF/services/javax.servlet.ServletContainerInitializer**，通过SPI机制调用SpringServletContainerInitializer
+
+```
+org.springframework.web.SpringServletContainerInitializer
+```
+
+#### onStartup(webAppInitializerClasses, ServletContext)
+
+它的onStartup方法找到所有的**WebApplicationInitializer**的实现类，按照Order排序，然后依次执行
+
+```java
+//感兴趣的类WebApplicationInitializer，该类的所有实现会传入onStartup方法 Set<Class<?>> webAppInitializerClasses 属性中
+@HandlesTypes(WebApplicationInitializer.class)
+public class SpringServletContainerInitializer implements ServletContainerInitializer {
+    /**
+ * 将{ServletContext}委托给应用程序类路径上存在的任何{@link WebApplicationInitializer} 实现。
+	 *  <p>因为此类声明了@ {@ code HandlesTypes（WebApplicationInitializer.class）}，所以Servlet 3.0+容器将自动扫描类路径以查找Spring的{@code WebApplicationInitializer}接口的实现
+	 *  并提供所有此类类型的集合此方法的{@code webAppInitializerClasses}参数。  <p>如果在类路径上没有找到{@code WebApplicationInitializer}实现，则*该方法实际上是无操作的。
+	 *  将发出INFO级别的日志消息，通知用户*实际上已经调用了{@code ServletContainerInitializer}，但是没有找到{@code WebApplicationInitializer}实现。
+	 *  * <p>假设检测到一种或多种{@code WebApplicationInitializer}类型，则将实例化它们（如果@ {@ link * org.springframework.core.annotation.Order @，则将对它们进行排序）。存在Order}注释
+	 *  或*已实现{@link org.springframework.core.Ordered Ordered}接口）。然后，将在每个实例上调用{@link WebApplicationInitializer＃onStartup（ServletContext）} *方法，
+	 *  委派{@code ServletContext}这样，以便每个实例可以注册和配置Servlet，例如Spring的{@code DispatcherServlet}，侦听器等作为Spring的{@code ContextLoaderListener}，
+	 *  *或其他任何Servlet API组件（例如过滤器）。 * @param webAppInitializer对在应用程序类路径上发现的{{link WebApplicationInitializer}的所有实现进行分类
+	 *  * @param servletContext要初始化的Servlet上下文
+*/
+    @Override
+	public void onStartup(@Nullable Set<Class<?>> webAppInitializerClasses, ServletContext servletContext)
+			throws ServletException {
+
+		List<WebApplicationInitializer> initializers = new LinkedList<>();
+		if (webAppInitializerClasses != null) {
+			for (Class<?> waiClass : webAppInitializerClasses) {
+				// Be defensive: Some servlet containers provide us with invalid classes,
+				// no matter what @HandlesTypes says...
+				if (!waiClass.isInterface() && !Modifier.isAbstract(waiClass.getModifiers()) &&
+						WebApplicationInitializer.class.isAssignableFrom(waiClass)) {
+					try {
+						initializers.add((WebApplicationInitializer)
+		ReflectionUtils.accessibleConstructor(waiClass).newInstance());
+					}
+				}
+			}
+		}
+
+		//若我们的WebApplicationInitializer的实现类 实现了Orderd接口或标注@Order注解，会进行排序
+		AnnotationAwareOrderComparator.sort(initializers);
+		//依次循环调用我们感兴趣的实例的onStartup方法
+		for (WebApplicationInitializer initializer : initializers) {
+			initializer.onStartup(servletContext);
+		}
+	}
+}
+```
+
+## WebApplicationInitializer 接口
+
+#### onStartup(ServletContext)
+
+​	在Servlet 3.0+环境中实现的接口，以便以编程方式配置ServletContext，这与传统的基于web.xml的方法相反（或可能与*结合）
+
+```java
+public interface WebApplicationInitializer {
+	//初始化此Web应用程序所需的任何Servlet，过滤器，侦听器，上下文参数和属性来配置给定的ServletContext
+	void onStartup(ServletContext servletContext) throws ServletException;
+}
+```
+
+根据官网Java配置示例注册并初始化`DispatcherServlet`spring启动的时候会调用所有实现WebApplicationInitializer的类的onStartup(ServletContext servletCxt)方法，
+
+```java
+public class MyWebApplicationInitializer implements WebApplicationInitializer {
+@Override
+public void onStartup(ServletContext servletCxt) {
+
+    // Load Spring web application configuration
+AnnotationConfigWebApplicationContext ac = new AnnotationConfigWebApplicationContext();
+    ac.register(AppConfig.class);
+    //调用的是AbstractApplicationContext#refresh
+    ac.refresh();
+
+    // Create and register the DispatcherServlet
+    DispatcherServlet servlet = new DispatcherServlet(ac);
+    //调用ApplicationContext#addServlet，动态注册Servlet对象
+    ServletRegistration.Dynamic registration = servletCxt.addServlet("app", servlet);
+    //设置启动时加载1
+    registration.setLoadOnStartup(1);
+    //添加映射
+    registration.addMapping("/app/*");
+}
+```
+
+<a href="#refresh">ac.refresh()</a>
+
+## Spring MVC 找Controller流程：
+
+ 	1. 扫描整个项目 定义一个Map Bean集合
+ 	2. 拿到所有加了@Controller注解的类
+ 	3. 便利类里面所有的方法对象
+ 	4. 判断方法是否加了@RequestMapping注解
+ 	5. 把@RequestMapping注解的value作为map集a合 的key给put进去，把method对象作为value放入map集合
+ 	6. 根据用户的请求，拿到请求的URI url:http://localhost:8080/test  uri:/test
+ 	7. 使用请求的 uri 作为map的key 去map里get 看是否有值
+	8. 
+
+Controller 定义方式有2种   beanName类型和@Controller类型
+
+Controller实现有3种 HttpRequestHandler、实现Controller和@Controller
+
+## AnnotationConfigWebApplicationContext 
+
+注释配置Web应用程序上下文，WebApplicationContext 接受组件类作为输入的实现-特别是@Configuration}注释类，但也使用{@inject}批注来添加普通的{@Component} 类和符合JSR-330的类
+
+#### register(componentClasses)
+
+注册一个或多个要处理的组件类，必须调用{ #refresh（）才能使上下文完全处理新类
+
+```java
+public class AnnotationConfigWebApplicationContext extends AbstractRefreshableWebApplicationContext
+      implements AnnotationConfigRegistry {
+public void register(Class<?>... componentClasses) {
+		Assert.notEmpty(componentClasses, "At least one component class must be specified");
+		Collections.addAll(this.componentClasses, componentClasses);
+	}
+```
+
+[11]: 
+
+## DispatcherServlet 分配请求Servlet()
+
+HTTP请求处理程序/控制器的中央调度程序，例如适用于Web UI控制器或基于HTTP的远程服务导出程序。向注册的处理程序调度以处理 Web请求，提供便利的映射和异常处理功能
+
+**请求处理路径 doService() -》logRequest() -》doDispatch() **
+
+#### DispatcherServlet(WebApplicationContext)
+
+
+使用给定的Web应用程序上下文创建一个新的{@code DispatcherServlet}。该构造函数在Servlet 3.0+环境中非常有用，在该环境中，可以通过{ServletContext＃addServlet} API对Servlet进行基于实例的注册
+
+```java
+public class DispatcherServlet extends FrameworkServlet {
+    /** 使用此构造函数表示将忽略以下属性 /init-params 
+      * <li>{@link #setContextClass(Class)} / 'contextClass'</li>
+	 * <li>{@link #setContextConfigLocation(String)} / 'contextConfigLocation'</li>
+	 * <li>{@link #setContextAttribute(String)} / 'contextAttribute'</li>
+	 * <li>{@link #setNamespace(String)} / 'namespace'</li>
+	 */
+    public DispatcherServlet(WebApplicationContext webApplicationContext) {
+		super(webApplicationContext);
+		setDispatchOptionsRequest(true);
+	}
+```
+
+#### doService(HttpServletRequest, HttpServletResponse) 
+
+公开特定于DispatcherServlet的请求属性，并将其委托给{@link #doDispatch} *，以进行实际的分派
+
+```java
+protected void doService(HttpServletRequest request, HttpServletResponse response) throws Exception {
+   logRequest(request);
+
+   // Keep a snapshot of the request attributes in case of an include,
+   // to be able to restore the original attributes after the include.
+   Map<String, Object> attributesSnapshot = null;
+   if (WebUtils.isIncludeRequest(request)) {
+      attributesSnapshot = new HashMap<>();
+      Enumeration<?> attrNames = request.getAttributeNames();
+      while (attrNames.hasMoreElements()) {
+         String attrName = (String) attrNames.nextElement();
+         if (this.cleanupAfterInclude || attrName.startsWith(DEFAULT_STRATEGIES_PREFIX)) {
+            attributesSnapshot.put(attrName, request.getAttribute(attrName));
+         }
+      }
+   }
+
+   // Make framework objects available to handlers and view objects.
+   request.setAttribute(WEB_APPLICATION_CONTEXT_ATTRIBUTE, getWebApplicationContext());
+   request.setAttribute(LOCALE_RESOLVER_ATTRIBUTE, this.localeResolver);
+   request.setAttribute(THEME_RESOLVER_ATTRIBUTE, this.themeResolver);
+   request.setAttribute(THEME_SOURCE_ATTRIBUTE, getThemeSource());
+
+   if (this.flashMapManager != null) {
+      FlashMap inputFlashMap = this.flashMapManager.retrieveAndUpdate(request, response);
+      if (inputFlashMap != null) {
+         request.setAttribute(INPUT_FLASH_MAP_ATTRIBUTE, Collections.unmodifiableMap(inputFlashMap));
+      }
+      request.setAttribute(OUTPUT_FLASH_MAP_ATTRIBUTE, new FlashMap());
+      request.setAttribute(FLASH_MAP_MANAGER_ATTRIBUTE, this.flashMapManager);
+   }
+
+   try {
+      doDispatch(request, response);
+   }
+   finally {
+      if (!WebAsyncUtils.getAsyncManager(request).isConcurrentHandlingStarted()) {
+         // Restore the original attribute snapshot, in case of an include.
+         if (attributesSnapshot != null) {
+            restoreAttributesAfterInclude(request, attributesSnapshot);
+         }
+      }
+   }
+}
+```
+
+#### logRequest(HttpServletRequest) 
+
+```java
+private void logRequest(HttpServletRequest request) {
+   LogFormatUtils.traceDebug(logger, traceOn -> {
+      String params;
+      if (isEnableLoggingRequestDetails()) {
+         params = request.getParameterMap().entrySet().stream()
+               .map(entry -> entry.getKey() + ":" + Arrays.toString(entry.getValue()))
+               .collect(Collectors.joining(", "));
+      }
+      else {
+         params = (request.getParameterMap().isEmpty() ? "" : "masked");
+      }
+
+      String queryString = request.getQueryString();
+      String queryClause = (StringUtils.hasLength(queryString) ? "?" + queryString : "");
+      String dispatchType = (!request.getDispatcherType().equals(DispatcherType.REQUEST) ?
+            "\"" + request.getDispatcherType().name() + "\" dispatch for " : "");
+      String message = (dispatchType + request.getMethod() + " \"" + getRequestUri(request) +
+            queryClause + "\", parameters={" + params + "}");
+
+      if (traceOn) {
+         List<String> values = Collections.list(request.getHeaderNames());
+         String headers = values.size() > 0 ? "masked" : "";
+         if (isEnableLoggingRequestDetails()) {
+            headers = values.stream().map(name -> name + ":" + Collections.list(request.getHeaders(name)))
+                  .collect(Collectors.joining(", "));
+         }
+         return message + ", headers={" + headers + "} in DispatcherServlet '" + getServletName() + "'";
+      }
+      else {
+         return message;
+      }
+   });
+}
+```
+
+#### doDispatch(HttpServletRequest, HttpServletResponse)
+
+所有HTTP方法都由该方法处理。由HandlerAdapters或处理程序自己决定可接受的方法。处理实际分派给处理程序，该处理程序将通过按顺序应用servlet的HandlerMappings获得。
+
+通过查询Servlet的已安装HandlerAdapters 来查找支持该处理程序类的第一个HandlerAdapter，即可获得HandlerAdapte
+
+```java
+protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
+   HttpServletRequest processedRequest = request;
+   HandlerExecutionChain mappedHandler = null;
+   boolean multipartRequestParsed = false;
+   // 获取异步管理器
+   WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
+
+   try {
+      ModelAndView mv = null;
+      Exception dispatchException = null;
+
+      try {
+         //将请求转换为多部分请求，并使多部分解析器可用,如果未设置多部分解析器，则只需使用现有请求
+         processedRequest = checkMultipart(request);
+         //如果processedRequest != request 说明已经将请求转换多部分请求,使用多部分请求解析
+         multipartRequestParsed = (processedRequest != request);
+
+         // 确定当前请求的处理程序
+         mappedHandler = getHandler(processedRequest);
+         if (mappedHandler == null) {
+            //找不到处理程序->设置适当的HTTP响应状态->response 404
+            noHandlerFound(processedRequest, response);
+            return;
+         }
+
+         // 确定当前请求的处理程序适配器
+         HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
+
+         // 如果处理程序支持，则处理最后修改的标头
+         String method = request.getMethod();
+         boolean isGet = "GET".equals(method);
+         if (isGet || "HEAD".equals(method)) {
+     //与HttpServlet的{@code getLastModified}方法具有相同的约定。如果处理程序类不支持，则可以简单地返回-1
+            long lastModified = ha.getLastModified(request, mappedHandler.getHandler());
+            if (new ServletWebRequest(request, response).checkNotModified(lastModified) && isGet) {
+               return;
+            }
+         }
+
+         if (!mappedHandler.applyPreHandle(processedRequest, response)) {
+            return;
+         }
+
+         //  调用实际处理程序 返回 ModelAndView
+         mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
+
+         if (asyncManager.isConcurrentHandlingStarted()) {
+            return;
+         }
+		//根据配置的参数，将传入的HttpServletRequest的请求URI转换为视图名称
+         applyDefaultViewName(processedRequest, mv);
+         //应用注册拦截器的postHandle方法
+         mappedHandler.applyPostHandle(processedRequest, response, mv);
+      }
+      catch (Exception ex) {
+         dispatchException = ex;
+      }
+      catch (Throwable err) {
+         // As of 4.3, we're processing Errors thrown from handler methods as well,
+         // making them available for @ExceptionHandler methods and other scenarios.
+         dispatchException = new NestedServletException("Handler dispatch failed", err);
+      }
+      //处理程序选择和处理程序调用的结果，该结果可以是* ModelAndView或要解析为ModelAndView的Exception。
+      processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);
+   }
+   catch (Exception ex) {
+      triggerAfterCompletion(processedRequest, response, mappedHandler, ex);
+   }
+   catch (Throwable err) {
+      triggerAfterCompletion(processedRequest, response, mappedHandler,
+            new NestedServletException("Handler processing failed", err));
+   }
+   finally {
+      if (asyncManager.isConcurrentHandlingStarted()) {
+         // Instead of postHandle and afterCompletion
+         if (mappedHandler != null) {
+            mappedHandler.applyAfterConcurrentHandlingStarted(processedRequest, response);
+         }
+      }
+      else {
+         // Clean up any resources used by a multipart request.
+         if (multipartRequestParsed) {
+            cleanupMultipart(processedRequest);
+         }
+      }
+   }
+}
+```

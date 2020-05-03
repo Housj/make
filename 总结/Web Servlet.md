@@ -24,9 +24,9 @@ Spring Web MVC是基于Servlet API构建的原始Web框架，并且从一开始�
 
 以下Java配置示例注册并初始化`DispatcherServlet`，该Servlet容器自动检测到（请参阅[Servlet Config](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/web.html#mvc-container-config)）：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 public class MyWebApplicationInitializer implements WebApplicationInitializer {
@@ -100,9 +100,9 @@ public class MyWebApplicationInitializer implements WebApplicationInitializer {
 
 以下示例配置`WebApplicationContext`层次结构：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 public class MyWebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
@@ -199,9 +199,9 @@ public class MyWebAppInitializer extends AbstractAnnotationConfigDispatcherServl
 
 在Servlet 3.0+环境中，您可以选择以编程方式配置Servlet容器，以替代方式或与`web.xml`文件结合使用。以下示例注册一个`DispatcherServlet`：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 import org.springframework.web.WebApplicationInitializer;
@@ -224,9 +224,9 @@ public class MyWebApplicationInitializer implements WebApplicationInitializer {
 
 对于使用基于Java的Spring配置的应用程序，建议这样做，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 public class MyWebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
@@ -250,9 +250,9 @@ public class MyWebAppInitializer extends AbstractAnnotationConfigDispatcherServl
 
 如果使用基于XML的Spring配置，则应直接从扩展 `AbstractDispatcherServletInitializer`，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 public class MyWebAppInitializer extends AbstractDispatcherServletInitializer {
@@ -278,9 +278,9 @@ public class MyWebAppInitializer extends AbstractDispatcherServletInitializer {
 
 `AbstractDispatcherServletInitializer`还提供了一种添加`Filter` 实例并将其自动映射到的便捷方法`DispatcherServlet`，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 public class MyWebAppInitializer extends AbstractDispatcherServletInitializer {
@@ -380,9 +380,9 @@ Spring `DispatcherServlet`还支持`last-modification-date`Servlet API指定的�
 
 给定前面的示例，当异常冒出气泡或响应具有错误状态时，Servlet容器在容器内向配置的URL（例如`/error`）进行ERROR调度。然后由进行处理`DispatcherServlet`，可能将其映射到`@Controller`，可以实现该模型以使用模型返回错误视图名称或呈现JSON响应，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @RestController
@@ -599,9 +599,9 @@ Spring还提供了一个`ThemeChangeInterceptor`允许使用简单的请求参�
 
 以下示例显示了如何`MultipartConfigElement`在Servlet注册上设置A ：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 public class AppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
@@ -638,9 +638,9 @@ TRACE级别的日志记录通常遵循与DEBUG相同的原理（例如，也不�
 
 以下示例显示了如何通过使用Java配置来执行此操作：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 public class MyInitializer
@@ -724,9 +724,9 @@ Spring MVC通过控制器上的注释为CORS配置提供了细粒度的支持。
 
 Spring MVC提供了一个基于注释的编程模型，其中`@Controller`和 `@RestController`组件使用注释来表达请求映射，请求输入，异常处理等。带注释的控制器具有灵活的方法签名，无需扩展基类或实现特定的接口。以下示例显示了由注释定义的控制器：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Controller
@@ -754,9 +754,9 @@ public class HelloController {
 
 要启用对此类`@Controller`bean的自动检测，可以将组件扫描添加到Java配置中，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -812,9 +812,9 @@ public class WebConfig {
 
 以下示例具有类型和方法级别的映射：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @RestController
@@ -850,9 +850,9 @@ class PersonController {
 
 捕获的URI变量可以通过访问`@PathVariable`，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @GetMapping("/owners/{ownerId}/pets/{petId}")
@@ -863,9 +863,9 @@ public Pet findPet(@PathVariable Long ownerId, @PathVariable Long petId) {
 
 您可以在类和方法级别声明URI变量，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Controller
@@ -885,9 +885,9 @@ URI变量会自动转换为适当的类型，或者`TypeMismatchException` 引�
 
 语法`{varName:regex}`使用正则表达式声明语法为的URI变量`{varName:regex}`。例如，给定URL `"/spring-web-3.0.5 .jar"`，以下方法提取名称，版本和文件扩展名：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @GetMapping("/{name:[a-z-]+}-{version:\\d\\.\\d\\.\\d}{ext:\\.[a-z]+}")
@@ -951,9 +951,9 @@ URI路径模式还可以具有嵌入式`${…}`占位符，这些占位符在启
 
 您可以根据请求的来缩小请求映射`Content-Type`，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @PostMapping(path = "/pets", consumes = "application/json") 
@@ -980,9 +980,9 @@ public void addPet(@RequestBody Pet pet) {
 
 您可以根据`Accept`请求标头和控制器方法生成的内容类型列表来缩小请求映射，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @GetMapping(path = "/pets/{petId}", produces = "application/json") 
@@ -1010,9 +1010,9 @@ public Pet getPet(@PathVariable String petId) {
 
 您可以根据请求参数条件来缩小请求映射。您可以测试是否存在请求参数（`myParam`），是否存在请求参数（）`!myParam`或特定值（`myParam=myValue`）。以下示例显示如何测试特定值：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @GetMapping(path = "/pets/{petId}", params = "myParam=myValue") 
@@ -1027,9 +1027,9 @@ public void findPet(@PathVariable String petId) {
 
 您还可以将其与请求标头条件一起使用，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @GetMapping(path = "/pets", headers = "myHeader=myValue") 
@@ -1076,9 +1076,9 @@ Spring MVC还支持带有自定义请求匹配逻辑的自定义请求映射属�
 
 您可以以编程方式注册处理程序方法，这些方法可用于动态注册或高级案例，例如同一处理程序在不同URL下的不同实例。下面的示例注册一个处理程序方法：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -1191,9 +1191,9 @@ JDK 8次的`java.util.Optional`被支撑作为组合的方法的参数与具有�
 
 如果期望URL包含矩阵变量，则控制器方法的请求映射必须使用URI变量来屏蔽该变量内容，并确保可以成功地匹配请求，而与矩阵变量的顺序和状态无关。以下示例使用矩阵变量：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 // GET /pets/42;q=11;r=22
@@ -1208,9 +1208,9 @@ public void findPet(@PathVariable String petId, @MatrixVariable int q) {
 
 鉴于所有路径段都可能包含矩阵变量，因此有时您可能需要消除矩阵变量应位于哪个路径变量的歧义。下面的示例演示了如何做到这一点：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 // GET /owners/42;q=11/pets/21;q=22
@@ -1227,9 +1227,9 @@ public void findPet(
 
 可以将矩阵变量定义为可选变量，并指定默认值，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 // GET /pets/42
@@ -1243,9 +1243,9 @@ public void findPet(@MatrixVariable(required=false, defaultValue="1") int q) {
 
 要获取所有矩阵变量，可以使用`MultiValueMap`，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 // GET /owners/42;q=11;r=12/pets/21;q=22;s=23
@@ -1270,9 +1270,9 @@ public void findPet(
 
 以下示例显示了如何执行此操作：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Controller
@@ -1326,9 +1326,9 @@ public class EditPetForm {
 
 以下示例获取`Accept-Encoding`和`Keep-Alive`标头的值：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @GetMapping("/demo")
@@ -1365,9 +1365,9 @@ JSESSIONID = 415A4AC178C59DACE0B2C9CA727CDD84
 
 以下示例显示如何获取cookie值：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @GetMapping("/demo")
@@ -1388,9 +1388,9 @@ public void handle(@CookieValue("JSESSIONID") String cookie) {
 
 您可以`@ModelAttribute`在方法参数上使用注释，以从模型访问属性，或将其实例化（如果不存在）。model属性还覆盖了名称与字段名称匹配的HTTP Servlet请求参数中的值。这被称为数据绑定，它使您不必处理解析和转换单个查询参数和表单字段的工作。以下示例显示了如何执行此操作：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @PostMapping("/owners/{ownerId}/pets/{petId}/edit")
@@ -1411,9 +1411,9 @@ public String processSubmit(@ModelAttribute Pet pet) { }
 
 虽然通常使用[模型](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/web.html#mvc-ann-modelattrib-methods)来用属性填充模型，但是另一种替代方法是依赖于`Converter`URI路径变量约定的组合。在以下示例中，模型属性名称 `account`匹配URI路径变量`account`，并`Account`通过将`String`帐号传递给注册的来加载`Converter`：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @PutMapping("/accounts/{account}")
@@ -1426,9 +1426,9 @@ public String save(@ModelAttribute("account") Account account) {
 
 数据绑定可能会导致错误。默认情况下，`BindException`引发a。但是，要检查controller方法中的此类错误，可以在`BindingResult`旁边紧紧添加一个参数`@ModelAttribute`，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @PostMapping("/owners/{ownerId}/pets/{petId}/edit")
@@ -1446,9 +1446,9 @@ public String processSubmit(@ModelAttribute("pet") Pet pet, BindingResult result
 
 在某些情况下，您可能希望访问没有数据绑定的模型属性。对于这种情况，您可以将注入`Model`到控制器中并直接访问它，或者设置`@ModelAttribute(binding=false)`，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @ModelAttribute
@@ -1474,9 +1474,9 @@ public String update(@Valid AccountForm form, BindingResult result,
 
 您可以通过添加`javax.validation.Valid`注释或Spring的`@Validated`注释（ [Bean验证](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#validation-beanvalidation)和 [Spring验证](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#validation)）在数据绑定之后自动应用验证 。以下示例显示了如何执行此操作：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @PostMapping("/owners/{ownerId}/pets/{petId}/edit")
@@ -1502,9 +1502,9 @@ public String processSubmit(@Valid @ModelAttribute("pet") Pet pet, BindingResult
 
 以下示例使用`@SessionAttributes`注释：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Controller
@@ -1520,9 +1520,9 @@ public class EditPetForm {
 
 在第一个请求上，将名称为的模型属性`pet`添加到模型时，该属性会自动升级到HTTP Servlet会话并保存在该会话中。它会一直保留在那里，直到另一个控制器方法使用`SessionStatus`方法参数来清除存储，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Controller
@@ -1553,9 +1553,9 @@ public class EditPetForm {
 
 如果您需要访问全局存在（即在控制器外部（例如，通过过滤器）管理）并且可能存在或可能不存在的预先存在的会话属性，则可以`@SessionAttribute`在方法参数上使用注释，如下所示示例显示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @RequestMapping("/")
@@ -1578,9 +1578,9 @@ public String handle(@SessionAttribute User user) {
 
 与相似`@SessionAttribute`，您可以使用`@RequestAttribute`批注访问之前创建的预先存在的请求属性（例如，通过Servlet `Filter` 或`HandlerInterceptor`）：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @GetMapping("/")
@@ -1603,9 +1603,9 @@ public String handle(@RequestAttribute Client client) {
 
 请注意，展开重定向URL时，本请求中的URI模板变量将自动变为可用，并且您无需通过`Model`或显式添加它们`RedirectAttributes`。以下示例显示了如何定义重定向：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @PostMapping("/files/{path}")
@@ -1641,9 +1641,9 @@ Flash属性的概念存在于许多其他Web框架中，并已证明有时会遇
 
 一个后`MultipartResolver`已经[启用](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/web.html#mvc-multipart)，POST的内容与要求`multipart/form-data`进行解析，并定期请求参数进行访问。以下示例访问一个常规表单字段和一个上载文件：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Controller
@@ -1673,9 +1673,9 @@ public class FileUploadController {
 
 您也可以将多部分内容用作绑定到[命令对象](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/web.html#mvc-ann-modelattrib-method-args)的数据的一部分 。例如，前面示例中的表单字段和文件可以是表单对象上的字段，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 class MyForm {
@@ -1725,9 +1725,9 @@ POST / someUrl
 
 您可以通过访问“元数据”部分`@RequestParam`的`String`，但你可能会想从JSON反序列化（类似`@RequestBody`）。在使用[HttpMessageConverter](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/integration.html#rest-message-conversion)`@RequestPart`将注释转换为多部分后，可使用 注释来访问它 ：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @PostMapping("/")
@@ -1739,9 +1739,9 @@ public String handle(@RequestPart("meta-data") MetaData metadata,
 
 您可以将其`@RequestPart`与`javax.validation.Valid`Spring的`@Validated`注释结合使用或一起使用 ，这两种注释都会导致应用标准Bean验证。默认情况下，验证错误会导致`MethodArgumentNotValidException`，并变成400（BAD_REQUEST）响应。或者，您可以通过`Errors`或`BindingResult`参数在控制器内本地处理验证错误，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @PostMapping("/")
@@ -1757,9 +1757,9 @@ public String handle(@Valid @RequestPart("meta-data") MetaData metadata,
 
 您可以使用`@RequestBody`注释有请求体读取和反序列化到一个 `Object`通过[`HttpMessageConverter`](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/integration.html#rest-message-conversion)。下面的示例使用一个`@RequestBody`参数：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @PostMapping("/accounts")
@@ -1772,9 +1772,9 @@ public void handle(@RequestBody Account account) {
 
 可以`@RequestBody`与`javax.validation.Valid`或Spring的 `@Validated`注释结合使用，这两种注释都会导致应用标准Bean验证。默认情况下，验证错误会导致`MethodArgumentNotValidException`，并变成400（BAD_REQUEST）响应。或者，您可以通过`Errors`或`BindingResult`参数在控制器内本地处理验证错误，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @PostMapping("/accounts")
@@ -1789,9 +1789,9 @@ public void handle(@Valid @RequestBody Account account, BindingResult result) {
 
 `HttpEntity`与使用大致相同，[`@RequestBody`](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/web.html#mvc-ann-requestbody)但基于公开请求标头和正文的容器对象。以下清单显示了一个示例：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @PostMapping("/accounts")
@@ -1806,9 +1806,9 @@ public void handle(HttpEntity<Account> entity) {
 
 您可以`@ResponseBody`在方法上使用批注，以通过[HttpMessageConverter](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/integration.html#rest-message-conversion)将返回序列化为响应主体 。以下清单显示了一个示例：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @GetMapping("/accounts/{id}")
@@ -1832,9 +1832,9 @@ public Account handle() {
 
 `ResponseEntity`就像[`@ResponseBody`](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/web.html#mvc-ann-responsebody)但带有状态和标题。例如：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @GetMapping("/something")
@@ -1857,9 +1857,9 @@ Spring提供了对Jackson JSON库的支持。
 
 Spring MVC为[Jackson的序列化视图](https://www.baeldung.com/jackson-json-view-annotation)提供了内置支持 ，该[视图](https://www.baeldung.com/jackson-json-view-annotation)仅可呈现。中所有字段的子集`Object`。要将其与 `@ResponseBody`或`ResponseEntity`控制器方法一起使用，可以使用Jackson的 `@JsonView`注释来激活序列化视图类，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @RestController
@@ -1906,9 +1906,9 @@ public class User {
 
 对于依赖视图分辨率的控制器，可以将序列化视图类添加到模型中，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Controller
@@ -1939,9 +1939,9 @@ public class UserController extends AbstractController {
 
 以下示例显示了一种`@ModelAttribute`方法：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @ModelAttribute
@@ -1953,9 +1953,9 @@ public void populateModel(@RequestParam String number, Model model) {
 
 以下示例仅添加一个属性：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @ModelAttribute
@@ -1970,9 +1970,9 @@ public Account addAccount(@RequestParam String number) {
 
 您还可以`@ModelAttribute`在方法上用作方法级别的注释`@RequestMapping`，在这种情况下，方法的返回值将`@RequestMapping`解释为模型属性。通常不需要这样做，因为这是HTML控制器的默认行为，除非返回值是a `String`，否则它将被解释为视图名称。 `@ModelAttribute`还可以自定义模型属性名称，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @GetMapping("/accounts/{id}")
@@ -1997,9 +1997,9 @@ public Account handle() {
 
 `@InitBinder``@RequestMapping`除了`@ModelAttribute`（命令对象）参数外，方法还支持许多与方法相同的参数。通常，它们使用一个`WebDataBinder`参数（用于注册）和一个`void`返回值进行声明。以下清单显示了一个示例：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Controller
@@ -2022,9 +2022,9 @@ public class FormController {
 
 或者，当您`Formatter`通过shared 使用基于设置时 `FormattingConversionService`，可以重新使用相同的方法并注册特定于控制器的`Formatter`实现，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Controller
@@ -2049,9 +2049,9 @@ public class FormController {
 
 `@Controller`和[@ControllerAdvice](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/web.html#mvc-ann-controller-advice)类可以具有 `@ExceptionHandler`处理控制器方法异常的方法，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Controller
@@ -2072,9 +2072,9 @@ public class SimpleController {
 
 另外，注释声明可以缩小异常类型以使其匹配，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @ExceptionHandler({FileSystemException.class, RemoteException.class})
@@ -2085,9 +2085,9 @@ public ResponseEntity<String> handle(IOException ex) {
 
 您甚至可以使用带有非常通用的参数签名的特定异常类型的列表，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @ExceptionHandler({FileSystemException.class, RemoteException.class})
@@ -2165,9 +2165,9 @@ REST服务的常见要求是在响应正文中包含错误详细信息。Spring�
 
 默认情况下，`@ControllerAdvice`方法适用于每个请求（即所有控制器），但是您可以通过使用批注上的属性将其范围缩小到控制器的子集，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 // Target all Controllers annotated with @RestController
@@ -2201,9 +2201,9 @@ Spring Web MVC包括WebMvc.fn，这是一个轻量级的函数编程模型，其
 
 `RouterFunctions.route()` 提供了一个有助于构建路由器的路由器构建器，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -2252,9 +2252,9 @@ public class PersonHandler {
 
 以下示例将请求正文提取到`String`：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 String string = request.body(String.class);
@@ -2262,9 +2262,9 @@ String string = request.body(String.class);
 
 以下示例将主体提取到`List`，其中`Person`对象从序列化形式（例如JSON或XML）解码：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 List<Person> people = request.body(new ParameterizedTypeReference<List<Person>>() {});
@@ -2272,9 +2272,9 @@ List<Person> people = request.body(new ParameterizedTypeReference<List<Person>>(
 
 以下示例显示如何访问参数：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 MultiValueMap<String, String> params = request.params();
@@ -2284,9 +2284,9 @@ MultiValueMap<String, String> params = request.params();
 
 `ServerResponse`提供对HTTP响应的访问，并且由于它是不可变的，因此可以使用一种`build`方法来创建它。您可以使用构建器来设置响应状态，添加响应标题或提供正文。以下示例使用JSON内容创建200（确定）响应：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 Person person = ...
@@ -2295,9 +2295,9 @@ ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(person);
 
 下面的示例演示如何构建`Location`不带标头的201（已创建）响应：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 URI location = ...
@@ -2308,9 +2308,9 @@ ServerResponse.created(location).build();
 
 我们可以将处理程序函数编写为lambda，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 HandlerFunction<ServerResponse> helloWorld =
@@ -2319,9 +2319,9 @@ HandlerFunction<ServerResponse> helloWorld =
 
 这很方便，但是在应用程序中我们需要多个功能，并且多个内联lambda可能会变得凌乱。因此，将相关的处理程序功能分组到一个处理程序类中很有用，该类具有与`@Controller`基于注释的应用程序相似的作用。例如，以下类公开了反应式`Person`存储库：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -2369,9 +2369,9 @@ public class PersonHandler {
 
 功能端点可以使用Spring的[验证工具](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#validation)将验证应用于请求主体。例如，给定一个定制的Spring [Validator](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#validation)实现`Person`：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 public class PersonHandler {
@@ -2418,9 +2418,9 @@ public class PersonHandler {
 
 您可以编写自己的`RequestPredicate`，但是`RequestPredicates`实用程序类根据请求路径，HTTP方法，内容类型等提供常用的实现。以下示例使用请求谓词基于`Accept` 标头创建约束：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 RouterFunction<ServerResponse> route = RouterFunctions.route()
@@ -2447,9 +2447,9 @@ RouterFunction<ServerResponse> route = RouterFunctions.route()
 
 以下示例显示了四种路线的组成：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -2478,9 +2478,9 @@ RouterFunction<ServerResponse> route = route()
 
 一组路由器功能通常具有共享谓词，例如共享路径。在上面的示例中，共享谓词将是与其中`/person`三个路由使用的match匹配的路径谓词。使用注释时，您可以使用`@RequestMapping` 映射到的类型级别的注释来删除此重复项`/person`。在WebMvc.fn中，可以通过`path`路由器功能构建器上的方法共享路径谓词。例如，可以通过以下方式使用嵌套路由来改进上面示例的最后几行：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 RouterFunction<ServerResponse> route = route()
@@ -2497,9 +2497,9 @@ RouterFunction<ServerResponse> route = route()
 
 尽管基于路径的嵌套是最常见的，但是您可以使用`nest`构建器上的方法来嵌套在任何种类的谓词上。上面的内容仍然包含一些以共享标头`Accept`谓词形式的重复。通过结合使用该`nest`方法，我们可以进一步改进`accept`：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 RouterFunction<ServerResponse> route = route()
@@ -2524,9 +2524,9 @@ RouterFunction<ServerResponse> route = route()
 
 以下示例显示了WebFlux Java配置：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -2568,9 +2568,9 @@ public class WebConfig implements WebMvcConfigurer {
 
 您可以通过使用过滤处理器功能`before`，`after`或`filter`在路由功能生成器方法。使用注释，您可以通过使用实现类似的功能`@ControllerAdvice`，一个`ServletFilter`，或两者兼而有之。该过滤器将应用于构建器构建的所有路由。这意味着在嵌套路由中定义的过滤器不适用于“顶级”路由。例如，考虑以下示例：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 RouterFunction<ServerResponse> route = route()
@@ -2594,9 +2594,9 @@ RouterFunction<ServerResponse> route = route()
 
 现在，我们可以为路由添加一个简单的安全过滤器，假设我们有一个`SecurityManager`可以确定是否允许特定路径的。以下示例显示了如何执行此操作：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 SecurityManager securityManager = ...
@@ -2638,9 +2638,9 @@ Spring MVC和Spring WebFlux
 
 `UriComponentsBuilder` 有助于从带有变量的URI模板构建URI，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 UriComponents uriComponents = UriComponentsBuilder
@@ -2661,9 +2661,9 @@ URI uri = uriComponents.expand("Westin", "123").toUri();
 
 可以将前面的示例合并为一个链，并通过进行缩短`buildAndExpand`，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 URI uri = UriComponentsBuilder
@@ -2676,9 +2676,9 @@ URI uri = UriComponentsBuilder
 
 您可以通过直接转到URI（这意味着编码）来进一步缩短它，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 URI uri = UriComponentsBuilder
@@ -2689,9 +2689,9 @@ URI uri = UriComponentsBuilder
 
 您可以使用完整的URI模板进一步缩短它，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 URI uri = UriComponentsBuilder
@@ -2709,9 +2709,9 @@ Spring MVC和Spring WebFlux
 
 以下示例显示了如何配置`RestTemplate`：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 // import org.springframework.web.util.DefaultUriBuilderFactory.EncodingMode;
@@ -2726,9 +2726,9 @@ restTemplate.setUriTemplateHandler(factory);
 
 以下示例配置了`WebClient`：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 // import org.springframework.web.util.DefaultUriBuilderFactory.EncodingMode;
@@ -2742,9 +2742,9 @@ WebClient client = WebClient.builder().uriBuilderFactory(factory).build();
 
 另外，您也可以`DefaultUriBuilderFactory`直接使用。它类似于使用， `UriComponentsBuilder`但不是静态工厂方法，它是一个包含配置和首选项的实际实例，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 String baseUrl = "https://example.com";
@@ -2774,9 +2774,9 @@ Spring MVC和Spring WebFlux
 
 以下示例使用第一个选项：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 URI uri = UriComponentsBuilder.fromPath("/hotel list/{city}")
@@ -2790,9 +2790,9 @@ URI uri = UriComponentsBuilder.fromPath("/hotel list/{city}")
 
 您可以通过直接转到URI（这意味着编码）来缩短前面的示例，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 URI uri = UriComponentsBuilder.fromPath("/hotel list/{city}")
@@ -2802,9 +2802,9 @@ URI uri = UriComponentsBuilder.fromPath("/hotel list/{city}")
 
 您可以使用完整的URI模板进一步缩短它，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 URI uri = UriComponentsBuilder.fromPath("/hotel list/{city}?q={q}")
@@ -2813,9 +2813,9 @@ URI uri = UriComponentsBuilder.fromPath("/hotel list/{city}?q={q}")
 
 在`WebClient`与`RestTemplate`扩大和编码URI通过内部模板`UriBuilderFactory`策略。两者都可以使用自定义策略进行配置。如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 String baseUrl = "https://example.com";
@@ -2843,9 +2843,9 @@ WebClient client = WebClient.builder().uriBuilderFactory(factory).build();
 
 您可以`ServletUriComponentsBuilder`用来创建相对于当前请求的URI，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 HttpServletRequest request = ...
@@ -2860,9 +2860,9 @@ ServletUriComponentsBuilder ucb = ServletUriComponentsBuilder.fromRequest(reques
 
 您可以创建相对于上下文路径的URI，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 // Re-uses host, port and context path...
@@ -2873,9 +2873,9 @@ ServletUriComponentsBuilder ucb = ServletUriComponentsBuilder.fromContextPath(re
 
 您可以创建与Servlet相关的URI（例如`/main/*`），如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 // Re-uses host, port, context path, and Servlet prefix...
@@ -2892,9 +2892,9 @@ ServletUriComponentsBuilder ucb = ServletUriComponentsBuilder.fromServletMapping
 
 Spring MVC提供了一种准备到控制器方法的链接的机制。例如，以下MVC控制器允许创建链接：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Controller
@@ -2910,9 +2910,9 @@ public class BookingController {
 
 您可以通过按名称引用方法来准备链接，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 UriComponents uriComponents = MvcUriComponentsBuilder
@@ -2925,9 +2925,9 @@ URI uri = uriComponents.encode().toUri();
 
 还有其他使用方法`MvcUriComponentsBuilder`。例如，您可以使用类似于代理的模拟测试技术来避免按名称引用控制器方法，如以下示例所示（该示例假定静态导入`MvcUriComponentsBuilder.on`）：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 UriComponents uriComponents = MvcUriComponentsBuilder
@@ -2944,9 +2944,9 @@ URI uri = uriComponents.encode().toUri();
 
 在这种情况下，您可以使用`fromXxx`接受a 的静态重载方法 `UriComponentsBuilder`来使用基本URL。另外，您可以`MvcUriComponentsBuilder` 使用基本URL 创建的实例，然后使用基于实例的`withXxx`方法。例如，以下清单使用`withMethodCall`：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 UriComponentsBuilder base = ServletUriComponentsBuilder.fromCurrentContextPath().path("/en");
@@ -2966,9 +2966,9 @@ URI uri = uriComponents.encode().toUri();
 
 考虑以下示例：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @RequestMapping("/people/{id}/addresses")
@@ -3007,9 +3007,9 @@ Spring MVC与Servlet 3.0异步请求[处理](https://docs.spring.io/spring-frame
 
 一旦 在Servlet容器中[启用](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/web.html#mvc-ann-async-configuration)了异步请求处理功能，控制器方法就可以使用来包装任何受支持的控制器方法返回值`DeferredResult`，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @GetMapping("/quotes")
@@ -3032,9 +3032,9 @@ deferredResult.setResult(result);
 
 控制器可以使用来包装任何受支持的返回值`java.util.concurrent.Callable`，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @PostMapping
@@ -3113,9 +3113,9 @@ Servlet API最初是为通过Filter-Servlet链进行一次传递而构建的。S
 
 您可以使用`ResponseBodyEmitter`返回值生成一个对象流，其中每个对象都使用进行序列化 [`HttpMessageConverter`](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/integration.html#rest-message-conversion)并写入响应，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @GetMapping("/events")
@@ -3143,9 +3143,9 @@ emitter.complete();
 
 `SseEmitter`（的子类`ResponseBodyEmitter`）提供对[服务器发送事件的](https://www.w3.org/TR/eventsource/)支持 ，其中从服务器[发送的事件](https://www.w3.org/TR/eventsource/)根据W3C SSE规范进行格式化。要从控制器生成SSE流，请返回`SseEmitter`，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @GetMapping(path="/events", produces=MediaType.TEXT_EVENT_STREAM_VALUE)
@@ -3173,9 +3173,9 @@ emitter.complete();
 
 有时，绕过消息转换并直接流式传输到响应`OutputStream`（例如，用于文件下载）很有用 。您可以使用`StreamingResponseBody` 返回值类型来执行此操作，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @GetMapping("/download")
@@ -3286,9 +3286,9 @@ Spring MVC `HandlerMapping`实现为CORS提供内置支持。成功将请求映�
 
 该[`@CrossOrigin`](https://docs.spring.io/spring-framework/docs/5.2.6.RELEASE/javadoc-api/org/springframework/web/bind/annotation/CrossOrigin.html) 注释能够对带注释的控制器方法跨域请求，如下面的示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @RestController
@@ -3320,9 +3320,9 @@ public class AccountController {
 
 `@CrossOrigin` 在类级别也受支持，并且被所有方法继承，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @CrossOrigin(origins = "https://domain2.com", maxAge = 3600)
@@ -3344,9 +3344,9 @@ public class AccountController {
 
 您可以`@CrossOrigin`在类级别和方法级别上使用，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @CrossOrigin(maxAge = 3600)
@@ -3389,9 +3389,9 @@ public class AccountController {
 
 要在MVC Java配置中启用CORS，可以使用`CorsRegistry`回调，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -3445,9 +3445,9 @@ public class WebConfig implements WebMvcConfigurer {
 
 要配置过滤器，请将a传递 `CorsConfigurationSource`给其构造函数，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 CorsConfiguration config = new CorsConfiguration();
@@ -3500,9 +3500,9 @@ HTTP缓存可以显着提高Web应用程序的性能。HTTP缓存围绕`Cache-Co
 
 尽管[RFC 7234](https://tools.ietf.org/html/rfc7234#section-5.2.2)描述了`Cache-Control`响应标头的所有可能的指令，但该`CacheControl`类型采用面向用例的方法，重点关注常见方案：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 // Cache for an hour - "Cache-Control: max-age=3600"
@@ -3529,9 +3529,9 @@ CacheControl ccCustom = CacheControl.maxAge(10, TimeUnit.DAYS).noTransform().cac
 
 控制器可以添加对HTTP缓存的显式支持。我们建议您这样做，因为需要先计算资源的 `lastModified`or `ETag`值，然后才能将其与条件请求标头进行比较。控制器可以将`ETag`标头和`Cache-Control` 设置添加到中`ResponseEntity`，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @GetMapping("/book/{id}")
@@ -3552,9 +3552,9 @@ public ResponseEntity<Book> showBook(@PathVariable Long id) {
 
 您还可以在控制器中针对条件请求标头进行检查，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @RequestMapping
@@ -3618,9 +3618,9 @@ Thymeleaf与Spring MVC的集成由Thymeleaf项目管理。配置涉及几个bean
 
 以下示例显示了如何将FreeMarker配置为视图技术：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -3822,9 +3822,9 @@ Town:
 
 如果您的应用程序希望通过内部代码处理城市（例如），则可以使用适当的键创建代码地图，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 protected Map<String, ?> referenceData(HttpServletRequest request) throws Exception {
@@ -3886,9 +3886,9 @@ Town:
 
 以下示例显示了如何配置Groovy标记模板引擎：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -3955,7 +3955,7 @@ Spring框架具有一个内置的集成，可以将Spring MVC与可以在[JSR-22
 | [EJS](https://www.embeddedjs.com/)                           | [纳斯霍恩](https://openjdk.java.net/projects/nashorn/) |
 | [ERB](https://www.stuartellis.name/articles/erb/)            | [红宝石](https://www.jruby.org/)                       |
 | [字符串模板](https://docs.python.org/2/library/string.html#template-strings) | [吉顿](https://www.jython.org/)                        |
-| [Kotlin脚本模板](https://github.com/sdeleuze/kotlin-script-templating) | [科特林](https://kotlinlang.org/)                      |
+| [Kotlin脚本模板](https://github.com/sdeleuze/kotlin-script-templating) | [ ](https://kotlinlang.org/)                           |
 
 |      | 集成任何其他脚本引擎的基本规则是，它必须实现 `ScriptEngine`和`Invocable`接口。 |
 | ---- | ------------------------------------------------------------ |
@@ -3980,9 +3980,9 @@ Spring框架具有一个内置的集成，可以将Spring MVC与可以在[JSR-22
 
 您可以声明一个`ScriptTemplateConfigurer`bean，以指定要使用的脚本引擎，要加载的脚本文件，调用呈现模板的函数等等。以下示例使用Mustache模板和Nashorn JavaScript引擎：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -4022,9 +4022,9 @@ public class WebConfig implements WebMvcConfigurer {
 
 对于Java和XML配置，该控制器看起来没有什么不同，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Controller
@@ -4064,9 +4064,9 @@ public class SampleController {
 
 以下示例显示了如何执行此操作：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -4257,9 +4257,9 @@ productList.url=/WEB-INF/jsp/productlist.jsp
 
 假设我们`User`有喜好，例如时事通讯订阅和兴趣爱好列表。以下示例显示了`Preferences`该类：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 public class Preferences {
@@ -4563,9 +4563,9 @@ public class Preferences {
 
 假设 一旦提交表单，我们想显示`firstName`和`lastName`字段的所有错误消息。我们有一个`User`名为的类实例的验证器`UserValidator`，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 public class UserValidator implements Validator {
@@ -4722,9 +4722,9 @@ REST的一个关键原则是使用“统一接口”。这意味着可以使用�
 
 以下示例显示了相应的`@Controller`方法：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @RequestMapping(method = RequestMethod.DELETE)
@@ -4858,9 +4858,9 @@ Spring表单标签库允许输入动态属性，这意味着您可以输入任�
 
 `AbstractAtomFeedView`需要您实现该`buildFeedEntries()`方法并可以选择覆盖该`buildFeedMetadata()`方法（默认实现为空）。以下示例显示了如何执行此操作：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 public class SampleContentAtomView extends AbstractAtomFeedView {
@@ -4881,9 +4881,9 @@ public class SampleContentAtomView extends AbstractAtomFeedView {
 
 类似的要求也适用于实施`AbstractRssFeedView`，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 public class SampleContentRssView extends AbstractRssFeedView {
@@ -4924,9 +4924,9 @@ HTML页面并非始终是用户查看模型输出的最佳方式，而Spring使�
 
 单词列表的简单PDF视图可以扩展 `org.springframework.web.servlet.view.document.AbstractPdfView`和实现该 `buildPdfDocument()`方法，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 public class PdfWordList extends AbstractPdfView {
@@ -4986,9 +4986,9 @@ XSLT是XML的一种转换语言，在Web应用程序中作为一种视图技术�
 
 配置是简单Spring Web应用程序的标准配置：MVC配置必须定义`XsltViewResolver`Bean和常规MVC注释配置。以下示例显示了如何执行此操作：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @EnableWebMvc
@@ -5012,9 +5012,9 @@ public class WebConfig implements WebMvcConfigurer {
 
 控制器逻辑封装在一个`@Controller`类中，其中handler方法的定义如下：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Controller
@@ -5109,9 +5109,9 @@ MVC Java配置和MVC XML名称空间提供适用于大多数应用程序的默�
 
 在Java配置中，可以使用`@EnableWebMvc`注释启用MVC配置，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -5146,9 +5146,9 @@ public class WebConfig {
 
 在Java配置中，您可以实现该`WebMvcConfigurer`接口，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -5169,9 +5169,9 @@ public class WebConfig implements WebMvcConfigurer {
 
 要在Java配置中注册自定义格式器和转换器，请使用以下命令：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -5225,9 +5225,9 @@ public class WebConfig implements WebMvcConfigurer {
 
 默认情况下，Spring MVC在解析和格式化日期值时会考虑请求区域设置。这适用于使用“输入”表单字段将日期表示为字符串的表单。但是，对于“日期”和“时间”表单字段，浏览器使用HTML规范中定义的固定格式。在这种情况下，日期和时间格式可以按以下方式自定义：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -5255,9 +5255,9 @@ public class WebConfig implements WebMvcConfigurer {
 
 在Java配置中，您可以自定义全局`Validator`实例，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -5291,9 +5291,9 @@ public class WebConfig implements WebMvcConfigurer {
 
 请注意，您还可以`Validator`在本地注册实现，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Controller
@@ -5314,9 +5314,9 @@ public class MyController {
 
 在Java配置中，您可以注册拦截器以应用于传入的请求，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -5361,9 +5361,9 @@ public class WebConfig implements WebMvcConfigurer {
 
 在Java配置中，您可以自定义请求的内容类型解析，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -5401,9 +5401,9 @@ public class WebConfig implements WebMvcConfigurer {
 
 以下示例使用自定义的`ObjectMapper`而不是默认的添加了XML和Jackson JSON转换器 ：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -5473,9 +5473,9 @@ public class WebConfiguration implements WebMvcConfigurer {
 
 以下Java配置示例将请求转发`/`到名为的视图`home`：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -5505,9 +5505,9 @@ MVC配置简化了视图解析器的注册。
 
 以下Java配置示例通过使用JSP和Jackson作为`View`JSON呈现的默认配置来配置内容协商视图解析：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -5556,9 +5556,9 @@ MVC名称空间提供专用元素。以下示例适用于FreeMarker：
 
 在Java配置中，您可以添加相应的`Configurer`bean，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -5590,9 +5590,9 @@ public class WebConfig implements WebMvcConfigurer {
 
 以下清单显示了如何使用Java配置进行操作：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -5624,9 +5624,9 @@ public class WebConfig implements WebMvcConfigurer {
 
 以下示例显示了如何`VersionResourceResolver`在Java配置中使用：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -5671,9 +5671,9 @@ Spring MVC允许映射`DispatcherServlet`到`/`（从而覆盖了容器默认Ser
 
 以下示例显示如何使用默认设置启用功能：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -5695,9 +5695,9 @@ public class WebConfig implements WebMvcConfigurer {
 
 覆盖`/`Servlet映射的警告是，`RequestDispatcher`必须通过名称而不是通过路径来检索默认Servlet的。在 `DefaultServletHttpRequestHandler`尝试自动检测默认的Servlet在启动时的容器，使用大多数主要的Servlet容器（包括软件Tomcat，Jetty的GlassFish，JBoss和树脂中，WebLogic和WebSphere）已知名称的列表。如果已使用其他名称自定义配置了默认Servlet，或者在默认Servlet名称未知的情况下使用了不同的Servlet容器，则必须显式提供默认Servlet的名称，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -5725,9 +5725,9 @@ public class WebConfig implements WebMvcConfigurer {
 
 以下示例显示了如何在Java配置中自定义路径匹配：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -5782,9 +5782,9 @@ public class WebConfig implements WebMvcConfigurer {
 
 对于高级模式，您可以`@EnableWebMvc`直接从中删除和扩展 `DelegatingWebMvcConfiguration`而不是实现`WebMvcConfigurer`，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Configuration
@@ -5800,9 +5800,9 @@ public class WebConfig extends DelegatingWebMvcConfiguration {
 
 MVC命名空间没有高级模式。如果您需要在bean上自定义一个不能更改的属性，则可以使用`BeanPostProcessor`Spring 的生命周期挂钩`ApplicationContext`，如以下示例所示：
 
-爪哇
 
-科特林
+
+ 
 
 ```java
 @Component

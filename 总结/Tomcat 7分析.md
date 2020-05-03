@@ -1,4 +1,4 @@
-#1 Tomcat的顶层结构及启动过程
+# 1 Tomcat的顶层结构及启动过程
 
 ## 1.1 Tomcat的顶层结构
 
@@ -14,7 +14,7 @@
 
 <img src="images/image-20200416130011264.png" alt="image-20200416130011264" style="zoom: 67%;" />
 
-<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200421102442832.png" alt="image-20200421102442832" style="zoom:50%;" />
+<img src="images/image-20200421102442832.png" alt="image-20200421102442832" style="zoom:50%;" />
 
 ​	Tomcat中的Server由Catalina管理，Catalina是整个Tomcat的管理类，里面的三个方法load、start、stop分别管理整个服务器的生命周期，load方法用于根据Tomcat的 conf/server.xml 文件创建Server并调用Server的init方法进行初始化，start方法用于启动服务器，stop方法用于停止服务器，start和sto方法内部分别调用Server的start和stop方法，load内部调用了Server的init方法。
 
@@ -28,11 +28,11 @@
 
 正常启动Tomcat调用Bootstrap的main方法，主要分为两部分：
 
-###1.2.1 首先新建Bootstrap，并执行init方法初始化
+### 1.2.1 首先新建Bootstrap，并执行init方法初始化
 
  	init方法初始化ClassLoader，并用ClassLoader创建Catalina实例，赋给catalinaDaemon变量，后面对命令的操作都使用catalinaDaemon具体执行。
 
-###1.2.2 处理main方法传入的命令，如果args参数为空，默认执行start
+### 1.2.2 处理main方法传入的命令，如果args参数为空，默认执行start
 
 ​	start命令的处理调用了三个方法：setAwait(true)、load(args)和start()。都调用了Catalina的相应方法进行具体执行，是用反射来调用的。
 
@@ -143,7 +143,7 @@ Catalina的启动主要是调用setAwait、load和start方法完成的。
 
 ​	start 方法用于启动服务器。
 
-###1.3.1 setAwait(boolean)方法
+### 1.3.1 setAwait(boolean)方法
 
 setAwait方法设置await属性的值，await属性在start方法中 服务器启动后使用它判断是否进入等待状态。
 
@@ -158,7 +158,7 @@ public class Catalina {
     }
 ```
 
-###1.3.2 load 方法		
+### 1.3.2 load 方法		
 
 ​	load方法根据conf/server.xml创建Server对象，并赋值给server属性，解析操作使用Tomcat开源的Digester完成的，然后调用server的init方法
 
@@ -421,7 +421,7 @@ protected void startInternal() throws LifecycleException {
 
 ## 2.1 Lifecycle 接口
 
-![image-20200421111746824](/Users/houshaojie/Library/Application Support/typora-user-images/image-20200421111746824.png)	
+![image-20200421111746824](images/image-20200421111746824.png)	
 
 Tomcat通过Lifecycle接口统一管理生命周期，所有有生命周期的组件都要实现Lifecycle接口。它一共做了4件事
 
@@ -470,7 +470,7 @@ Tomcat通过Lifecycle接口统一管理生命周期，所有有生命周期的�
 * 生命周期方法中设置了相应的状态并调用了相应的模版方法，init、start、stop和destroy对应的模版方法分别是initInternal、startInternal、stopInternal和destroyInternal方法，这四个方法由子类具体实现
 * 组件当前的状态在声明周期的四个方法中已经设置好了，直接返回
 
-###三个管理监听器的方法
+### 三个管理监听器的方法
 
 ```java
   private LifecycleSupport lifecycle = new LifecycleSupport(this);
@@ -547,7 +547,7 @@ public void fireLifecycleEvent(String type, Object data) {
 
 ​	四个声明周期方法的实现首先判断当前的状态和要处理的方法是否匹配，不匹配就会执行相应方法使其匹配(在init之前调用start，start方法里检验状态等，还是会先执行init方法)，或不处理甚至抛出异常，如果匹配或者处理后匹配了，会调用相应的模版方法并设置相应的状态。
 
-####init方法
+#### init方法
 
 ​	LifecycleBase中的状态是通过LifecycleState类型的state属性来保存的，最开始初始化值为NEW，如果不为NEW会调用invalidTransition方法抛出异常，其他三个方法也会这样
 
@@ -861,9 +861,9 @@ public String getStateName() {
 
 		1. Container的四个子容器有一个共同的父类ContainerBase，定义了Container容器的initInternal和startInternal方法通用处理内容，具体容器还可以添加自己的内容
   		2. 除了最顶层容器的init被Service调用的，子容器的init方法并不是在容器中逐层循环调用的，而是在执行start方法时通过状态判断还没有初始化才会调用
-    		3. start方法除了在父容器的startInternal方法中调用，还会在父容器的添加子容器的addChild方法中调用，主要是因为Context和Wrapper是动态添加的，
+        		3. start方法除了在父容器的startInternal方法中调用，还会在父容器的添加子容器的addChild方法中调用，主要是因为Context和Wrapper是动态添加的，
 
-###ContainerBase的initInternal
+### ContainerBase的initInternal
 
 ​	该方法主要初始化ThreadPoolExecutor类型的startStopExecutor属性，用于管理启动和关闭的线程。这里并没有设置生命周期的相应状态，所以如果具体容器也没有设置相应生命周期状态，那么即使已经调用init方法进行初始化，在start进行启动前也会再次调用init方法。
 
@@ -883,7 +883,7 @@ protected void initInternal() throws LifecycleException {
 }
 ```
 
-###ContainerBase的startInternal
+### ContainerBase的startInternal
 
 ​	该方法主要做了五件事
 
@@ -1133,7 +1133,7 @@ Wrapper没有XXConfig样式的LifecycleListener监听器
 
 ​	上一节讲了Container的创建过程，Container处理请求是使用Pipeline-valve管道处理的。下面先分析它的处理模式，然后分析实现方法
 
-##4.1 Pipeline-Valve处理模式
+## 4.1 Pipeline-Valve处理模式
 
 ​	Pipeline-Valve是责任链模式，在一个请求处理过程中有多个处理者依次对请求进行处理。
 
@@ -1155,7 +1155,7 @@ Wrapper没有XXConfig样式的LifecycleListener监听器
 
 ​	Pipeline管道的实现分为生命周期管理和处理请求两部分
 
-###Pipeline管道生命周期的实现方法
+### Pipeline管道生命周期的实现方法
 
 ​	Container中的Pipeline在抽象类ContainerBase中定义，并在生命周期的startInternal、stopInternal、destoryInternal方法中调用管道的相应生命周期方法(因为管道不需要初始化所以initInternal没有调用)
 
@@ -1438,7 +1438,7 @@ protected void destroyInternal() throws LifecycleException {
     }
 ```
 
-##5.3 ProtocolHandler
+## 5.3 ProtocolHandler
 
 ​	Tomcat的ProtocolHandler的继承结构图
 
@@ -1666,7 +1666,7 @@ public void service(org.apache.coyote.Request req,
 
 而`NioEndpoint`为了实现上面这两步，用了五个组件来。这五个组件是`LimitLatch`、`Acceptor`、`Poller`、`SocketProcessor`、`Executor`
 
-```
+```java
 /**
  * Threads used to accept new connections and pass them to worker threads.
  */
@@ -1702,7 +1702,7 @@ private Executor executor = null;
 
 用图简单表示就是以下的关系
 
-![image-20200421103218209](/Users/houshaojie/Library/Application Support/typora-user-images/image-20200421103218209.png)
+![image-20200421103218209](images/image-20200421103218209.png)
 
 接下来我们就来分别的看一下每个组件里面关键的代码
 
@@ -1710,7 +1710,7 @@ private Executor executor = null;
 
 我们上面说了`LimitLatch`主要是用来控制Tomcat所能接收的最大数量连接，如果超过了此连接，那么Tomcat就会将此连接线程阻塞等待，等里面有其他连接释放了再消费此连接。那么`LimitLatch`是如何做到呢？我们可以看`LimitLatch`这个类
 
-```
+```java
 public class LimitLatch {
 
     private static final Log log = LogFactory.getLog(LimitLatch.class);
@@ -1766,7 +1766,7 @@ AQS是如何知道什么时候阻塞线程呢？即不能获取连接呢？这�
 
 `Acceptor`是接收连接的，我们可以看到`Acceptor`实现了`Runnable`接口，那么在哪会新开启线程来执行`Acceptor`的run方法呢？在`AbstractEndpoint`的`startAcceptorThreads`方法中。
 
-```
+```java
 protected void startAcceptorThreads() {
     int count = getAcceptorThreadCount();
     acceptors = new ArrayList<>(count);
@@ -1786,7 +1786,7 @@ protected void startAcceptorThreads() {
 
 可以看到这里可以设置开启几个`Acceptor`，默认是一个。而一个端口只能对应一个`ServerSocketChannel`，那么这个`ServerSocketChannel`在哪初始化呢？我们可以看到在`Acceptor acceptor = new Acceptor<>(this);`这句话中传入了this进去，那么应该是由`Endpoint`组件初始化的连接。在`NioEndpoint`的`initServerSocket`方法中初始化了连接。
 
-```
+```java
 // Separated out to make it easier for folks that extend NioEndpoint to
 // implement custom [server]sockets
 protected void initServerSocket() throws Exception {
@@ -1814,7 +1814,7 @@ protected void initServerSocket() throws Exception {
 1. 在bind方法中的第二个参数表示操作系统的等待队列长度，即Tomcat不再接受连接时（达到了设置的最大连接数），但是在操作系统层面还是能够接受连接的，此时就将此连接信息放入等待队列，那么这个队列的大小就是此参数设置的。
 2. `ServerSocketChannel`被设置成了阻塞的模式，也就是说是以阻塞方式接受连接的。或许会有疑问。在平时的NIO编程中Channel不是都要设置成非阻塞模式吗？这里解释一下，如果是设置成非阻塞模式那么就必须设置一个`Selector`不断的轮询，但是接受连接只需要阻塞一个通道即可。
 
-<img src="/Users/houshaojie/Library/Application Support/typora-user-images/image-20200421104447503.png" alt="image-20200421104447503" style="zoom: 50%;" />
+<img src="images/image-20200421104447503.png" alt="image-20200421104447503" style="zoom: 50%;" />
 
 这里需要注意一点，每个`Acceptor`在生成`PollerEvent`对象放入`Poller`队列中时都是随机取出`Poller`对象的，具体代码可以看如下，所以`Poller`中的`Queue`对象设置成了`SynchronizedQueue`，因为可能有多个`Acceptor`同时向此`Poller`的队列中放入`PollerEvent`对象。
 
@@ -2511,7 +2511,7 @@ public interface Lifecycle {
 
 在`Server.xml`中我们发现第一个层级也是`Server`，然后`Catalina`的`satrt`方法中第一个启动的也是`Server`。
 
-![image-20200421113221658](/Users/houshaojie/Library/Application Support/typora-user-images/image-20200421113221658.png)
+![image-20200421113221658](images/image-20200421113221658.png)
 
 
 
@@ -2539,7 +2539,7 @@ public interface Lifecycle {
 
 用过SpringBoot的人都知道，首先要写一个main方法来启动
 
-```
+```java
 @SpringBootApplication
 public class TomcatdebugApplication {
 
@@ -2666,9 +2666,8 @@ protected ConfigurableApplicationContext createApplicationContext() {
 
 通过这个类图我们可以知道，这个类继承的是`ServletWebServerApplicationContext`,这就是我们真正的主角，而这个类最终是继承了`AbstractApplicationContext`，了解完创建上下文的情况后，我们再来看看刷新上下文，相关代码如下：
 
-```
+```java
 //类：SpringApplication.java
-
 private void refreshContext(ConfigurableApplicationContext context) {
     //直接调用刷新方法
 		refresh(context);
@@ -2687,7 +2686,6 @@ protected void refresh(ApplicationContext applicationContext) {
 		Assert.isInstanceOf(AbstractApplicationContext.class, applicationContext);
 		((AbstractApplicationContext) applicationContext).refresh();
 	}
-复制代码
 ```
 
 这里还是直接传递调用本类的`refresh(context)`方法，最后是强转成父类`AbstractApplicationContext`调用其`refresh()`方法,该代码如下：
@@ -2803,7 +2801,7 @@ private void createWebServer() {
 
 根据上图我们发现，工厂类是一个接口，各个具体服务的实现是由各个子类来实现的，所以我们就去看看`TomcatServletWebServerFactory.getWebServer()`的实现。
 
-```
+```java
 	@Override
 	public WebServer getWebServer(ServletContextInitializer... initializers) {
 		Tomcat tomcat = new Tomcat();
@@ -2821,12 +2819,11 @@ private void createWebServer() {
 		prepareContext(tomcat.getHost(), initializers);
 		return getTomcatWebServer(tomcat);
 	}
-复制代码
 ```
 
 根据上面的代码，我们发现其主要做了两件事情，第一件事就是把Connnctor(我们称之为连接器)对象添加到Tomcat中，第二件事就是`configureEngine`,这连接器我们勉强能理解（不理解后面会述说），那这个`Engine`是什么呢？我们查看`tomcat.getEngine()`的源码：
 
-```
+```java
     public Engine getEngine() {
         Service service = getServer().findServices()[0];
         if (service.getContainer() != null) {
@@ -2839,7 +2836,6 @@ private void createWebServer() {
         service.setContainer(engine);
         return engine;
     }
-复制代码
 ```
 
 根据上面的源码，我们发现，原来这个Engine是容器，我们继续跟踪源码，找到`Container`接口
