@@ -283,6 +283,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 Spring框架的资源访问Resource接口。该接口提供了更强的资源访问能力，Spring 框架本身大量使用了 Resource 接口来访问底层资源。
 
+Bean的后置处理器
+
 ### Resource 接口介绍
 
 source 接口是具体资源访问策略的抽象，也是所有资源访问类所实现的接口。
