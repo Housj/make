@@ -1,385 +1,43 @@
-https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/
+# SpringBoot入门
 
-# 入门
+可以使用Spring Boot创建Java应用程序，应用程序可以通过使用`java -jar`或更传统的部署来启动。我们还提供了一个运行“ spring脚本”的命令行工具。
 
-如果您是从Spring Boot或“ Spring”开始的，请先阅读本节。它回答了基本的“什么？”，“如何？” 和“为什么？” 问题。它包括对Spring Boot的介绍以及安装说明。然后，我们将引导您构建第一个Spring Boot应用程序，并讨论一些核心原理。
-
-## 1.介绍Spring Boot
-
-Spring Boot使创建可运行的独立，生产级基于Spring的应用程序变得容易。我们对Spring平台和第三方库持固执己见的观点，这样您就可以以最小的麻烦开始使用。大多数Spring Boot应用程序只需要很少的Spring配置。
-
-您可以使用Spring Boot创建Java应用程序，该应用程序可以通过使用`java -jar`或更传统的战争部署来启动。我们还提供了一个运行“ spring脚本”的命令行工具。
-
-我们的主要目标是：
+目标：
 
 - 为所有Spring开发提供根本上更快且可广泛访问的入门经验。
 - 开箱即用，但随着需求开始偏离默认值，您会很快摆脱困境。
 - 提供一系列大型项目通用的非功能性功能（例如嵌入式服务器，安全性，指标，运行状况检查和外部化配置）。
 - 完全没有代码生成，也不需要XML配置。
 
-## 2.系统要求
-
-Spring Boot 2.2.6.RELEASE需要[Java 8，](https://www.java.com/)并且与Java 13（包括）兼容。 还需要[Spring Framework 5.2.5.RELEASE](https://docs.spring.io/spring/docs/5.2.5.RELEASE/spring-framework-reference/)或更高版本。
-
-为以下构建工具提供了明确的构建支持：
-
-| 制作工具 | 版                               |
-| :------- | :------------------------------- |
-| 马文     | 3.3+                             |
-| 摇篮     | 5.x和6.x（也支持4.10，但已弃用） |
-
-### 2.1。Servlet容器
-
-Spring Boot支持以下嵌入式servlet容器：
-
-| 名称         | Servlet版本 |
-| :----------- | :---------- |
-| Tomcat 9.0   | 4.0         |
-| 码头9.4      | 3.1         |
-| Undertow 2.0 | 4.0         |
-
-您还可以将Spring Boot应用程序部署到任何Servlet 3.1+兼容容器中。
-
-## 3.安装Spring Boot
-
-Spring Boot可以与“经典” Java开发工具一起使用，也可以作为命令行工具安装。无论哪种方式，都需要[Java SDK v1.8](https://www.java.com/)或更高版本。在开始之前，您应该使用以下命令检查当前的Java安装：
-
-```
-$ java-版本
-```
-
-如果您不熟悉Java开发，或者想尝试使用Spring Boot，则可能要先尝试使用[Spring Boot CLI](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/getting-started.html#getting-started-installing-the-cli)（命令行界面）。否则，请继续阅读“经典”安装说明。
-
-### 3.1。Java开发人员的安装说明
-
-您可以像使用任何标准Java库一样使用Spring Boot。为此，请`spring-boot-*.jar`在类路径中包含适当的文件。Spring Boot不需要任何特殊的工具集成，因此您可以使用任何IDE或文本编辑器。另外，Spring Boot应用程序没有什么特别之处，因此您可以像运行其他Java程序一样运行和调试Spring Boot应用程序。
-
-尽管您*可以*复制Spring Boot jar，但是我们通常建议您使用支持依赖关系管理的构建工具（例如Maven或Gradle）。
-
-#### 3.1.1。Maven安装
-
-Spring Boot与Apache Maven 3.3或更高版本兼容。如果尚未安装Maven，则可以按照[maven.apache.org上](https://maven.apache.org/)的说明进行操作。
-
-|      | 在许多操作系统上，Maven可以与程序包管理器一起安装。如果您使用OSX Homebrew，请尝试`brew install maven`。Ubuntu用户可以运行`sudo apt-get install maven`。具有[Chocolatey的](https://chocolatey.org/) Windows用户可以`choco install maven`从提升的（管理员）提示符下运行。 |
-| ---- | ------------------------------------------------------------ |
-|      |                                                              |
-
-Spring Boot依赖项使用`org.springframework.boot` `groupId`。通常，您的Maven POM文件从`spring-boot-starter-parent`项目继承，并声明对一个或多个[“启动器”的](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/using-spring-boot.html#using-boot-starter)依赖关系。Spring Boot还提供了一个可选的[Maven插件](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/build-tool-plugins.html#build-tool-plugins-maven-plugin)来创建可执行jar。
-
-以下清单显示了一个典型的`pom.xml`文件：
-
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <groupId>com.example</groupId>
-    <artifactId>myproject</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-
-    <!-- Inherit defaults from Spring Boot -->
+ <!-- Inherit defaults from Spring Boot -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.2.6.RELEASE</version>
     </parent>
-
-    <!-- Override inherited settings -->
-    <description/>
-    <developers>
-        <developer/>
-    </developers>
-    <licenses>
-        <license/>
-    </licenses>
-    <scm>
-        <url/>
-    </scm>
-    <url/>
-
-    <!-- Add typical dependencies for a web application -->
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-    </dependencies>
-
-    <!-- Package as an executable jar -->
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
-</project>
 ```
 
-|      | 这`spring-boot-starter-parent`是使用Spring Boot的一种好方法，但可能并不总是适合。有时您可能需要从其他父POM继承，或者您可能不喜欢我们的默认设置。在这种情况下，请参阅[using-spring-boot.html](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/using-spring-boot.html#using-boot-maven-without-a-parent)以获取使用`import`范围的替代解决方案。 |
-| ---- | ------------------------------------------------------------ |
-|      |                                                              |
+Spring Boot依赖项使用`org.springframework.boot` `groupId`。通常Maven POM文件从`spring-boot-starter-parent`项目继承，是一个特殊的启动提供有用的Maven的默认值，并声明对一个或多个[“启动器”的](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/using-spring-boot.html#using-boot-starter)依赖关系。Spring Boot还提供了一个可选的[Maven插件](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/build-tool-plugins.html#build-tool-plugins-maven-plugin)来创建可执行jar。
 
-#### 3.1.2。摇篮安装
+`mvn dependency:tree`命令显示项目依赖关系的树形表示。您可以看到它`spring-boot-starter-parent`本身不提供任何依赖关系。
 
-Spring Boot与5.x和6.x兼容。还支持4.10，但不支持该支持，在将来的版本中将删除该支持。如果尚未安装Gradle，则可以按照[gradle.org上](https://gradle.org/)的说明进行[操作](https://gradle.org/)。
+## 简单启动
 
-可以使用来声明Spring Boot依赖项`org.springframework.boot` `group`。通常，您的项目声明对一个或多个[“启动器”的](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/using-spring-boot.html#using-boot-starter)依赖。Spring Boot提供了一个有用的[Gradle插件](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/build-tool-plugins.html#build-tool-plugins-gradle-plugin)，可用于简化依赖项声明和创建可执行jar。
-
-摇篮包装
-
-当您需要构建项目时，Gradle包装器提供了一种“获取” Gradle的好方法。它是一个小的脚本和库，您随代码一起提交以引导构建过程。有关详细信息，请参见[docs.gradle.org/current/userguide/gradle_wrapper.html](https://docs.gradle.org/current/userguide/gradle_wrapper.html)。
-
-有关Spring Boot和Gradle [入门的](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/gradle-plugin/reference/html//#getting-started)更多详细信息，可以在Gradle插件参考指南的“ [入门”部分](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/gradle-plugin/reference/html//#getting-started)中找到。
-
-### 3.2。安装Spring Boot CLI
-
-Spring Boot CLI（命令行界面）是一个命令行工具，可用于快速使用Spring进行原型设计。它使您可以运行[Groovy](http://groovy-lang.org/)脚本，这意味着您具有类似Java的熟悉语法，而没有太多样板代码。
-
-您无需使用CLI即可与Spring Boot一起使用，但这绝对是使Spring应用程序启动的最快方法。
-
-#### 3.2.1。手动安装
-
-您可以从Spring软件存储库下载Spring CLI发行版：
-
-- [spring-boot-cli-2.2.6.RELEASE-bin.zip](https://repo.spring.io/release/org/springframework/boot/spring-boot-cli/2.2.6.RELEASE/spring-boot-cli-2.2.6.RELEASE-bin.zip)
-- [弹簧启动cli-2.2.6.RELEASE-bin.tar.gz](https://repo.spring.io/release/org/springframework/boot/spring-boot-cli/2.2.6.RELEASE/spring-boot-cli-2.2.6.RELEASE-bin.tar.gz)
-
-也提供最先进的 [快照分发](https://repo.spring.io/snapshot/org/springframework/boot/spring-boot-cli/)。
-
-下载完成后，请按照解压缩后的存档中的[INSTALL.txt](https://raw.githubusercontent.com/spring-projects/spring-boot/v2.2.6.RELEASE/spring-boot-project/spring-boot-cli/src/main/content/INSTALL.txt)说明进行操作。总之，文件目录中有一个`spring`脚本（`spring.bat`对于Windows）。或者，您可以使用该文件（脚本可帮助您确保正确设置类路径）。`bin/``.zip``java -jar``.jar`
-
-#### 3.2.2。使用SDKMAN安装！
-
-SDKMAN！（软件开发套件管理器）可用于管理各种二进制SDK的多个版本，包括Groovy和Spring Boot CLI。获取SDKMAN！从[sdkman.io](https://sdkman.io/)并使用以下命令安装Spring Boot：
-
-```
-$ sdk安装springboot
-$ spring --version
-Spring Boot v2.2.6.RELEASE
-```
-
-如果您为CLI开发功能并希望轻松访问所构建的版本，请使用以下命令：
-
-```
-$ sdk install springboot dev /path/to/spring-boot/spring-boot-cli/target/spring-boot-cli-2.2.6.RELEASE-bin/spring-2.2.6.RELEASE/
-$ sdk默认的springboot dev
-$ spring --version
-Spring CLI v2.2.6.RELEASE
-```
-
-前面的说明安装`spring`称为`dev`实例的本地实例。它指向您的目标构建位置，因此每次重建Spring Boot `spring`都是最新的。
-
-您可以通过运行以下命令来查看它：
-
-```
-$ sdk ls springboot
-
-================================================== ==============================
-可用的Springboot版本
-================================================== ==============================
-> +开发
-* 2.2.6。发布
-
-================================================== ==============================
-+-本地版本
-*-已安装
->-当前正在使用
-================================================== ==============================
-```
-
-#### 3.2.3。OSX Homebrew安装
-
-如果您使用的是Mac，并且使用[Homebrew](https://brew.sh/)，则可以使用以下命令安装Spring Boot CLI：
-
-```
-$酿造水龙头枢纽/水龙头
-$ brew安装springboot
-```
-
-自制软件安装`spring`到`/usr/local/bin`。
-
-|      | 如果看不到该公式，则说明brew的安装可能已过期。在这种情况下，请运行`brew update`并重试。 |
-| ---- | ------------------------------------------------------------ |
-|      |                                                              |
-
-#### 3.2.4。MacPorts安装
-
-如果您使用的是Mac并使用[MacPorts](https://www.macports.org/)，则可以使用以下命令安装Spring Boot CLI：
-
-```
-$ sudo port install spring-boot-cli
-```
-
-#### 3.2.5。命令行补全
-
-Spring Boot CLI包括为[BASH](https://en.wikipedia.org/wiki/Bash_(Unix_shell))和[zsh](https://en.wikipedia.org/wiki/Z_shell) Shell 提供命令完成的脚本。您可以`source`将脚本（也称为`spring`）放在任何shell中，或将其放在个人或系统范围内的bash完成初始化中。在Debian系统上，系统范围内的脚本位于其中，`/shell-completion/bash`并且在启动新Shell时将执行该目录中的所有脚本。例如，如果您是使用SDKMAN！安装的，则要手动运行脚本，请使用以下命令：
-
-```
-$。〜/ .sdkman / candidates / springboot / current / shell-completion / bash / spring
-$ spring <这里点击标签>
-  抢救jar运行测试版
-```
-
-|      | 如果使用Homebrew或MacPorts安装Spring Boot CLI，则命令行完成脚本会自动注册到您的Shell中。 |
-| ---- | ------------------------------------------------------------ |
-|      |                                                              |
-
-#### 3.2.6。Windows Scoop安装
-
-如果您使用的是Windows并使用[Scoop](https://scoop.sh/)，则可以使用以下命令安装Spring Boot CLI：
-
-```
->铲斗添加附加功能
->独家安装springboot
-```
-
-Scoop安装`spring`到`~/scoop/apps/springboot/current/bin`。
-
-|      | 如果您没有看到应用清单，则可能是因为瓢的安装已过期。在这种情况下，请运行`scoop update`并重试。 |
-| ---- | ------------------------------------------------------------ |
-|      |                                                              |
-
-#### 3.2.7。快速入门Spring CLI示例
-
-您可以使用以下Web应用程序来测试安装。首先，创建一个名为的文件`app.groovy`，如下所示：
-
-```groovy
+```java
 @RestController
-class ThisWillActuallyRun {
+@EnableAutoConfiguration
+public class Example {
+@RequestMapping("/")
+String home() {
+    return "Hello World!";
+}
 
-    @RequestMapping("/")
-    String home() {
-        "Hello World!"
-    }
-
+public static void main(String[] args) {
+    SpringApplication.run(Example.class, args);
+}
 }
 ```
-
-然后从外壳运行它，如下所示：
-
-```
-$ spring run app.groovy
-```
-
-|      | 由于依赖项已下载，因此您的应用程序的第一次运行很慢。随后的运行要快得多。 |
-| ---- | ------------------------------------------------------------ |
-|      |                                                              |
-
-`localhost:8080`在您喜欢的网络浏览器中打开。您应该看到以下输出：
-
-```
-你好，世界！
-```
-
-### 3.3。从较早版本的Spring Boot升级
-
-如果要从`1.x`Spring Boot发行版进行升级，请查看[项目Wiki上的“迁移指南”，](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide)其中提供了详细的升级说明。还请检查[“发行说明”](https://github.com/spring-projects/spring-boot/wiki)以获取每个发行版的“新功能和值得注意的功能”列表。
-
-升级到新功能版本时，某些属性可能已被重命名或删除。Spring Boot提供了一种在启动时分析应用程序环境并打印诊断的方法，而且还可以在运行时为您临时迁移属性。要启用该功能，请将以下依赖项添加到您的项目中：
-
-```xml
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-properties-migrator</artifactId>
-    <scope>runtime</scope>
-</dependency>
-```
-
-|      | 较晚添加到环境的属性（例如使用时`@PropertySource`）将不被考虑。 |
-| ---- | ------------------------------------------------------------ |
-|      |                                                              |
-
-|      | 迁移完成后，请确保从项目的依赖项中删除此模块。 |
-| ---- | ---------------------------------------------- |
-|      |                                                |
-
-要升级现有的CLI安装，请使用适当的程序包管理器命令（例如，`brew upgrade`）。如果您手动安装了CLI，请遵循[标准说明](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/getting-started.html#getting-started-manual-cli-installation)，记住要更新`PATH`环境变量以删除所有较旧的引用。
-
-## 4.开发您的第一个Spring Boot应用程序
-
-本节介绍如何开发一个简单的“ Hello World！”。Web应用程序，重点介绍了Spring Boot的一些关键功能。我们使用Maven来构建该项目，因为大多数IDE都支持它。
-
-|      | 该[spring.io](https://spring.io/)网站包含了许多“入门” [指南](https://spring.io/guides)使用Spring的引导。如果您需要解决特定问题，请首先检查。通过转到[start.spring.io](https://start.spring.io/)并从依赖项搜索器中选择“ Web”启动器，可以简化以下步骤。这样做会生成一个新的项目结构，以便您可以[立即开始编码](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/getting-started.html#getting-started-first-application-code)。查看[Spring Initializr文档](https://docs.spring.io/initializr/docs/current/reference/html//#user-guide)以获取更多详细信息。 |
-| ---- | ------------------------------------------------------------ |
-|      |                                                              |
-
-在开始之前，请打开终端并运行以下命令，以确保安装了有效的Java和Maven版本：
-
-```
-$ java-版本
-Java版本“ 1.8.0_102”
-Java（TM）SE运行时环境（内部版本1.8.0_102-b14）
-Java HotSpot（TM）64位服务器VM（内部版本25.102-b14，混合模式）
-$ mvn -v
-Apache Maven 3.5.4（1edded0938998edf8bf061f1ceb3cfdeccf443fe; 2018-06-17T14：33：14-04：00）
-Maven主页：/usr/local/Cellar/maven/3.3.9/libexec
-Java版本：1.8.0_102，供应商：Oracle Corporation
-```
-
-|      | 该示例需要在其自己的文件夹中创建。随后的说明假定您已经创建了一个合适的文件夹，并且它是当前目录。 |
-| ---- | ------------------------------------------------------------ |
-|      |                                                              |
-
-### 4.1。创建POM
-
-我们需要先创建一个Maven `pom.xml`文件。本`pom.xml`是用来构建项目的配方。打开您喜欢的文本编辑器并添加以下内容：
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <groupId>com.example</groupId>
-    <artifactId>myproject</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.6.RELEASE</version>
-    </parent>
-
-    <description/>
-    <developers>
-        <developer/>
-    </developers>
-    <licenses>
-        <license/>
-    </licenses>
-    <scm>
-        <url/>
-    </scm>
-    <url/>
-
-    <!-- Additional lines to be added here... -->
-
-</project>
-```
-
-上面的清单应为您提供有效的构建。您可以通过运行`mvn package`进行测试（目前，您可以忽略“ jar将为空-没有内容标记为包含！”警告）。
-
-|      | 此时，您可以将项目导入到IDE中（大多数现代Java IDE都包含对Maven的内置支持）。为简单起见，在此示例中，我们继续使用纯文本编辑器。 |
-| ---- | ------------------------------------------------------------ |
-|      |                                                              |
-
-### 4.2。添加类路径依赖
-
-Spring Boot提供了许多“启动器”，使您可以将jar添加到类路径中。我们的烟雾测试应用程序使用`spring-boot-starter-parent`的`parent`聚甲醛的部分。本`spring-boot-starter-parent`是一个特殊的启动提供有用的Maven的默认值。它还提供了一个[`dependency-management`](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/using-spring-boot.html#using-boot-dependency-management)部分，以便您可以省略`version`“祝福”依赖项的标签。
-
-其他“入门”提供了开发特定类型的应用程序时可能需要的依赖项。由于我们正在开发Web应用程序，因此我们添加了`spring-boot-starter-web`依赖项。在此之前，我们可以通过运行以下命令来查看当前的状态：
-
-```
-$ mvn依赖关系：树
-
-[INFO] com.example：myproject：jar：0.0.1-SNAPSHOT
-```
-
-该`mvn dependency:tree`命令显示项目依赖关系的树形表示。您可以看到它`spring-boot-starter-parent`本身不提供任何依赖关系。要添加必要的依赖项，请编辑您的依赖项，`pom.xml`并`spring-boot-starter-web`在该`parent`部分的正下方添加依赖项：
 
 ```xml
 <dependencies>
@@ -390,195 +48,67 @@ $ mvn依赖关系：树
 </dependencies>
 ```
 
-如果`mvn dependency:tree`再次运行，您会发现现在还有许多其他依赖项，包括Tomcat Web服务器和Spring Boot本身。
+## @RestController和@RequestMapping
 
-### 4.3。编写代码
+​	`@RestController`。这被称为*构造型*注释。它为阅读代码的人和Spring提供了提示，提示该类起特定的作用。在这种情况下，我们的类是web `@Controller`，因此Spring在处理传入的Web请求时会考虑使用它。该`@RestController`注解告诉Spring使得到的字符串直接返回给调用者。
 
-要完成我们的应用程序，我们需要创建一个Java文件。默认情况下，Maven会从编译源代码`src/main/java`，因此您需要创建该文件夹结构，然后添加一个名为的文件以`src/main/java/Example.java`包含以下代码：
+​	`@RequestMapping`注释提供“路由”的信息。它告诉Spring任何具有`/`路径的HTTP请求都应映射到该`home`方法。
 
-```java
-import org.springframework.boot.*;
-import org.springframework.boot.autoconfigure.*;
-import org.springframework.web.bind.annotation.*;
+> ​	Spring参考文档中的[MVC部分](https://docs.spring.io/spring/docs/5.2.5.RELEASE/spring-framework-reference/web.html#mvc)
 
-@RestController
-@EnableAutoConfiguration
-public class Example {
+### @EnableAutoConfiguration
 
-    @RequestMapping("/")
-    String home() {
-        return "Hello World!";
-    }
+​	`@EnableAutoConfiguration`注释告诉Spring Boot根据所添加的jar依赖关系“猜测”您如何配置Spring。由于`spring-boot-starter-web`添加了Tomcat和Spring MVC，因此自动配置假定您正在开发Web应用程序并相应地设置Spring。
 
-    public static void main(String[] args) {
-        SpringApplication.run(Example.class, args);
-    }
-
-}
-```
-
-尽管这里没有太多代码，但正在进行很多工作。我们将在接下来的几节中逐步介绍重要部分。
-
-#### 4.3.1。@RestController和@RequestMapping注释
-
-`@RestController`称为*构造型*注释。它为阅读代码的人和Spring提供了提示，提示该类起特定的作用。在这种情况下，我们的类是web `@Controller`，因此Spring在处理传入的Web请求时会考虑使用它。
-
-`@RequestMapping`注释提供“路由”的信息。它告诉Spring任何具有`/`路径的HTTP请求都应映射到该`home`方法。该`@RestController`注解告诉Spring使得到的字符串直接返回给调用者。
-
-|      | 在`@RestController`与`@RequestMapping`注解是Spring MVC的注解（他们并不是专门针对春季启动）。有关更多详细信息，请参见Spring参考文档中的[MVC部分](https://docs.spring.io/spring/docs/5.2.5.RELEASE/spring-framework-reference/web.html#mvc)。 |
-| ---- | ------------------------------------------------------------ |
-|      |                                                              |
-
-#### 4.3.2。@EnableAutoConfiguration批注
-
-第二个类级别的注释是`@EnableAutoConfiguration`。这个注释告诉Spring Boot根据所添加的jar依赖关系“猜测”您如何配置Spring。由于`spring-boot-starter-web`添加了Tomcat和Spring MVC，因此自动配置假定您正在开发Web应用程序并相应地设置Spring。
-
-启动器和自动配置
+​	启动器和自动配置
 
 自动配置旨在与“启动器”配合使用，但是这两个概念并没有直接联系在一起。您可以自由选择启动器之外的jar依赖项。Spring Boot仍然尽其最大努力来自动配置您的应用程序。
 
-#### 4.3.3。“主要”方法
+## Main -> run(Class,args)
 
-我们应用程序的最后一部分是`main`方法。这只是遵循Java约定的应用程序入口点的标准方法。我们的main方法`SpringApplication`通过调用委托给Spring Boot的类`run`。 `SpringApplication`引导我们的应用程序，启动Spring，这反过来又启动了自动配置的Tomcat Web服务器。我们需要将`Example.class`一个参数传递给该`run`方法，以判断`SpringApplication`哪个是主要的Spring组件。该`args`数组也将通过以公开任何命令行参数。
+​	`main`方法只是遵循Java约定的应用程序入口点的标准方法。main方法`SpringApplication`通过调用委托给Spring Boot的类`run`。 `SpringApplication`引导我们的应用程序，启动Spring，这反过来又启动了自动配置的Tomcat Web服务器。我们需要将`Example.class`一个参数传递给该`run`方法，以判断`SpringApplication`哪个是主要的Spring组件。该`args`数组也将通过以公开任何命令行参数。
 
-### 4.4。运行示例
+## 运行`mvn spring-boot:run`
 
-此时，您的应用程序应该可以工作了。由于使用了`spring-boot-starter-parent`POM，因此有一个有用的`run`目标，可以用来启动应用程序。`mvn spring-boot:run`从根项目目录中键入以启动应用程序。您应该看到类似于以下内容的输出：
+​	由于使用了`spring-boot-starter-parent`POM，因此有一个有用的`run`目标，可以用来启动应用程序。`mvn spring-boot:run`从根项目目录中键入以启动应用程序。
 
-```
-$ mvn spring-boot：运行
+## 创建可执行jar
 
-  。____ _ __ _ _
- / \\ / ___'_ __ _ _（_）_ __ __ _ _ \ \ \ \
-（（）\ ___ |'_ |'_ | |'_ \ / _` | \ \ \ \ \
- \\ / ___）| | _）| | | | | || （_ | |））））
-  '| ____ | .__ | _ | | _ | _ | | _ \ __，| / / / /
- ======== | _ | ============= | ___ / = / _ / _ / _ /
- :: Spring Boot ::（v2.2.6.RELEASE）
-....... 。。
-....... 。。（日志输出在这里）
-....... 。。
-........在2.222秒内启动示例（JVM运行6.514）
-```
-
-如果您打开Web浏览器到`localhost:8080`，则应该看到以下输出：
-
-```
-你好，世界！
-```
-
-要正常退出该应用程序，请按`ctrl-c`。
-
-### 4.5。创建一个可执行的Jar
-
-通过创建一个可以在生产环境中运行的完全独立的可执行jar文件来结束示例。可执行jar（有时称为“胖jar”）是包含您的已编译类以及代码需要运行的所有jar依赖项的归档文件。
+​	创建一个可以在生产环境中运行的完全独立的可执行jar文件。	包含您的已编译类以及代码需要运行的所有jar依赖项的归档文件。
 
 可执行jar和Java
 
-Java没有提供加载嵌套jar文件（jar中本身包含的jar文件）的标准方法。如果您要分发独立的应用程序，则可能会出现问题。
-
-为了解决这个问题，许多开发人员使用“超级”罐子。uber jar将来自应用程序所有依赖项的所有类打包到单个存档中。这种方法的问题在于，很难查看应用程序中包含哪些库。如果在多个jar中使用相同的文件名（但具有不同的内容），也可能会产生问题。
-
-Spring Boot采用了[另一种方法](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/appendix-executable-jar-format.html#executable-jar)，实际上允许您直接嵌套jar。
-
-要创建可执行jar，我们需要将添加`spring-boot-maven-plugin`到`pom.xml`。为此，请在该`dependencies`部分下方插入以下行：
+​	Java没有提供加载嵌套jar文件（jar中本身包含的jar文件）的标准方法。我们需要将添加`spring-boot-maven-plugin`到`pom.xml`。在`dependencies`部分下方插入以下行
 
 ```xml
 <build>
     <plugins>
-        <plugin>
-            <groupId>org.springframework.boot</groupId>
+        <plugin>        
+          	<groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-maven-plugin</artifactId>
         </plugin>
     </plugins>
 </build>
 ```
 
-|      | 所述`spring-boot-starter-parent`POM包括``配置以结合`repackage`目标。如果不使用父POM，则需要自己声明此配置。有关详细信息，请参见[插件文档](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/maven-plugin//usage.html)。 |
-| ---- | ------------------------------------------------------------ |
-|      |                                                              |
+从命令行运行`mvn package`，查看`target`目录，应该看到`myproject-0.0.1-SNAPSHOT.jar`，可以使用`jar tvf`解压查看细节，要运行该应用程序，使用`java -jar`
 
-保存您的代码，`pom.xml`然后从命令行运行`mvn package`，如下所示：
-
-```
-$ mvn软件包
-
-[INFO]正在扫描项目...
-[信息]
-[INFO] ----------------------------------------------- -------------------------
-[INFO]构建myproject 0.0.1-SNAPSHOT
-[INFO] ----------------------------------------------- -------------------------
-[INFO] ......
-[INFO] --- maven-jar-plugin：2.4：jar（默认-jar）@ myproject-
-[INFO]构建jar：/Users/developer/example/spring-boot-example/target/myproject-0.0.1-SNAPSHOT.jar
-[信息]
-[INFO] --- spring-boot-maven-plugin：2.2.6.RELEASE：repackage（默认）@ myproject-
-[INFO] ----------------------------------------------- -------------------------
-[INFO]建立成功
-[INFO] ----------------------------------------------- -------------------------
-```
-
-如果查看`target`目录，应该看到`myproject-0.0.1-SNAPSHOT.jar`。该文件的大小应为10 MB左右。如果您想窥视内部，可以使用`jar tvf`，如下所示：
-
-```
-$ jar tvf target / myproject-0.0.1-SNAPSHOT.jar
-```
-
-您还应该`myproject-0.0.1-SNAPSHOT.jar.original`在`target`目录中看到一个更小的文件。这是Maven在Spring Boot重新打包之前创建的原始jar文件。
-
-要运行该应用程序，请使用以下`java -jar`命令：
-
-```
-$ java -jar target / myproject-0.0.1-SNAPSHOT.jar
-
-  。____ _ __ _ _
- / \\ / ___'_ __ _ _（_）_ __ __ _ _ \ \ \ \
-（（）\ ___ |'_ |'_ | |'_ \ / _` | \ \ \ \ \
- \\ / ___）| | _）| | | | | || （_ | |））））
-  '| ____ | .__ | _ | | _ | _ | | _ \ __，| / / / /
- ======== | _ | ============= | ___ / = / _ / _ / _ /
- :: Spring Boot ::（v2.2.6.RELEASE）
-....... 。。
-....... 。。（日志输出在这里）
-....... 。。
-........在2.536秒内启动示例（JVM运行2.864）
-```
-
-和以前一样，要退出该应用程序，请按`ctrl-c`。
-
-## 5.接下来阅读什么
-
-希望本节提供了一些Spring Boot基础知识，并带您开始编写自己的应用程序。如果您是面向任务的开发人员，则可能要跳到[spring.io](https://spring.io/)并查看一些解决特定“我如何使用Spring进行操作”的[入门](https://spring.io/guides/)指南。问题。我们也有特定[于](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/howto.html#howto) Spring Boot的“ [操作方法](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/howto.html#howto) ”参考文档。
-
-否则，下一个逻辑步骤是阅读*[using-spring-boot.html](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/using-spring-boot.html#using-boot)*。如果您真的不耐烦，还可以继续阅读有关*[Spring Boot功能的信息](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/spring-boot-features.html#boot-features)*。
-
-最后更新时间2020-03-26 11:43:46 UTC
-
-
+> java -jar target / myproject-0.0.1-SNAPSHOT.jar
 
 # 使用Spring Boot
 
-本节将详细介绍如何使用Spring Boot。它涵盖了诸如构建系统，自动配置以及如何运行应用程序之类的主题。我们还将介绍一些Spring Boot最佳实践。尽管Spring Boot没什么特别的（它只是您可以使用的另一个库），但是有一些建议可以使您的开发过程更轻松一些。
+本节介绍使用Spring Boot涵盖了诸如构建系统，自动配置以及如何运行应用程序之类的主题。还将介绍一些Spring Boot最佳实践。
 
-如果您是从Spring Boot开始的，那么在进入本节之前，您应该阅读*[入门指南](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/getting-started.html#getting-started)*。
+## 1  构建系统
 
-## 1.构建系统
+建议选择一个支持[依赖关系管理](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/using-spring-boot.html#using-boot-dependency-management)并且可以使用发布到“ Maven Central”存储库的工件的构建系统。我们建议您选择Maven或Gradle。
 
-强烈建议您选择一个支持[*依赖关系管理*](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/using-spring-boot.html#using-boot-dependency-management)并且可以使用发布到“ Maven Central”存储库的工件的构建系统。我们建议您选择Maven或Gradle。可以使Spring Boot与其他构建系统（例如，Ant）一起使用，但是它们并没有得到很好的支持。
+### 1.1 依赖管理
 
-### 1.1。依赖管理
+​	每个Spring Boot版本都与Spring Framework的基本版本相关联。实际不需要为构建配置中的所有这些依赖项提供版本，因为Spring Boot会为您管理该版本。当您升级Spring Boot本身时，这些依赖项也会以一致的方式升级。
 
-每个Spring Boot版本都提供了它所支持的依赖关系的精选列表。实际上，您不需要为构建配置中的所有这些依赖项提供版本，因为Spring Boot会为您管理该版本。当您升级Spring Boot本身时，这些依赖项也会以一致的方式升级。
-
-|      | 您仍然可以指定版本，并在需要时覆盖Spring Boot的建议。 |
-| ---- | ----------------------------------------------------- |
-|      |                                                       |
-
-精选列表包含可与Spring Boot一起使用的所有spring模块以及完善的第三方库列表。该列表作为可与[Maven](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/using-spring-boot.html#using-boot-maven-parent-pom)和[Gradle](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/using-spring-boot.html#using-boot-gradle)一起使用的标准[材料清单（`spring-boot-dependencies`）](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/using-spring-boot.html#using-boot-maven-without-a-parent)提供。
-
-|      | 每个Spring Boot版本都与Spring Framework的基本版本相关联。我们**强烈**建议您不要指定其版本。 |
-| ---- | ------------------------------------------------------------ |
-|      |                                                              |
+> ​	您仍然可以指定版本，并在需要时覆盖Spring Boot的建议。
+>
 
 ### 1.2 Maven
 
@@ -594,7 +124,7 @@ Maven用户可以从`spring-boot-starter-parent`项目继承以获得合理的�
 
 请注意，由于`application.properties`和`application.yml`文件都接受Spring样式的占位符（`${…}`），因此Maven过滤已更改为使用`@..@`占位符。（您可以通过设置名为的Maven属性来覆盖它`resource.delimiter`。）
 
-#### 1.2.1。继承入门级父级
+#### 1.2.1 继承入门级父级
 
 要将您的项目配置为继承自`spring-boot-starter-parent`，请设置`parent`如下：
 
@@ -674,7 +204,7 @@ Maven用户可以从`spring-boot-starter-parent`项目继承以获得合理的�
 
 #### 1.2.3。使用Spring Boot Maven插件
 
-Spring Boot包含一个[Maven插件](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/build-tool-plugins.html#build-tool-plugins-maven-plugin)，可以将项目打包为可执行jar。``如果要使用插件，请将该插件添加到您的部分，如以下示例所示：
+Spring Boot包含一个[Maven插件](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/build-tool-plugins.html#build-tool-plugins-maven-plugin)，可以将项目打包为可执行jar。如果要使用插件，请将该插件添加到您的部分，如以下示例所示：
 
 ```xml
 <build>
@@ -691,14 +221,14 @@ Spring Boot包含一个[Maven插件](https://docs.spring.io/spring-boot/docs/2.2
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
-### 1.3。摇篮
+### 1.3 Gradle
 
 要了解有关将Spring Boot与Gradle结合使用的信息，请参阅Spring Boot的Gradle插件的文档：
 
 - 参考（[HTML](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/gradle-plugin/reference/html/)和[PDF](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/gradle-plugin/reference/pdf/spring-boot-gradle-plugin-reference.pdf)）
 - [API](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/gradle-plugin/reference/api/)
 
-### 1.4。蚂蚁
+### 1.4 Ant
 
 可以使用Apache Ant + Ivy构建Spring Boot项目。该`spring-boot-antlib`“的antlib”模块还可以帮助蚂蚁创建可执行的JAR文件。
 
@@ -760,7 +290,7 @@ Spring Boot包含一个[Maven插件](https://docs.spring.io/spring-boot/docs/2.2
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
-### 1.5。初学者
+### 1.5 Starters
 
 入门程序是一组方便的依赖项描述符，您可以在应用程序中包括它们。您可以一站式购买所需的所有Spring和相关技术，而不必搜寻示例代码和依赖描述符的复制粘贴负载。例如，如果要开始使用Spring和JPA进行数据库访问，请`spring-boot-starter-data-jpa`在项目中包括依赖项。
 
@@ -849,7 +379,7 @@ Spring Boot在该`org.springframework.boot`组下提供了以下应用程序启�
 
 Spring Boot不需要任何特定的代码布局即可工作。但是，有一些最佳实践可以帮助您。
 
-### 2.1。使用“默认”包
+### 2.1 Using the “default” Package
 
 当一个类不包含`package`声明时，它被认为是在“默认包”中。通常不建议使用“默认程序包”，应避免使用。这可能会导致使用了Spring启动应用程序的特殊问题`@ComponentScan`，`@ConfigurationPropertiesScan`，`@EntityScan`，或`@SpringBootApplication`注解，因为从每一个罐子每一个类被读取。
 
@@ -857,7 +387,7 @@ Spring Boot不需要任何特定的代码布局即可工作。但是，有一些
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
-### 2.2。找到主要的应用程序类别
+### 2.2 Locating the Main Application Class
 
 我们通常建议您将主应用程序类放在其他类之上的根包中。该[`@SpringBootApplication`注解](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/using-spring-boot.html#using-boot-using-springbootapplication-annotation)往往放在你的主类，它隐含地定义为某些项目一基地“搜索包”。例如，如果您正在编写JPA应用程序，`@SpringBootApplication`则使用带注释的类的包搜索`@Entity`项目。使用根软件包还允许组件扫描仅应用于您的项目。
 
@@ -904,7 +434,7 @@ public class Application {
 }
 ```
 
-## 3.配置类
+## 3.Configuration Classes
 
 Spring Boot支持基于Java的配置。尽管可以`SpringApplication`与XML源一起使用，但是我们通常建议您的主要源为单个`@Configuration`类。通常，定义`main`方法的类是主要的候选者`@Configuration`。
 
@@ -912,11 +442,11 @@ Spring Boot支持基于Java的配置。尽管可以`SpringApplication`与XML源�
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
-### 3.1。导入其他配置类
+### 3.1 `@Import`和`@Configuration`导入其他配置类
 
 您无需将所有内容都`@Configuration`放在一个类中。所述`@Import`注释可以用于导入额外的配置类。另外，您可以`@ComponentScan`用来自动拾取所有Spring组件，包括`@Configuration`类。
 
-### 3.2。导入XML配置
+### 3.2 `@ImportResource`导入XML配置
 
 如果绝对必须使用基于XML的配置，我们建议您仍然从一个`@Configuration`类开始。然后，您可以使用`@ImportResource`批注来加载XML配置文件。
 
@@ -926,17 +456,17 @@ Spring Boot自动配置会尝试根据添加的jar依赖关系自动配置Spring
 
 您需要通过将`@EnableAutoConfiguration`或`@SpringBootApplication`注释添加到一个`@Configuration`类中来选择自动配置。
 
-|      | 您只能添加一个`@SpringBootApplication`或`@EnableAutoConfiguration`注释。我们通常建议您仅将一个或另一个添加到您的主要`@Configuration`班级。 |
+|      | 您只能添加一个`@SpringBootApplication`或`@EnableAutoConfiguration`注释。我们通常建议您仅将一个或另一个添加到您的主要`@Configuration` class。 |
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
-### 4.1。逐渐取代自动配置
+### 4.1 逐渐取代自动配置
 
 自动配置是非侵入性的。在任何时候，您都可以开始定义自己的配置，以替换自动配置的特定部分。例如，如果您添加自己的`DataSource`bean，则默认的嵌入式数据库支持将退出。
 
 如果您需要找出当前正在应用的自动配置以及原因，请使用`--debug`开关启动应用程序。这样做可以启用调试日志，以选择核心记录器，并将条件报告记录到控制台。
 
-### 4.2。禁用特定的自动配置类
+### 4.2 禁用特定的自动配置类
 
 如果发现正在应用不需要的特定自动配置类，则可以使用exclude属性`@SpringBootApplication`来禁用它们，如以下示例所示：
 
@@ -961,9 +491,9 @@ public class MyApplication {
 
 ## 5.Spring Beans和依赖注入
 
-您可以自由使用任何标准的Spring Framework技术来定义bean及其注入的依赖项。为简单起见，我们经常发现使用`@ComponentScan`（查找bean）和使用`@Autowired`（进行构造函数注入）效果很好。
+您可以自由使用任何标准的Spring Framework技术来定义bean及其注入的依赖项。为简单起见，使用`@ComponentScan`（查找bean）和使用`@Autowired`（进行构造函数注入）效果很好。
 
-如果按照上面的建议构造代码（将应用程序类放在根包中），则可以添加`@ComponentScan`而无需任何参数。您的所有应用程序组件（的`@Component`，`@Service`，`@Repository`，`@Controller`等）自动注册为春豆。
+如果按照上面的建议构造代码（将应用程序类放在根包中），则可以添加`@ComponentScan`而无需任何参数。您的所有应用程序组件（的`@Component`，`@Service`，`@Repository`，`@Controller`等）自动注册为Spring Beans。
 
 以下示例显示了一个`@Service`使用构造函数注入来获取所需`RiskAssessor`Bean的Bean：
 
@@ -1005,7 +535,7 @@ public class DatabaseAccountService implements AccountService {
 }
 ```
 
-|      | 请注意，使用构造函数注入如何将`riskAssessor`字段标记为`final`，指示该字段随后不能更改。 |
+|      | 注意，使用构造函数注入将`riskAssessor`字段标记为`final`，指示该字段随后不能更改。 |
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
@@ -1037,21 +567,33 @@ public class Application {
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
-|      | 这些功能都不是强制性的，您可以选择用它启用的任何功能替换此单个注释。例如，您可能不想在应用程序中使用组件扫描或配置属性扫描：`package com.example.myapplication; import org.springframework.boot.SpringApplication; import org.springframework.context.annotation.ComponentScan import org.springframework.context.annotation.Configuration; import org.springframework.context.annotation.Import; @Configuration(proxyBeanMethods = false) @EnableAutoConfiguration @Import({ MyConfig.class, MyAnotherConfig.class }) public class Application {     public static void main(String[] args) {            SpringApplication.run(Application.class, args);    } }`在此示例中，`Application`与其他任何Spring Boot应用程序一样，除了不会自动检测`@Component`-annotated类和`@ConfigurationProperties`-annotated类，并且显式导入用户定义的Bean（请参阅参考资料`@Import`）。 |
-| ---- | ------------------------------------------------------------ |
-|      |                                                              |
+​	 这些功能都不是强制性的，您可以选择用它启用的任何功能替换此单个注释。例如，您可能不想在应用程序中使用组件扫描或配置属性扫描：
+
+
+
+```java
+@Configuration(proxyBeanMethods = false)
+@EnableAutoConfiguration
+@Import({ MyConfig.class, MyAnotherConfig.class })
+public class Application {
+public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+}
+```
+
+​	在此示例中，`Application`与其他任何Spring Boot应用程序一样，除了不会自动检测`@Component`-annotated类和`@ConfigurationProperties`-annotated类，并且显式导入用户定义的Bean（请参阅参考资料`@Import`）
 
 ## 7.运行您的应用程序
 
 将应用程序打包为jar并使用嵌入式HTTP服务器的最大优势之一是，您可以像运行其他应用程序一样运行应用程序。调试Spring Boot应用程序也很容易。您不需要任何特殊的IDE插件或扩展。
 
-|      | 本节仅介绍基于罐子的包装。如果选择将应用程序打包为war文件，则应参考服务器和IDE文档。 |
+|      | 本节仅介绍基于jar based packaging。如果选择将应用程序打包为war文件，则应参考服务器和IDE文档。 |
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
-### 7.1。从IDE运行
+### 7.1 从IDE运行
 
-您可以将IDE中的Spring Boot应用程序作为简单的Java应用程序运行。但是，您首先需要导入您的项目。导入步骤因您的IDE和构建系统而异。大多数IDE可以直接导入Maven项目。例如，Eclipse用户可以从菜单中选择`Import…`→ 。`Existing Maven Projects``File`
+您可以将IDE中的Spring Boot应用程序作为简单的Java应用程序运行。但是，您首先需要导入您的项目。导入步骤因您的IDE和构建系统而异。大多数IDE可以直接导入Maven项目。例如，Eclipse用户可以从菜单中选择`Import…`→ `Existing Maven Projects`->`File`
 
 如果您不能直接将项目导入IDE，则可以使用构建插件生成IDE元数据。Maven包括[Eclipse](https://maven.apache.org/plugins/maven-eclipse-plugin/)和[IDEA的](https://maven.apache.org/plugins/maven-idea-plugin/)插件。Gradle提供了用于[各种IDE的](https://docs.gradle.org/current/userguide/userguide.html)插件。
 
@@ -1059,7 +601,7 @@ public class Application {
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
-### 7.2。作为打包的应用程序运行
+### 7.2 作为打包的应用程序运行
 
 如果您使用Spring Boot Maven或Gradle插件来创建可执行jar，则可以使用来运行您的应用程序`java -jar`，如以下示例所示：
 
@@ -1074,7 +616,7 @@ $ java -Xdebug -Xrunjdwp：server = y，transport = dt_socket，address = 8000�
        -jar target / myapplication-0.0.1-SNAPSHOT.jar
 ```
 
-### 7.3。使用Maven插件
+### 7.3 使用Maven插件
 
 Spring Boot Maven插件包含一个`run`目标，可用于快速编译和运行您的应用程序。应用程序以爆炸形式运行，就像在IDE中一样。以下示例显示了运行Spring Boot应用程序的典型Maven命令：
 
@@ -1088,7 +630,7 @@ $ mvn spring-boot：运行
 $ export MAVEN_OPTS = -Xmx1024m
 ```
 
-### 7.4。使用Gradle插件
+### 7.4 使用Gradle插件
 
 Spring Boot Gradle插件还包含一个`bootRun`任务，可用于以爆炸形式运行您的应用程序。`bootRun`每当您应用`org.springframework.boot`和`java`插件时，都会添加该任务，并在以下示例中显示：
 
@@ -1102,7 +644,7 @@ $ gradle bootRun
 $ export JAVA_OPTS = -Xmx1024m
 ```
 
-### 7.5。热交换
+### 7.5 Hot Swapping
 
 由于Spring Boot应用程序只是普通的Java应用程序，因此JVM热交换应该可以立即使用。JVM热插拔在一定程度上受到它可以替换的字节码的限制。对于更完整的解决方案，可以使用[JRebel](https://www.jrebel.com/products/jrebel)。
 
@@ -1112,7 +654,7 @@ $ export JAVA_OPTS = -Xmx1024m
 
 Spring Boot包括一组额外的工具，这些工具可以使应用程序开发体验更加愉快。该`spring-boot-devtools`模块可以包含在任何项目中，以提供其他开发时功能。要包括devtools支持，请将模块依赖项添加到您的构建中，如以下Maven和Gradle清单所示：
 
-马文
+**Maven**
 
 ```xml
 <dependencies>
@@ -1124,7 +666,7 @@ Spring Boot包括一组额外的工具，这些工具可以使应用程序开发
 </dependencies>
 ```
 
-摇篮
+**Gradle**
 
 ```groovy
 configurations {
@@ -1142,15 +684,11 @@ dependencies {
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
-|      | 在Maven中将依赖项标记为可选，或`developmentOnly`在Gradle中使用自定义配置（如上所示）是一种最佳做法，可防止将devtools过渡应用到使用您项目的其他模块。 |
-| ---- | ------------------------------------------------------------ |
-|      |                                                              |
-
 |      | 重新打包的存档默认情况下不包含devtools。如果要使用[某个远程devtools功能](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/using-spring-boot.html#using-boot-devtools-remote)，则需要禁用`excludeDevtools`build属性以包含它。Maven和Gradle插件均支持该属性。 |
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
-### 8.1。属性默认值
+### 8.1 属性默认值
 
 Spring Boot支持的一些库使用缓存来提高性能。例如，[模板引擎](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/spring-boot-features.html#boot-features-spring-mvc-template-engines)缓存已编译的模板，以避免重复解析模板文件。而且，Spring MVC可以在提供静态资源时向响应添加HTTP缓存标头。
 
@@ -1168,7 +706,7 @@ Spring Boot支持的一些库使用缓存来提高性能。例如，[模板引�
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
-### 8.2。自动重启
+### 8.2 自动重启
 
 `spring-boot-devtools`只要类路径上的文件发生更改，使用的应用程序就会自动重新启动。在IDE中工作时，这可能是一个有用的功能，因为它为代码更改提供了非常快速的反馈循环。默认情况下，将监视类路径上指向文件夹的任何条目的更改。请注意，某些资源（例如静态资产和视图模板）[不需要重新启动应用程序](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/using-spring-boot.html#using-boot-devtools-restart-exclude)。
 
@@ -1198,11 +736,11 @@ Spring Boot支持的一些库使用缓存来提高性能。例如，[模板引�
 
 重新启动与重新加载
 
-Spring Boot提供的重启技术通过使用两个类加载器来工作。不变的类（例如，来自第三方jar的类）将被加载到*基*类加载器中。您正在积极开发的类将加载到*重新启动*类加载器中。重新启动应用程序时，将丢弃*重新启动*类加载器，并创建一个新的类加载器。这种方法意味着应用程序的重启通常比“冷启动”要快得多，因为*基本*类加载器已经可用并已填充。
+Spring Boot提供的重启技术通过使用两个类加载器来工作。不**变的类（例如，来自第三方jar的类）将被加载到基类加载器中**。**开发的类将加载到重新启动类加载器中**。重新启动应用程序时，将丢弃重新启动类加载器，并创建一个新的类加载器。这种方法意味着应用程序的重启通常比“冷启动”要快得多，因为基本类加载器已经可用并已填充。
 
 如果发现重新启动对于您的应用程序来说不够快，或者遇到类加载问题，则可以考虑从ZeroTurnaround 重新加载技术，例如[JRebel](https://jrebel.com/software/jrebel/)。这些方法通过在加载类时重写类来使它们更适合于重新加载。
 
-#### 8.2.1。记录条件评估中的更改
+#### 8.2.1 记录条件评估中的更改
 
 默认情况下，每次应用程序重新启动时，都会记录一个报告，其中显示了条件评估增量。该报告显示了在进行诸如添加或删除bean以及设置配置属性之类的更改时对应用程序自动配置的更改。
 
@@ -1212,27 +750,27 @@ Spring Boot提供的重启技术通过使用两个类加载器来工作。不变
 spring.devtools.restart.log-condition-evaluation-delta = false
 ```
 
-#### 8.2.2。排除资源
+#### 8.2.2 排除资源
 
 某些资源在更改时不一定需要触发重新启动。例如，Thymeleaf模板可以就地编辑。默认情况下，改变资源`/META-INF/maven`，`/META-INF/resources`，`/resources`，`/static`，`/public`，或`/templates`不触发重新启动，但确会触发[现场重装](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/using-spring-boot.html#using-boot-devtools-livereload)。如果要自定义这些排除项，则可以使用该`spring.devtools.restart.exclude`属性。例如，仅排除`/static`，`/public`您将设置以下属性：
 
 ```
-spring.devtools.restart.exclude =静态/ **，公共/ **
+spring.devtools.restart.exclude=static/**,public/**
 ```
 
-|      | 如果要保留这些默认值并*添加*其他排除项，请改用该`spring.devtools.restart.additional-exclude`属性。 |
+|      | 如果要保留这些默认值并添加其他排除项，请改用该`spring.devtools.restart.additional-exclude`属性。 |
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
-#### 8.2.3。观看其他路径
+#### 8.2.3 监视其他路径
 
 当您对不在类路径上的文件进行更改时，您可能希望重新启动或重新加载应用程序。为此，请使用该`spring.devtools.restart.additional-paths`属性来配置其他路径以监视更改。您可以使用[前面描述](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/using-spring-boot.html#using-boot-devtools-restart-exclude)的`spring.devtools.restart.exclude`属性来控制其他路径下的更改是触发完全重新启动还是[实时重新加载](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/using-spring-boot.html#using-boot-devtools-livereload)。
 
-#### 8.2.4。禁用重启
+#### 8.2.4 禁用重启
 
-如果您不想使用重新启动功能，则可以使用该`spring.devtools.restart.enabled`属性将其禁用。在大多数情况下，您可以在自己的设备中设置此属性`application.properties`（这样做仍会初始化重新启动类加载器，但它不会监视文件更改）。
+如果您不想使用重新启动功能，则可以使用该`spring.devtools.restart.enabled`属性将其禁用。在大多数情况下，可以在自己的设备中设置此属性`application.properties`（这样做仍会初始化重新启动类加载器，但它不会监视文件更改）。
 
-如果您需要*完全*禁用重启支持（例如，因为它不适用于特定的库），则需要在调用之前将`spring.devtools.restart.enabled` `System`属性设置为，如以下示例所示：`false``SpringApplication.run(…)`
+如果您需要*完全*禁用重启支持，则需要在调用`SpringApplication.run(…)`之前将`spring.devtools.restart.enabled` `System`属性设置为`false`，如以下示例所示：
 
 ```java
 public static void main(String[] args) {
@@ -1241,7 +779,7 @@ public static void main(String[] args) {
 }
 ```
 
-#### 8.2.5。使用触发文件
+#### 8.2.5 使用触发文件
 
 如果使用持续编译更改文件的IDE，则可能更喜欢仅在特定时间触发重新启动。为此，您可以使用“触发文件”，这是一个特殊文件，当您要实际触发重新启动检查时必须对其进行修改。
 
@@ -1260,7 +798,7 @@ src
       +-.reloadtrigger
 ```
 
-那么您的`trigger-file`财产将是：
+那么您的`trigger-file`  property将是：
 
 ```properties
 spring.devtools.restart.trigger-file=.reloadtrigger
@@ -1274,7 +812,7 @@ spring.devtools.restart.trigger-file=.reloadtrigger
 
 某些IDE具有使您不必手动更新触发器文件的功能。 [Eclipse的Spring工具](https://spring.io/tools)和[IntelliJ IDEA（最终版）](https://www.jetbrains.com/idea/)都具有这种支持。使用Spring Tools，您可以从控制台视图中使用“重新加载”按钮（只要您`trigger-file`名为`.reloadtrigger`）。对于IntelliJ，您可以按照[其文档中](https://www.jetbrains.com/help/idea/spring-boot.html#configure-application-update-policies-with-devtools)的[说明进行操作](https://www.jetbrains.com/help/idea/spring-boot.html#configure-application-update-policies-with-devtools)。
 
-#### 8.2.6。自定义重启类加载器
+#### 8.2.6 自定义重启类加载器
 
 如前面的“ [重新启动与重新加载”](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/using-spring-boot.html#using-spring-boot-restart-vs-reload)部分所述，重新启动功能是通过使用两个类加载器实现的。对于大多数应用程序，此方法效果很好。但是，有时可能会导致类加载问题。
 
@@ -1295,13 +833,13 @@ restart.include.projectcommon=/mycorp-myproj-[\\w\\d-\.]+\.jar
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
-#### 8.2.7。已知局限性
+#### 8.2.7 已知局限性
 
 重新启动功能不适用于通过使用标准反序列化的对象`ObjectInputStream`。如果你需要反序列化的数据，你可能需要使用Spring的`ConfigurableObjectInputStream`结合`Thread.currentThread().getContextClassLoader()`。
 
 不幸的是，一些第三方库在不考虑上下文类加载器的情况下反序列化。如果发现这样的问题，则需要向原始作者请求修复。
 
-### 8.3。LiveReload
+### 8.3 LiveReload
 
 该`spring-boot-devtools`模块包括一个嵌入式LiveReload服务器，该服务器可用于在更改资源时触发浏览器刷新。可从[livereload.com](http://livereload.com/extensions/)免费获得适用于Chrome，Firefox和Safari的LiveReload浏览器扩展。
 
@@ -1311,7 +849,7 @@ restart.include.projectcommon=/mycorp-myproj-[\\w\\d-\.]+\.jar
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
-### 8.4。全局设置
+### 8.4 全局设置
 
 您可以通过将以下任何文件添加到`$HOME/.config/spring-boot`文件夹来配置全局devtools设置：
 
@@ -1319,7 +857,7 @@ restart.include.projectcommon=/mycorp-myproj-[\\w\\d-\.]+\.jar
 2. `spring-boot-devtools.yaml`
 3. `spring-boot-devtools.yml`
 
-添加到这些文件的任何属性都将应用于使用devtools的计算机上的*所有* Spring Boot应用程序。例如，要将重启配置为始终使用[触发文件](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/using-spring-boot.html#using-boot-devtools-restart-triggerfile)，您可以添加以下属性：
+添加到这些文件的任何属性都将应用于使用devtools的计算机上的所有 Spring Boot应用程序。例如，要将重启配置为始终使用[触发文件](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/using-spring-boot.html#using-boot-devtools-restart-triggerfile)，您可以添加以下属性：
 
 〜/ .config / spring-boot / spring-boot-devtools.properties
 
@@ -1335,7 +873,7 @@ spring.devtools.restart.trigger-file=.reloadtrigger
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
-### 8.5。远程应用
+### 8.5 远程应用
 
 Spring Boot开发人员工具不仅限于本地开发。远程运行应用程序时，您还可以使用多种功能。选择启用远程支持，因为启用它可能会带来安全风险。仅当在受信任的网络上运行或使用SSL保护时，才应启用它。如果这两个选项都不可用，则不应使用DevTools的远程支持。您永远不要在生产部署上启用支持。
 
@@ -1359,7 +897,7 @@ Spring Boot开发人员工具不仅限于本地开发。远程运行应用程序
 
 远程devtools支持分为两个部分：接受连接的服务器端端点和在IDE中运行的客户端应用程序。`spring.devtools.remote.secret`设置属性后，将自动启用服务器组件。客户端组件必须手动启动。
 
-#### 8.5.1。运行远程客户端应用程序
+#### 8.5.1 运行远程客户端应用程序
 
 远程客户端应用程序旨在在您的IDE中运行。您需要`org.springframework.boot.devtools.RemoteSpringApplication`使用与所连接的远程项目相同的类路径来运行。应用程序的唯一必需参数是它连接到的远程URL。
 
@@ -1401,7 +939,7 @@ Spring Boot开发人员工具不仅限于本地开发。远程运行应用程序
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
-#### 8.5.2。远程更新
+#### 8.5.2 远程更新
 
 远程客户端以与[本地重新启动](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/using-spring-boot.html#using-boot-devtools-restart)相同的方式监视应用程序类路径中的更改。任何更新的资源都会推送到远程应用程序，并且（*如果需要*）会触发重新启动。如果您迭代使用本地没有的云服务的功能，这将很有帮助。通常，远程更新和重新启动比完整的重建和部署周期要快得多。
 
@@ -1409,7 +947,7 @@ Spring Boot开发人员工具不仅限于本地开发。远程运行应用程序
 | ---- | ------------------------------------------------------------ |
 |      |                                                              |
 
-#### 8.5.3。配置文件系统观察器
+#### 8.5.3 配置文件系统观察器
 
 [FileSystemWatcher的](https://github.com/spring-projects/spring-boot/tree/v2.2.6.RELEASE/spring-boot-project/spring-boot-devtools/src/main/java/org/springframework/boot/devtools/filewatch/FileSystemWatcher.java)工作方式是按一定时间间隔轮询类更改，然后等待预定义的静默期以确保没有更多更改。然后将更改上传到远程应用程序。在较慢的开发环境中，可能会发生静默期不够的情况，并且类中的更改可能会分为几批。第一批类更改上传后，服务器将重新启动。由于服务器正在重新启动，因此下一批不能发送到应用程序。
 
@@ -1424,7 +962,7 @@ spring.devtools.restart.quiet-period=1s
 
 现在每2秒轮询一次受监视的classpath文件夹是否有更改，并保持1秒钟的静默时间以确保没有其他类更改。
 
-## 9.打包您的生产申请
+## 9.打包生产应用
 
 可执行jar可以用于生产部署。由于它们是独立的，因此它们也非常适合基于云的部署。
 
@@ -1435,3 +973,364 @@ spring.devtools.restart.quiet-period=1s
 现在，您应该了解如何使用Spring Boot以及应遵循的一些最佳实践。现在，您可以继续深入了解特定的*[Spring Boot功能](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/spring-boot-features.html#boot-features)*，或者可以跳过并阅读有关Spring Boot 的“ [生产就绪](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/production-ready-features.html#production-ready) ”方面的信息。
 
 最后更新时间2020-03-26 11:43:46 UTC
+
+
+
+
+
+# Spring Boot自动配置原理
+
+​	Spring Boot自动配置会尝试根据添加的jar依赖关系自动配置Spring应用程序。需要通过将`@EnableAutoConfiguration`或`@SpringBootApplication`注释添加到一个`@Configuration`类中来选择自动配置。
+
+## @SpringBootApplication组件扫描和自动配置
+
+典型的Spring Boot应用的启动类一般均位于 src/main/java根路径下，比如 MoonApplication类：
+
+```java
+@SpringBootApplication
+publicclassMoonApplication{
+	public static void main(String[] args) {
+	SpringApplication.run(MoonApplication.class, args);
+	}
+}
+```
+
+**@SpringBootApplication**开启组件扫描和自动配置，而 SpringApplication.run则负责启动引导应用程序。@SpringBootApplication是一个复合 Annotation，它将三个有用的注解组合在一起：
+
+```java
+@SpringBootConfiguration
+@EnableAutoConfiguration
+@ComponentScan(excludeFilters = {
+	@Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
+	@Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) })
+public @interface SpringBootApplication{
+// ......
+}
+```
+### @SpringBootConfiguration
+
+​	@SpringBootConfiguration就是 @Configuration，它是Spring框架的注解，标明该类是一个 JavaConfig配置类。
+
+### @ComponentScan
+
+​	@ComponentScan启用组件扫描。
+
+### @EnableAutoConfiguration
+
+​	注解表示开启Spring Boot自动配置功能，Spring Boot会根据应用的依赖、自定义的bean、classpath下有没有某个类 等等因素来猜测你需要的bean，然后注册到IOC容器中。
+
+#### @AutoConfigurationPackage
+
+ 	自动扫描当前路径下的包，所以启动类一般都在最外层
+
+```java
+@AutoConfigurationPackage
+@Import({AutoConfigurationImportSelector.class})
+public @interface EnableAutoConfiguration {
+    String ENABLED_OVERRIDE_PROPERTY = "spring.boot.enableautoconfiguration";
+    Class<?>[] exclude() default {};
+    String[] excludeName() default {};
+}
+```
+
+#### AutoConfigurationImportSelector
+
+​	@Import注解用于导入该类，并将这个类作为一个bean的定义注册到容器中，这里它将把 **EnableAutoConfigurationImportSelector**作为bean注入到容器中，而这个类会将所有符合条件的**@Configuration**配置都加载到容器中。
+
+##### selectImports(AnnotationMetadata）返回所有的配置类 configurations
+
+​	selectImports方法是在容器启动过程中执行：**AbstractApplicationContext.refresh()**。
+
+​	选择并返回应基于导入Configuration类的 AnnotationMetadata 导入哪些类的名称，然后Spring会加载这些类
+
+```java
+//DeferredImportSelector处理 EnableAutoConfiguration 自动配置。
+//如果需要 @EnableAutoConfiguration 的自定义变体，则也可以将该类作为子类
+//@see EnableAutoConfiguration
+public class AutoConfigurationImportSelector
+		implements DeferredImportSelector, BeanClassLoaderAware, ResourceLoaderAware,
+		BeanFactoryAware, EnvironmentAware, Ordered {
+//选择并返回应基于导入Configuration类的 AnnotationMetadata 导入哪些类的名称，然后Spring会加载这些类
+public String[] selectImports(AnnotationMetadata annotationMetadata) {
+  //传入beanClassLoader，读取META-INF/spring-autoconfigure-metadata.properties下所有类  
+  //由属性文件支持的{@link AutoConfigurationMetadata}实现。
+AutoConfigurationMetadata autoConfigurationMetadata = AutoConfigurationMetadataLoader
+				.loadMetadata(this.beanClassLoader);
+  //根据导入的 @Configuration类的AnnotationMetadata 返回 AutoConfigurationEntry
+		AutoConfigurationEntry autoConfigurationEntry = getAutoConfigurationEntry(
+				autoConfigurationMetadata, annotationMetadata);
+         //返回所有的配置类 configurations
+		return StringUtils.toStringArray(autoConfigurationEntry.getConfigurations());
+    
+// 这句代码被封装在AutoConfigurationMetadataLoader.loadMetadata(this.beanClassLoader);
+List<String> factories = newArrayList<String>(newLinkedHashSet<String>(
+SpringFactoriesLoader.loadFactoryNames(EnableAutoConfiguration.class, this.beanClassLoader)));
+}
+```
+
+这个类会扫描所有的jar包，将所有符合条件的**@Configuration**配置类注入的容器中，何为符合条件，下面spring.factories文件中的自动配置类
+
+### spring-boot-autoconfigure/META-INF/spring.factories
+
+```xml
+// 配置的key = EnableAutoConfiguration，与代码中一致
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,\
+org.springframework.boot.autoconfigure.aop.AopAutoConfiguration,\
+org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration\
+```
+
+以 DataSourceAutoConfiguration为例，看看Spring Boot是如何自动配置的：
+
+```java
+@Configuration
+@ConditionalOnClass({ DataSource.class, EmbeddedDatabaseType.class})
+@EnableConfigurationProperties(DataSourceProperties.class)
+@Import({ Registrar.class, DataSourcePoolMetadataProvidersConfiguration.class})
+public class DataSourceAutoConfiguration{
+}
+```
+
+分别说一说：
+
+**@ConditionalOnClass({ DataSource.class, EmbeddedDatabaseType.class })**：当Classpath中存在DataSource或者EmbeddedDatabaseType类时才启用这个配置，否则这个配置将被忽略。
+
+**@EnableConfigurationProperties(DataSourceProperties.class)**：将DataSource的默认配置类注入到IOC容器中，DataSourceproperties定义为：
+
+```java
+// 提供对datasource配置信息的支持，所有的配置前缀为：spring.datasource
+@ConfigurationProperties(prefix = "spring.datasource")
+public classDataSourceProperties{
+    private ClassLoader classLoader;
+    private Environment environment;
+    private String name = "testdb";
+	......
+}
+```
+
+**@Import({ Registrar.class, DataSourcePoolMetadataProvidersConfiguration.class })**：导入其他额外的配置，就以 DataSourcePoolMetadataProvidersConfiguration为例吧。
+
+```java
+@Configuration
+public class DataSourcePoolMetadataProvidersConfiguration{
+
+@Configuration
+@ConditionalOnClass(org.apache.tomcat.jdbc.pool.DataSource.class)
+static class TomcatDataSourcePoolMetadataProviderConfiguration{
+@Bean
+public DataSourcePoolMetadataProvider tomcatPoolDataSourceMetadataProvider() {
+.....
+}
+}
+```
+
+**DataSourcePoolMetadataProvidersConfiguration**是数据库连接池提供者的一个配置类，即Classpath中存在 org.apache.tomcat.jdbc.pool.**DataSource.class**，则使用**tomcat-jdbc连接池**，**如果Classpath中存在 HikariDataSource.class则使用Hikari连接池**
+
+这里仅描述了DataSourceAutoConfiguration的冰山一角，但足以说明Spring Boot如何利用条件话配置来实现自动配置的。回顾一下， @EnableAutoConfiguration中导入了EnableAutoConfigurationImportSelector类，而这个类的 selectImports()通过SpringFactoriesLoader得到了大量的配置类，而每一个配置类则根据条件化配置来做出决策，以实现自动配置。
+
+# Eureka 启动分析
+
+## @EnableEurekaServer开启注册中心服务
+
+```java
+@SpringBootApplication
+@EnableEurekaServer
+public class SpringCloudEurekaApplication {
+    public static void main(String[] args) {
+      SpringApplication.run(SpringCloudEurekaApplication.class, args);
+    }
+
+}
+```
+
+## **@EnableEurekaServer**注解
+
+​	导入配置类EurekaServerMarkerConfiguration
+
+```java
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Import(EurekaServerMarkerConfiguration.class)
+public @interface EnableEurekaServer {
+
+}
+```
+
+## **EurekaServerMarkerConfiguration**配置类
+
+​	负责添加标记bean以激活  **EurekaServerAutoConfiguration**
+
+```java
+@Configuration
+public class EurekaServerMarkerConfiguration {
+
+   @Bean
+   public Marker eurekaServerMarkerBean() {
+      return new Marker();
+   }
+
+   class Marker {
+   }
+}
+```
+
+## spring-cloud-netflix-eureka-server/META-INF/spring.factories
+
+**EnableAutoConfiguration = EurekaServerAutoConfiguration**
+
+```xml
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.springframework.cloud.netflix.eureka.server.EurekaServerAutoConfiguration
+```
+
+## EurekaServerAutoConfiguration自动配置类
+
+```java
+@Configuration
+//导入EurekaServerInitializerConfiguration类
+@Import(EurekaServerInitializerConfiguration.class)
+//EurekaServerMarkerConfiguration.Marker存在时才可用
+@ConditionalOnBean(EurekaServerMarkerConfiguration.Marker.class)
+@EnableConfigurationProperties({ EurekaDashboardProperties.class,
+      InstanceRegistryProperties.class })
+@PropertySource("classpath:/eureka/server.properties")
+public class EurekaServerAutoConfiguration extends WebMvcConfigurerAdapter {
+   //包含Eureka服务器所需的Jersey资源的软件包列表
+   private static final String[] EUREKA_PACKAGES = new String[] { "com.netflix.discovery","com.netflix.eureka" };
+```
+
+
+
+### jerseyFilterRegistration（Application）注册Jersey过滤器
+
+```java
+@Bean
+public FilterRegistrationBean jerseyFilterRegistration(
+      javax.ws.rs.core.Application eurekaJerseyApp) {
+   FilterRegistrationBean bean = new FilterRegistrationBean();
+   bean.setFilter(new ServletContainer(eurekaJerseyApp));
+   bean.setOrder(Ordered.LOWEST_PRECEDENCE);
+   bean.setUrlPatterns(
+   Collections.singletonList(EurekaConstants.DEFAULT_PREFIX + "/*"));
+   return bean;
+}
+```
+
+### jerseyApplication(Environment,ResourceLoader)
+
+使用Eureka服务器所需的所有资源构建Jersey Application
+
+```java
+@Bean
+public javax.ws.rs.core.Application jerseyApplication(Environment environment,ResourceLoader resourceLoader) {
+  
+   ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(
+         false, environment);
+   // 过滤以仅包括具有特定注释的类
+   provider.addIncludeFilter(new AnnotationTypeFilter(Path.class));
+   provider.addIncludeFilter(new AnnotationTypeFilter(Provider.class));
+
+   // 在Eureka包（或子包）中查找类
+   Set<Class<?>> classes = new HashSet<>();
+   for (String basePackage : EUREKA_PACKAGES) {
+      Set<BeanDefinition> beans = provider.findCandidateComponents(basePackage);
+      for (BeanDefinition bd : beans) {
+         Class<?> cls = ClassUtils.resolveClassName(bd.getBeanClassName(),
+               resourceLoader.getClassLoader());
+         classes.add(cls);
+      }
+   }
+
+   // 构造Jersey ResourceConfig
+   Map<String, Object> propsAndFeatures = new HashMap<>();
+   propsAndFeatures.put(
+         // 跳过网络应用使用的静态内容
+     ServletContainer.PROPERTY_WEB_PAGE_CONTENT_REGEX,
+     EurekaConstants.DEFAULT_PREFIX + "/(fonts|images|css|js)/.*");
+
+   DefaultResourceConfig rc = new DefaultResourceConfig(classes);
+   rc.setPropertiesAndFeatures(propsAndFeatures);
+
+   return rc;
+}
+```
+
+
+
+## @EnableAutoConfiguration
+
+​	启用Spring Application Context的自动配置，尝试猜测和配置您可能需要的bean。自动配置类通常根据您的类路径和定义的bean应用。如果您的类路径上有 tomcat-embedded.jar，则可能需要 TomcatServletWebServerFactory（除非定义了自己的ServletWebServerFactory bean）。
+
+​	使用 SpringBootApplication 时，会自动启用上下文的自动配置，因此添加此批注不会产生任何其他影响
+
+​	自动配置会尝试尽可能智能化，并且会在您定义更多自己的配置时回退。您始终可以手动 exclude（）不要应用的任何配置（如果您没有访问权限，使用 excludeName（））。您也可以通过 { spring.autoconfigure.exclude}属性排除它们。在注册用户定义的bean之后，始终会应用自动配置。
+
+​	用 @EnableAutoConfiguration 注释的类的包通常通过 @SpringBootApplication进行注释，具有特定的意义，并且经常用作“默认值”。例如，在扫描{ @Entity}类时将使用它。 通常建议将{ @EnableAutoConfiguration}（如果您不使用{ @SpringBootApplication}）放在根包中，以便可以搜索所有子包和类。
+
+​	自动配置类是常规的Spring  Configuration bean。 使用 SpringFactoriesLoader 机制定位（针对此类）。 通常，自动配置bean是 @Conditional bean（大多数经常使用 @ConditionalOnClass 和 @ConditionalOnMissingBean 注释）。
+
+```java
+/**@see ConditionalOnBean
+ * @see ConditionalOnMissingBean
+ * @see ConditionalOnClass
+ * @see AutoConfigureAfter
+ * @see SpringBootApplication
+ */
+@AutoConfigurationPackage //扫描当前路径下所有配置类
+@Import(AutoConfigurationImportSelector.class)//导入配置类
+public @interface EnableAutoConfiguration {
+
+	String ENABLED_OVERRIDE_PROPERTY= "spring.boot.enableautoconfiguration";
+
+   /**
+    * 排除特定的自动配置类，使其永远不会应用。
+    * 返回要排除的类
+    */
+   Class<?>[] exclude() default {};
+
+   /**
+    * 排除特定的自动配置类名称，以使它们永远不会被应用
+    * @返回要排除的类名
+    * @since 1.3.0
+    */
+   String[] excludeName() default {};
+
+}
+```
+
+
+
+## AutoConfigurationImportSelector配置类
+
+​	DeferredImportSelector 处理 EnableAutoConfiguration 自动配置。如果需要  @EnableAutoConfiguration的自定义变体，则也可以将该类作为子类。
+
+### selectImports（AnnotationMetadata）返回所有的配置类 configurations
+
+​	selectImports方法是在容器启动过程中执行：**AbstractApplicationContext.refresh()**。
+
+​	选择并返回应基于导入 Configuration 类的 AnnotationMetadata导入哪些类的名称。
+
+```java
+public class AutoConfigurationImportSelector
+      implements DeferredImportSelector, BeanClassLoaderAware, ResourceLoaderAware,
+      BeanFactoryAware, EnvironmentAware, Ordered {
+        
+	@Override
+	public String[] selectImports(AnnotationMetadata annotationMetadata) {
+		if (!isEnabled(annotationMetadata)) {
+			return NO_IMPORTS;
+		}
+		AutoConfigurationMetadata autoConfigurationMetadata = AutoConfigurationMetadataLoader
+				.loadMetadata(this.beanClassLoader);
+		AutoConfigurationEntry autoConfigurationEntry = getAutoConfigurationEntry(
+				autoConfigurationMetadata, annotationMetadata);
+		return StringUtils.toStringArray(autoConfigurationEntry.getConfigurations());
+	}     
+        
+```
+
+![image-20200504002337743](/Users/houshaojie/Library/Application Support/typora-user-images/image-20200504002337743.png)
+
+![image-20200504003802273](/Users/houshaojie/Library/Application Support/typora-user-images/image-20200504003802273.png)
+
