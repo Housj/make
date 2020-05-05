@@ -492,9 +492,9 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 ## 3.Circuit Breaker: Spring Cloud Circuit Breaker With Hystrix
 
-断路器：带Hystrix的弹簧云断路器
+断路器：Spring Cloud Hystrix断路器
 
-### [3.1。禁用弹簧云断路器Hystrix](https://cloud.spring.io/spring-cloud-static/spring-cloud-netflix/2.2.2.RELEASE/reference/html/#disabling-spring-cloud-circuit-breaker-hystrix)
+### [3.1。禁用Spring Cloud Hystrix断路器](https://cloud.spring.io/spring-cloud-static/spring-cloud-netflix/2.2.2.RELEASE/reference/html/#disabling-spring-cloud-circuit-breaker-hystrix)
 
 您可以通过设置`spring.cloud.circuitbreaker.hystrix.enabled` 为来禁用自动配置`false`。
 
@@ -514,7 +514,7 @@ public Customizer<HystrixCircuitBreakerFactory> defaultConfig() {
 }
 ```
 
-##### [反应性例子](https://cloud.spring.io/spring-cloud-static/spring-cloud-netflix/2.2.2.RELEASE/reference/html/#reactive-example)
+##### [Reactive例子](https://cloud.spring.io/spring-cloud-static/spring-cloud-netflix/2.2.2.RELEASE/reference/html/#reactive-example)
 
 ```java
 @Bean
@@ -538,7 +538,7 @@ public Customizer<HystrixCircuitBreakerFactory> customizer() {
 }
 ```
 
-##### [反应性例子](https://cloud.spring.io/spring-cloud-static/spring-cloud-netflix/2.2.2.RELEASE/reference/html/#reactive-example-2)
+##### [Reactive例子](https://cloud.spring.io/spring-cloud-static/spring-cloud-netflix/2.2.2.RELEASE/reference/html/#reactive-example-2)
 
 ```java
 @Bean
@@ -597,7 +597,7 @@ Netflix创建了一个名为[Hystrix](https://github.com/Netflix/Hystrix)的库�
 
 这`@HystrixCommand`是由一个名为[“ javanica”](https://github.com/Netflix/Hystrix/tree/master/hystrix-contrib/hystrix-javanica)的Netflix contrib库提供的。Spring Cloud会自动将带有该批注的Spring bean包装在连接到Hystrix断路器的代理中。断路器计算何时断开和闭合电路，以及在发生故障时应采取的措施。
 
-要配置，`@HystrixCommand`您可以将`commandProperties` 属性与`@HystrixProperty`注释列表一起使用。有关 更多详细信息，请参见 [此处](https://github.com/Netflix/Hystrix/tree/master/hystrix-contrib/hystrix-javanica#configuration)。有关 可用属性的详细信息，请参见[Hystrix Wiki](https://github.com/Netflix/Hystrix/wiki/Configuration)。
+配置，`@HystrixCommand`您可以将`commandProperties` 属性与`@HystrixProperty`注释列表一起使用。有关 更多详细信息，请参见 [此处](https://github.com/Netflix/Hystrix/tree/master/hystrix-contrib/hystrix-javanica#configuration)。有关 可用属性的详细信息，请参见[Hystrix Wiki](https://github.com/Netflix/Hystrix/wiki/Configuration)。
 
 ### [4.2。传播安全上下文或使用Spring Scope](https://cloud.spring.io/spring-cloud-static/spring-cloud-netflix/2.2.2.RELEASE/reference/html/#netflix-hystrix-starter)
 
