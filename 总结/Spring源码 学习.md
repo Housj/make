@@ -634,8 +634,6 @@ public class SpringBeanUtils implements ApplicationContextAware {
 
 **解决此类问题的关键是要对SpringIOC和DI的整个流程做到心中有数，看源码一般情况下不要求每一行代码都了解透彻，但是对于整个的流程和每个流程中在做什么事需要了然，这样实际遇到问题时才可以很快的切入进行分析解决。**
 
-
-
 # Spring AOP
 
 ​	AOP原理
@@ -1735,6 +1733,7 @@ public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
     }
 
   
+
 
 
 
@@ -6886,6 +6885,140 @@ spiDemo
 
 https://github.com/lemon-simple/SPIDEMO
 
+# WebApplicationContext
+
+在Web应用中，我们会用到WebApplicationContext  用它来保存上下文信息
+
+ 
+
+那么它set到ServletContext的过程是怎么样呢
+
+ 
+
+1）通过WEB.XML中监听类
+
+​    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+
+触发contextInitialized方法
+
+![img](https://images2015.cnblogs.com/blog/647901/201705/647901-20170520231836916-811515666.png)
+
+再来看
+
+```java
+ public WebApplicationContext initWebApplicationContext(ServletContext servletContext) {
+        if (servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE) != null) {
+            throw new IllegalStateException(
+                    "Cannot initialize context because there is already a root application context present - " +
+                    "check whether you have multiple ContextLoader* definitions in your web.xml!");
+        }
+        Log logger = LogFactory.getLog(ContextLoader.class);
+        servletContext.log("Initializing Spring root WebApplicationContext");
+        if (logger.isInfoEnabled()) {
+            logger.info("Root WebApplicationContext: initialization started");
+        }
+        long startTime = System.currentTimeMillis();
+        try {
+            // Store context in local instance variable, to guarantee that
+            // it is available on ServletContext shutdown.
+            if (this.context == null) {
+                this.context = createWebApplicationContext(servletContext);
+            } 
+```
+
+最后一行，又调用了createWebApplicationContext方法，我们再来看一下这个方法的代码：
+
+```java
+	protected WebApplicationContext createWebApplicationContext(ServletContext sc) {
+		Class<?> contextClass = determineContextClass(sc);
+		if (!ConfigurableWebApplicationContext.class.isAssignableFrom(contextClass)) {
+			throw new ApplicationContextException("Custom context class [" + contextClass.getName() +
+					"] is not of type [" + ConfigurableWebApplicationContext.class.getName() + "]");
+		}
+		return (ConfigurableWebApplicationContext) BeanUtils.instantiateClass(contextClass);
+	}
+```
+
+通过代码可知，在这里返回了一个ConfigurableWebApplicationContext，再来看一下contextLoader的initWebApplicationContext方法中最关键的代码：
+
+```java
+servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, this.context);
+```
+
+在这里把context存入servletContext中，所以以后要用到WebApplicationContext的时候可以从servletContext取出。
+
+# ServletContext
+
+1)ServletContext是一个全局的储存信息的空间，所有用户共用一个，其信息必须是线程安全且共享的。
+
+ServletContext有一个接口定义：ServletContext接口。此接口定义了运行servlet的web应用的servlet视图。容器供应商负责提供servlet容器内ServletContext接口的实现。使用ServletContext对象，servlet可以记录事件日志，获取资源的URL地址，并且设置和保存上下文内可以访问的其他servlet的属性。
+
+ServletContext以web的已知路径为根路径。比如，假定一个servlet上下文位于http://www.mycorp.com/catalog。以/catalog请求路径开头的所有请求，已知为上下文路径，被路由到和该ServletContext关联的web应用。
+
+那么它定义了哪些方法呢。比如
+
+`getContextPath getRealPath`  
+
+ `public void setAttribute(String name, Object object);`
+
+ `public <T extends Servlet> T createServlet(Class<T> clazz)  throws ServletException;`
+
+ `public <T extends Filter> T createFilter(Class<T> clazz)   throws ServletException;`
+
+ `public void addListener(String className);`
+
+  `public ClassLoader getClassLoader();`
+
+详见：ServletContext接口
+
+2)Servlet上下文：Servlet上下文提供对应用程序中所有Servlet所共有的各种资源和功能的访问。Servlet上下文API用于设置应用程序中**所有**Servlet共有的信息。Servlet可能需要共享他们之间的共有信息。运行于同一服务器的Servlet有时会共享资源，如JSP页面、文件和其他Servlet。
+
+ 
+
+3）ServletContext接口作用域
+
+容器中部署的每一个web应用都有一个ServletContext接口的实例对象与之关联。如果容器被分布在多个虚拟机上，一个web应用将在每一个VM中有一个ServletContext实例
+
+ 
+
+4）初始化参数
+
+ServletContext接口的初始化参数允许servlet访问与web应用相关的上下文初始化参数，这些由应用开发人员在部署描述符中WEB.XML指定：context-param节点
+
+getInitParameter
+
+getInitParameterNames
+
+5) 上下文属性
+
+servlet可以通过名称将对象属性绑定到上下文。任何绑定到上下文的属性可以被同一个web应用的其他servlet使用。ServletContext接口的下列方法允许访问这种功能：
+
+setAttribute
+
+getAttribute
+
+getAttributeNames
+
+removeAttribute
+
+6)资源
+
+ServletContext接口通过下列方法提供对web应用组成的静态内容文档层级的直接访问，包括HTML，GIF和JPEG文件：
+
+getResource
+
+getResourceAsStream
+
+getResource和getResourceAsStream方法以“/”开头的字符串为参数，它指定上下文根路径的资源相对路径。文档的层级可能存在于服务器的文件系统，war文件，远程服务器或者在一些其它位置中。
+
+7)临时工作目录
+
+每一个servlet上下文都需要一个临时存储目录。Servlet容器必须为每一个servlet上下文提供一个私有的临时目录，并且使它可以通过javax.servlet.context.tempdir上下文属性可用。这些属性关联的对象必须是java.io.File类型。
+
+这项需求认可了很多servlet引擎实现中提供的常见便利。容器不需要在servlet重启时维持临时目录的内容，但是需要确保一个servlet上下文的临时目录的内容对于该servlet容器上运行的其他web应用的servlet上下文不可见.
+
+总结一下:WEB容器启动时  一般会初始化一个应用上下文即所谓的servletContext上下文  像J2EE应用来说spring会借助用webApplicationContext存储上下文信息。
+
 # Spring MVC创建过程
 
 ​	先分析Spring MVC的整体结构，然后具体分析每层的创建过程
@@ -7000,9 +7133,9 @@ protected final void initServletBean() throws ServletException {
 ​	initWebApplicatoinContext方法做了三件事
 
 		1. 获取spring的根容器rootContext
-
-     		2. 设置webApplicationContext并根据情况调用onRefresh方法
-               		3. 将webApplicationContext设置到ServletContext中
+	
+	 		2. 设置webApplicationContext并根据情况调用onRefresh方法
+	           		3. 将webApplicationContext设置到ServletContext中
 
 ```java
 protected WebApplicationContext initWebApplicationContext() {
@@ -7910,8 +8043,7 @@ AnnotationConfigWebApplicationContext ac = new AnnotationConfigWebApplicationCon
  	4. 判断方法是否加了@RequestMapping注解
  	5. 把@RequestMapping注解的value作为map集a合 的key给put进去，把method对象作为value放入map集合
  	6. 根据用户的请求，拿到请求的URI url:http://localhost:8080/test  uri:/test
- 	7. 使用请求的 uri 作为map的key 去map里get 看是否有值
-	8. 
+   	7. 使用请求的 uri 作为map的key 去map里get 看是否有值
 
 Controller 定义方式有2种   beanName类型和@Controller类型
 
